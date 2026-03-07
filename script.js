@@ -2267,19 +2267,82 @@ function makeWindowResizable(windowEl) {
   });
 }
 
+function rectsOverlap(a, b, padding = 12) {
+  return !(
+    a.right + padding < b.left ||
+    a.left > b.right + padding ||
+    a.bottom + padding < b.top ||
+    a.top > b.bottom + padding
+  );
+}
+
+function getRandomWidgetPosition(width, height, occupiedRects = []) {
+  const margin = 8;
+  const maxLeft = Math.max(margin, Math.round(window.innerWidth - width - margin));
+  const maxTop = Math.max(margin, Math.round(window.innerHeight - height - margin));
+
+  for (let attempt = 0; attempt < 26; attempt += 1) {
+    const left = randomInt(margin, maxLeft);
+    const top = randomInt(margin, maxTop);
+    const candidate = {
+      left,
+      top,
+      right: left + width,
+      bottom: top + height,
+    };
+
+    const hasOverlap = occupiedRects.some((rect) => rectsOverlap(candidate, rect));
+    if (!hasOverlap) {
+      return { left, top };
+    }
+  }
+
+  return {
+    left: randomInt(margin, maxLeft),
+    top: randomInt(margin, maxTop),
+  };
+}
+
+function placeWidgetRandomly(windowEl, occupiedRects = [], preferredSize = null) {
+  const rect = windowEl.getBoundingClientRect();
+  const targetWidth = preferredSize?.width || rect.width;
+  const targetHeight = preferredSize?.height || rect.height;
+
+  const size = clampWindowSize(windowEl, targetWidth, targetHeight);
+  const randomPos = getRandomWidgetPosition(size.width, size.height, occupiedRects);
+  const safePos = clampWindowPosition(windowEl, randomPos.left, randomPos.top);
+
+  windowEl.style.left = `${safePos.left}px`;
+  windowEl.style.top = `${safePos.top}px`;
+  windowEl.style.width = `${size.width}px`;
+  windowEl.style.height = `${size.height}px`;
+
+  occupiedRects.push({
+    left: safePos.left,
+    top: safePos.top,
+    right: safePos.left + size.width,
+    bottom: safePos.top + size.height,
+  });
+
+  return {
+    left: safePos.left,
+    top: safePos.top,
+    width: size.width,
+    height: size.height,
+  };
+}
+
 function initializeFloatingWindows() {
+  const occupiedRects = [];
+
   floatingWindows.forEach((windowEl, index) => {
-    const rect = windowEl.getBoundingClientRect();
+    const placed = placeWidgetRandomly(windowEl, occupiedRects);
+
     windowDefaults.set(windowEl, {
-      left: rect.left,
-      top: rect.top,
-      width: rect.width,
-      height: rect.height,
+      width: placed.width,
+      height: placed.height,
     });
-    windowEl.style.left = `${rect.left}px`;
-    windowEl.style.top = `${rect.top}px`;
-    windowEl.style.width = `${rect.width}px`;
-    windowEl.style.height = `${rect.height}px`;
+
     windowEl.style.right = "auto";
     windowEl.style.bottom = "auto";
     windowEl.style.zIndex = String(topWindowZ + index);
@@ -2289,6 +2352,8 @@ function initializeFloatingWindows() {
 
   if (resetWidgetsButton) {
     resetWidgetsButton.addEventListener("click", () => {
+      const resetOccupiedRects = [];
+
       floatingWindows.forEach((windowEl, index) => {
         const defaults = windowDefaults.get(windowEl);
 
@@ -2300,10 +2365,10 @@ function initializeFloatingWindows() {
 
         windowEl.classList.remove("is-hidden", "is-closing-tv", "is-dragging", "is-resizing");
         if (defaults) {
-          windowEl.style.left = `${defaults.left}px`;
-          windowEl.style.top = `${defaults.top}px`;
-          windowEl.style.width = `${defaults.width}px`;
-          windowEl.style.height = `${defaults.height}px`;
+          placeWidgetRandomly(windowEl, resetOccupiedRects, {
+            width: defaults.width,
+            height: defaults.height,
+          });
           windowEl.style.zIndex = String(topWindowZ + index);
         }
       });
