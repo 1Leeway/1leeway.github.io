@@ -119,6 +119,16 @@ a {
   transform: scale(1.005);
 }
 
+.tui-window.is-random-resizing {
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    width 260ms ease,
+    height 260ms ease,
+    left 260ms ease,
+    top 260ms ease;
+}
+
 .window-titlebar {
   border-bottom: 1px solid var(--line);
   background: #111;
@@ -262,6 +272,31 @@ a {
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.random-resize-widgets {
+  position: fixed;
+  right: 0.9rem;
+  bottom: 2.75rem;
+  z-index: 7;
+  pointer-events: auto;
+  border: 1px solid var(--line);
+  background: #080808;
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.7rem;
+  padding: 0.34rem 0.52rem;
+  cursor: pointer;
+  opacity: 1;
+  transform: translateY(0);
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.random-resize-widgets:hover,
+.random-resize-widgets:focus-visible {
+  background: #efefef;
+  color: #000;
+  border-color: var(--line-strong);
 }
 
 .reset-widgets.is-visible {
