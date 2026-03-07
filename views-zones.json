@@ -1,0 +1,783 @@
+{
+  "version": 2,
+  "defaultLanguage": "fr",
+  "supportedLanguages": ["fr", "en", "es", "de", "ru"],
+  "newline": "\n",
+  "categories": [
+    {
+      "id": "id",
+      "title": "ID",
+      "subtitle": "Carte d'identite du profil.",
+      "textZone": {
+        "type": "preformatted",
+        "preserveLineBreaks": true,
+        "preserveWhitespace": true,
+        "asciiLines": [
+          "+-------------------------------------------------------------+",
+          "| My Profile                                                  |",
+          "+-------------------------------------------------------------+",
+          "| Pseudo: 1LEEWAY                                           |",
+          "| Role    : Fullstack Developer                               |",
+          "| Focus   : TUI UX, Frontend systems, web performance         |",
+          "| Status  : Available for freelance and collab                |",
+          "+-------------------------------------------------------------+"
+        ],
+        "asciiText": "+-------------------------------------------------------------+\n| My Profile                                                  |\n+-------------------------------------------------------------+\n| Nickname: 1LEEWAY                                           |\n| Role    : Fullstack Developer                               |\n| Focus   : TUI UX, Frontend systems, web performance         |\n| Status  : Available for freelance and collab                |\n+-------------------------------------------------------------+",
+        "metaLines": [
+          "> Ville: Angouleme, France",
+          "> Fuseau: UTC+1",
+          "> Langues: FR / EN"
+        ],
+        "metaText": "> Ville: Angouleme, France\n> Fuseau: UTC+1\n> Langues: FR / EN"
+      },
+      "actions": [
+        {
+          "label": "[ OPEN GITHUB ]",
+          "href": "https://github.com/1leeway"
+        },
+        {
+          "label": "[ SEND MAIL ]",
+          "href": "mailto:hello@1leeway.dev"
+        }
+      ],
+      "translations": {
+        "en": {
+          "title": "ID",
+          "subtitle": "Profile identity card.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| PROFILE_CARD                                                |",
+              "+-------------------------------------------------------------+",
+              "| Nickname: 1LEEWAY                                           |",
+              "| Role    : Fullstack Developer                               |",
+              "| Focus   : TUI UX, frontend systems, web performance         |",
+              "| Status  : Available for freelance and collab                |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> City: Angouleme, France",
+              "> Timezone: UTC+1",
+              "> Languages: FR / EN"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ OPEN GITHUB ]",
+              "href": "https://github.com/1leeway"
+            },
+            {
+              "label": "[ SEND MAIL ]",
+              "href": "mailto:hello@1leeway.dev"
+            }
+          ]
+        },
+        "es": {
+          "title": "ID",
+          "subtitle": "Ficha de identidad del perfil.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| PERFIL_ID                                                   |",
+              "+-------------------------------------------------------------+",
+              "| Alias   : 1LEEWAY                                           |",
+              "| Rol     : Desarrollador Fullstack                           |",
+              "| Enfoque : TUI UX, sistemas frontend, rendimiento web        |",
+              "| Estado  : Disponible para freelance y colaboracion          |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Ciudad: Angouleme, Francia",
+              "> Zona horaria: UTC+1",
+              "> Idiomas: FR / EN"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ ABRIR GITHUB ]",
+              "href": "https://github.com/1leeway"
+            },
+            {
+              "label": "[ ENVIAR MAIL ]",
+              "href": "mailto:hello@1leeway.dev"
+            }
+          ]
+        },
+        "de": {
+          "title": "ID",
+          "subtitle": "Profilkarte.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| PROFIL_ID                                                   |",
+              "+-------------------------------------------------------------+",
+              "| Alias   : 1LEEWAY                                           |",
+              "| Rolle   : Fullstack Entwickler                              |",
+              "| Fokus   : TUI UX, Frontend Systeme, Web Performance         |",
+              "| Status  : Verfugbar fur Freelance und Kollaboration         |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Stadt: Angouleme, Frankreich",
+              "> Zeitzone: UTC+1",
+              "> Sprachen: FR / EN"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ GITHUB OFFNEN ]",
+              "href": "https://github.com/1leeway"
+            },
+            {
+              "label": "[ MAIL SENDEN ]",
+              "href": "mailto:hello@1leeway.dev"
+            }
+          ]
+        },
+        "ru": {
+          "title": "ID",
+          "subtitle": "Karta profilya.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| PROFILE_ID                                                  |",
+              "+-------------------------------------------------------------+",
+              "| Nik     : 1LEEWAY                                           |",
+              "| Rol     : Fullstack razrabotchik                            |",
+              "| Fokus   : TUI UX, frontend sistemy, web proizvoditelnost    |",
+              "| Status  : Dostupen dlya freelance i sovmestnoy raboty       |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Gorod: Angouleme, Frantsiya",
+              "> Chasovoy poyas: UTC+1",
+              "> Yazyki: FR / EN"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ OTKRYT GITHUB ]",
+              "href": "https://github.com/1leeway"
+            },
+            {
+              "label": "[ OTPRAVIT MAIL ]",
+              "href": "mailto:hello@1leeway.dev"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "cv",
+      "title": "CV",
+      "subtitle": "Resume rapide du parcours.",
+      "textZone": {
+        "type": "preformatted",
+        "preserveLineBreaks": true,
+        "preserveWhitespace": true,
+        "asciiLines": [
+          "+-------------------------------------------------------------+",
+          "| CURRICULUM_VITAE                                            |",
+          "+-------------------------------------------------------------+",
+          "| 2026 | Lead frontend architecture on dashboard platform     |",
+          "| 2025 | Built high-scale APIs and payment flows             |",
+          "| 2024 | Shipped offline-first products for startup teams    |",
+          "| 2023 | Crafted design systems and reusable UI libraries    |",
+          "+-------------------------------------------------------------+"
+        ],
+        "asciiText": "+-------------------------------------------------------------+\n| CURRICULUM_VITAE                                            |\n+-------------------------------------------------------------+\n| 2026 | Lead frontend architecture on dashboard platform     |\n| 2025 | Built high-scale APIs and payment flows             |\n| 2024 | Shipped offline-first products for startup teams    |\n| 2023 | Crafted design systems and reusable UI libraries    |\n+-------------------------------------------------------------+",
+        "metaLines": [
+          "> Points forts: architecture, DX, quality gates",
+          "> Methodes: prototypage rapide puis refactor propre",
+          "> Livrables: produit, docs, pipeline CI"
+        ],
+        "metaText": "> Points forts: architecture, DX, quality gates\n> Methodes: prototypage rapide puis refactor propre\n> Livrables: produit, docs, pipeline CI"
+      },
+      "actions": [
+        {
+          "label": "[ DOWNLOAD CV ]",
+          "href": "#"
+        },
+        {
+          "label": "[ CONTACT ]",
+          "view": "contact"
+        }
+      ],
+      "translations": {
+        "en": {
+          "title": "RESUME",
+          "subtitle": "Quick overview of my path.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| RESUME                                                      |",
+              "+-------------------------------------------------------------+",
+              "| 2026 | Led frontend architecture for dashboard platform     |",
+              "| 2025 | Built high-scale APIs and payment flows             |",
+              "| 2024 | Shipped offline-first products for startup teams    |",
+              "| 2023 | Crafted design systems and reusable UI libraries    |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Strengths: architecture, DX, quality gates",
+              "> Method: fast prototyping then clean refactor",
+              "> Deliverables: product, docs, CI pipeline"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ DOWNLOAD RESUME ]",
+              "href": "#"
+            },
+            {
+              "label": "[ CONTACT ]",
+              "view": "contact"
+            }
+          ]
+        },
+        "es": {
+          "title": "CV",
+          "subtitle": "Resumen rapido del recorrido.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| CURRICULUM                                                  |",
+              "+-------------------------------------------------------------+",
+              "| 2026 | Lider de arquitectura frontend para dashboards       |",
+              "| 2025 | APIs a gran escala y flujos de pago                 |",
+              "| 2024 | Productos offline-first para equipos startup        |",
+              "| 2023 | Sistemas de diseno y librerias UI reutilizables     |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Fortalezas: arquitectura, DX, quality gates",
+              "> Metodo: prototipado rapido y refactor limpio",
+              "> Entregables: producto, docs, pipeline CI"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ DESCARGAR CV ]",
+              "href": "#"
+            },
+            {
+              "label": "[ CONTACTO ]",
+              "view": "contact"
+            }
+          ]
+        },
+        "de": {
+          "title": "LEBENSLAUF",
+          "subtitle": "Kurze Ubersicht meines Werdegangs.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| LEBENSLAUF                                                  |",
+              "+-------------------------------------------------------------+",
+              "| 2026 | Frontend Architektur fur Dashboard Plattform geleitet|",
+              "| 2025 | High-Scale APIs und Payment Flows gebaut            |",
+              "| 2024 | Offline-First Produkte fur Startup Teams geliefert  |",
+              "| 2023 | Design Systeme und UI Libraries aufgebaut           |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Starken: Architektur, DX, Quality Gates",
+              "> Methode: schnell prototypen, dann sauber refactoren",
+              "> Deliverables: Produkt, Doku, CI Pipeline"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ CV DOWNLOAD ]",
+              "href": "#"
+            },
+            {
+              "label": "[ KONTAKT ]",
+              "view": "contact"
+            }
+          ]
+        },
+        "ru": {
+          "title": "CV",
+          "subtitle": "Kratkoe rezume puti.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| REZUME                                                      |",
+              "+-------------------------------------------------------------+",
+              "| 2026 | Lider frontend arkhitektury dlya dashboard platform  |",
+              "| 2025 | High-scale API i platezhnye potoki                  |",
+              "| 2024 | Offline-first produkty dlya startup komand          |",
+              "| 2023 | Dizayn sistemy i pereispolzuemye UI biblioteki      |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Silnye storony: arkhitektura, DX, quality gates",
+              "> Metod: bystryy prototip, potom chistyy refactor",
+              "> Resultat: product, docs, CI pipeline"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ SKACHAT CV ]",
+              "href": "#"
+            },
+            {
+              "label": "[ KONTAKT ]",
+              "view": "contact"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "taff",
+      "title": "TAFF",
+      "subtitle": "Projets et realisations principales.",
+      "textZone": {
+        "type": "preformatted",
+        "preserveLineBreaks": true,
+        "preserveWhitespace": true,
+        "asciiLines": [
+          "+-------------------------------------------------------------+",
+          "| WORK_LOG                                                    |",
+          "+-------------------------------------------------------------+",
+          "| neural-dashboard :: realtime analytics platform             |",
+          "| void-commerce    :: headless checkout engine                |",
+          "| tui-editor       :: terminal style layout builder           |",
+          "| quantum-notes    :: markdown + sync offline app             |",
+          "+-------------------------------------------------------------+"
+        ],
+        "asciiText": "+-------------------------------------------------------------+\n| WORK_LOG                                                    |\n+-------------------------------------------------------------+\n| neural-dashboard :: realtime analytics platform             |\n| void-commerce    :: headless checkout engine                |\n| tui-editor       :: terminal style layout builder           |\n| quantum-notes    :: markdown + sync offline app             |\n+-------------------------------------------------------------+",
+        "metaLines": [
+          "> Stack dominante: React, TypeScript, Node, SQL",
+          "> Contraintes gerees: perf, scale, maintainability",
+          "> Delivery: production-ready and monitored"
+        ],
+        "metaText": "> Stack dominante: React, TypeScript, Node, SQL\n> Contraintes gerees: perf, scale, maintainability\n> Delivery: production-ready and monitored"
+      },
+      "actions": [
+        {
+          "label": "[ PROJECTS REPO ]",
+          "href": "https://github.com/1leeway?tab=repositories"
+        },
+        {
+          "label": "[ MAIL FOR DEMO ]",
+          "href": "mailto:hello@1leeway.dev"
+        }
+      ],
+      "translations": {
+        "en": {
+          "title": "WORK",
+          "subtitle": "Main projects and builds.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| WORK_LOG                                                    |",
+              "+-------------------------------------------------------------+",
+              "| neural-dashboard :: realtime analytics platform             |",
+              "| void-commerce    :: headless checkout engine                |",
+              "| tui-editor       :: terminal style layout builder           |",
+              "| quantum-notes    :: markdown + offline sync app             |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Main stack: React, TypeScript, Node, SQL",
+              "> Handled constraints: perf, scale, maintainability",
+              "> Delivery: production-ready and monitored"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ PROJECTS REPO ]",
+              "href": "https://github.com/1leeway?tab=repositories"
+            },
+            {
+              "label": "[ MAIL FOR DEMO ]",
+              "href": "mailto:hello@1leeway.dev"
+            }
+          ]
+        },
+        "es": {
+          "title": "TRABAJO",
+          "subtitle": "Proyectos y logros principales.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| REGISTRO_DE_TRABAJO                                         |",
+              "+-------------------------------------------------------------+",
+              "| neural-dashboard :: plataforma de analitica en tiempo real  |",
+              "| void-commerce    :: motor headless de checkout              |",
+              "| tui-editor       :: constructor de layout estilo terminal   |",
+              "| quantum-notes    :: app markdown + sync offline             |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Stack principal: React, TypeScript, Node, SQL",
+              "> Restricciones: perf, escala, mantenibilidad",
+              "> Entrega: produccion lista y monitorizada"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ REPO PROYECTOS ]",
+              "href": "https://github.com/1leeway?tab=repositories"
+            },
+            {
+              "label": "[ MAIL PARA DEMO ]",
+              "href": "mailto:hello@1leeway.dev"
+            }
+          ]
+        },
+        "de": {
+          "title": "ARBEIT",
+          "subtitle": "Wichtige Projekte und Umsetzungen.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| WORK_LOG                                                    |",
+              "+-------------------------------------------------------------+",
+              "| neural-dashboard :: Realtime Analytics Plattform            |",
+              "| void-commerce    :: Headless Checkout Engine                |",
+              "| tui-editor       :: Terminal Style Layout Builder           |",
+              "| quantum-notes    :: Markdown + Offline Sync App             |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Hauptstack: React, TypeScript, Node, SQL",
+              "> Rahmen: Perf, Scale, Maintainability",
+              "> Lieferung: production-ready und monitored"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ PROJEKT REPO ]",
+              "href": "https://github.com/1leeway?tab=repositories"
+            },
+            {
+              "label": "[ MAIL FUR DEMO ]",
+              "href": "mailto:hello@1leeway.dev"
+            }
+          ]
+        },
+        "ru": {
+          "title": "RABOTA",
+          "subtitle": "Klyuchevye proekty i realizatsii.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| WORK_LOG                                                    |",
+              "+-------------------------------------------------------------+",
+              "| neural-dashboard :: platforma realtime analytics            |",
+              "| void-commerce    :: headless checkout engine                |",
+              "| tui-editor       :: konstruktor terminal style layout       |",
+              "| quantum-notes    :: markdown + offline sync app             |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Osnovnoy stack: React, TypeScript, Node, SQL",
+              "> Ogranicheniya: perf, scale, maintainability",
+              "> Deliver: production-ready i monitored"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ REPO PROEKTOV ]",
+              "href": "https://github.com/1leeway?tab=repositories"
+            },
+            {
+              "label": "[ MAIL DLYA DEMO ]",
+              "href": "mailto:hello@1leeway.dev"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "stack",
+      "title": "STACK",
+      "subtitle": "Technos et outils utilises au quotidien.",
+      "textZone": {
+        "type": "preformatted",
+        "preserveLineBreaks": true,
+        "preserveWhitespace": true,
+        "asciiLines": [
+          "+-------------------------------------------------------------+",
+          "| TECH_STACK                                                  |",
+          "+-------------------------------------------------------------+",
+          "| Frontend : React, Next.js, Svelte, Tailwind, GSAP          |",
+          "| Backend  : Node.js, Express, PostgreSQL, Redis             |",
+          "| DevOps   : Docker, GitHub Actions, Vercel, observability   |",
+          "| Quality  : Vitest, Playwright, ESLint, typed APIs          |",
+          "+-------------------------------------------------------------+"
+        ],
+        "asciiText": "+-------------------------------------------------------------+\n| TECH_STACK                                                  |\n+-------------------------------------------------------------+\n| Frontend : React, Next.js, Svelte, Tailwind, GSAP          |\n| Backend  : Node.js, Express, PostgreSQL, Redis             |\n| DevOps   : Docker, GitHub Actions, Vercel, observability   |\n| Quality  : Vitest, Playwright, ESLint, typed APIs          |\n+-------------------------------------------------------------+",
+        "metaLines": [
+          "> Approche: pragmatique, orientee resultats",
+          "> Objectif: livrer vite sans dette toxique",
+          "> Standard: lisible, teste, monitorable"
+        ],
+        "metaText": "> Approche: pragmatique, orientee resultats\n> Objectif: livrer vite sans dette toxique\n> Standard: lisible, teste, monitorable"
+      },
+      "actions": [
+        {
+          "label": "[ GO TO TAFF ]",
+          "view": "taff"
+        },
+        {
+          "label": "[ GO TO CV ]",
+          "view": "cv"
+        }
+      ],
+      "translations": {
+        "en": {
+          "title": "STACK",
+          "subtitle": "Tech and tools used every day.",
+          "textZone": {
+            "metaLines": [
+              "> Approach: pragmatic and result-driven",
+              "> Goal: ship fast without toxic debt",
+              "> Standard: readable, tested, monitorable"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ GO TO WORK ]",
+              "view": "taff"
+            },
+            {
+              "label": "[ GO TO RESUME ]",
+              "view": "cv"
+            }
+          ]
+        },
+        "es": {
+          "title": "STACK",
+          "subtitle": "Tecnologias y herramientas del dia a dia.",
+          "textZone": {
+            "metaLines": [
+              "> Enfoque: pragmatico y orientado a resultados",
+              "> Objetivo: entregar rapido sin deuda toxica",
+              "> Estandar: legible, testeado, monitorizable"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ IR A TRABAJO ]",
+              "view": "taff"
+            },
+            {
+              "label": "[ IR A CV ]",
+              "view": "cv"
+            }
+          ]
+        },
+        "de": {
+          "title": "STACK",
+          "subtitle": "Technologien und Tools fur den Alltag.",
+          "textZone": {
+            "metaLines": [
+              "> Ansatz: pragmatisch und ergebnisorientiert",
+              "> Ziel: schnell liefern ohne toxische Schuld",
+              "> Standard: lesbar, getestet, monitorbar"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ ZU ARBEIT ]",
+              "view": "taff"
+            },
+            {
+              "label": "[ ZU CV ]",
+              "view": "cv"
+            }
+          ]
+        },
+        "ru": {
+          "title": "STACK",
+          "subtitle": "Tekhnologii i instrumenty kazhdyy den.",
+          "textZone": {
+            "metaLines": [
+              "> Podkhod: pragmatichnyy, orientirovan na rezultat",
+              "> Tsell: bystro relizit bez toksichnogo dolga",
+              "> Standart: chitaemo, testiruemo, monitorimo"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ K RABOTE ]",
+              "view": "taff"
+            },
+            {
+              "label": "[ K CV ]",
+              "view": "cv"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "contact",
+      "title": "CONTACT",
+      "subtitle": "Canaux directs pour echanger.",
+      "textZone": {
+        "type": "preformatted",
+        "preserveLineBreaks": true,
+        "preserveWhitespace": true,
+        "asciiLines": [
+          "+-------------------------------------------------------------+",
+          "| CONTACT_CHANNELS                                            |",
+          "+-------------------------------------------------------------+",
+          "| MAIL     : hello@1leeway.dev                               |",
+          "| GITHUB   : github.com/1leeway                              |",
+          "| LINKEDIN : linkedin.com                                    |",
+          "| NOTE     : reponse rapide sur sujets projet                |",
+          "+-------------------------------------------------------------+"
+        ],
+        "asciiText": "+-------------------------------------------------------------+\n| CONTACT_CHANNELS                                            |\n+-------------------------------------------------------------+\n| MAIL     : hello@1leeway.dev                               |\n| GITHUB   : github.com/1leeway                              |\n| LINKEDIN : linkedin.com                                    |\n| NOTE     : reponse rapide sur sujets projet                |\n+-------------------------------------------------------------+",
+        "metaLines": [
+          "> Type de mission: freelance, collaboration, build produit",
+          "> Delai habituel de reponse: 24h",
+          "> Brief conseille: contexte, objectifs, deadline"
+        ],
+        "metaText": "> Type de mission: freelance, collaboration, build produit\n> Delai habituel de reponse: 24h\n> Brief conseille: contexte, objectifs, deadline"
+      },
+      "actions": [
+        {
+          "label": "[ SEND MAIL ]",
+          "href": "mailto:hello@1leeway.dev"
+        },
+        {
+          "label": "[ OPEN GITHUB ]",
+          "href": "https://github.com/1leeway"
+        }
+      ],
+      "translations": {
+        "en": {
+          "title": "CONTACT",
+          "subtitle": "Direct channels to connect.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| CONTACT_CHANNELS                                            |",
+              "+-------------------------------------------------------------+",
+              "| MAIL     : hello@1leeway.dev                               |",
+              "| GITHUB   : github.com/1leeway                              |",
+              "| LINKEDIN : linkedin.com                                    |",
+              "| NOTE     : fast replies for project topics                 |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Mission type: freelance, collaboration, product build",
+              "> Typical response time: 24h",
+              "> Recommended brief: context, goals, deadline"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ SEND MAIL ]",
+              "href": "mailto:hello@1leeway.dev"
+            },
+            {
+              "label": "[ OPEN GITHUB ]",
+              "href": "https://github.com/1leeway"
+            }
+          ]
+        },
+        "es": {
+          "title": "CONTACTO",
+          "subtitle": "Canales directos para hablar.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| CANALES_DE_CONTACTO                                         |",
+              "+-------------------------------------------------------------+",
+              "| MAIL     : hello@1leeway.dev                               |",
+              "| GITHUB   : github.com/1leeway                              |",
+              "| LINKEDIN : linkedin.com                                    |",
+              "| NOTA     : respuesta rapida para temas de proyecto         |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Tipo de mision: freelance, colaboracion, build de producto",
+              "> Tiempo habitual de respuesta: 24h",
+              "> Brief recomendado: contexto, objetivos, deadline"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ ENVIAR MAIL ]",
+              "href": "mailto:hello@1leeway.dev"
+            },
+            {
+              "label": "[ ABRIR GITHUB ]",
+              "href": "https://github.com/1leeway"
+            }
+          ]
+        },
+        "de": {
+          "title": "KONTAKT",
+          "subtitle": "Direkte Kanale fur Austausch.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| KONTAKT_KANAELE                                             |",
+              "+-------------------------------------------------------------+",
+              "| MAIL     : hello@1leeway.dev                               |",
+              "| GITHUB   : github.com/1leeway                              |",
+              "| LINKEDIN : linkedin.com                                    |",
+              "| HINWEIS  : schnelle Antwort fur Projektthemen              |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Mission: freelance, kollaboration, produkt build",
+              "> Antwortzeit: 24h",
+              "> Brief empfohlen: kontext, ziele, deadline"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ MAIL SENDEN ]",
+              "href": "mailto:hello@1leeway.dev"
+            },
+            {
+              "label": "[ GITHUB OFFNEN ]",
+              "href": "https://github.com/1leeway"
+            }
+          ]
+        },
+        "ru": {
+          "title": "KONTAKT",
+          "subtitle": "Pryamye kanaly dlya svyazi.",
+          "textZone": {
+            "asciiLines": [
+              "+-------------------------------------------------------------+",
+              "| CONTACT_CHANNELS                                            |",
+              "+-------------------------------------------------------------+",
+              "| MAIL     : hello@1leeway.dev                               |",
+              "| GITHUB   : github.com/1leeway                              |",
+              "| LINKEDIN : linkedin.com                                    |",
+              "| NOTE     : bystryy otvet po proektnym voprosam             |",
+              "+-------------------------------------------------------------+"
+            ],
+            "metaLines": [
+              "> Tip raboty: freelance, kollaboratsiya, product build",
+              "> Obychnoe vremya otveta: 24h",
+              "> Rekomenduemyy brief: kontekst, tseli, deadline"
+            ]
+          },
+          "actions": [
+            {
+              "label": "[ OTPRAVIT MAIL ]",
+              "href": "mailto:hello@1leeway.dev"
+            },
+            {
+              "label": "[ OTKRYT GITHUB ]",
+              "href": "https://github.com/1leeway"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
