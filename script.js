@@ -241,6 +241,20 @@ const fastfetchOutput = document.getElementById("fastfetchOutput");
 const monitorOutput = document.getElementById("monitorOutput");
 const shellOutput = document.getElementById("shellOutput");
 
+const windowUiTargets = Object.create(null);
+floatingWindows.forEach((windowEl) => {
+  const windowId = windowEl.dataset.window;
+  if (!windowId) {
+    return;
+  }
+
+  windowUiTargets[windowId] = {
+    titleEl: windowEl.querySelector(".window-title"),
+    labelEl: windowEl.querySelector(".window-label"),
+    closeEl: windowEl.querySelector("[data-window-close]"),
+  };
+});
+
 const menuLabelMap = new Map();
 const windowDefaults = new Map();
 const windowHideTimers = new WeakMap();
@@ -259,13 +273,22 @@ let bootStartTime = 0;
 let siteConfig = null;
 let activeLanguage = "fr";
 let activeLocale = "fr-FR";
+let activeLanguagePack = null;
 let supportedLanguages = ["fr", "en", "es", "de", "ru"];
 let widgetsInitialized = false;
 let asciiExpanded = false;
 let asciiCollapseTimer;
+let shellLayoutScheduleRafId = 0;
+let viewportSyncRafId = 0;
 
 const MOBILE_BREAKPOINT = 860;
 const TOUCH_TABLET_BREAKPOINT = 1100;
+
+const phoneWidthQuery = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+const shortLandscapeQuery = window.matchMedia("(max-height: 560px) and (orientation: landscape)");
+const coarseTabletQuery = window.matchMedia(
+  `(max-width: ${TOUCH_TABLET_BREAKPOINT}px) and (pointer: coarse)`
+);
 
 const monitorBootTime = Date.now();
 const monitorCoreCount = Math.min(Math.max(navigator.hardwareConcurrency || 4, 2), 8);
@@ -919,15 +942,13 @@ function applyWindowI18n(languagePack) {
   const windows = ["fastfetch", "monitor", "shell"];
 
   windows.forEach((windowId) => {
-    const windowEl = document.querySelector(`[data-window="${windowId}"]`);
+    const ui = windowUiTargets[windowId];
     const windowTexts = languagePack.windows?.[windowId];
-    if (!windowEl || !windowTexts) {
+    if (!ui || !windowTexts) {
       return;
     }
 
-    const titleEl = windowEl.querySelector(".window-title");
-    const labelEl = windowEl.querySelector(".window-label");
-    const closeEl = windowEl.querySelector("[data-window-close]");
+    const { titleEl, labelEl, closeEl } = ui;
 
     if (titleEl && typeof windowTexts.title === "string") {
       titleEl.textContent = windowTexts.title;
@@ -998,6 +1019,7 @@ function setLanguage(languageCode, options = {}) {
 
   activeLanguage = nextLanguage;
   const languagePack = getLanguagePack(activeLanguage);
+  activeLanguagePack = languagePack;
   activeLocale = languagePack.locale || "fr-FR";
 
   applyStaticUiTexts(languagePack);
@@ -1552,7 +1574,7 @@ async function collectFastfetchInfo() {
 }
 
 function buildFastfetchText(info) {
-  const languagePack = getLanguagePack(activeLanguage);
+  const languagePack = activeLanguagePack || staticI18n.fr;
   const fastfetchStrings = languagePack.fastfetch || {};
   const labels = fastfetchStrings.labels || {};
 
@@ -1597,7 +1619,7 @@ async function runFastfetch() {
   runFastfetchButton.disabled = true;
   fastfetchCycle += 1;
   const cycleId = fastfetchCycle;
-  const fastfetchStrings = getLanguagePack(activeLanguage).fastfetch || {};
+  const fastfetchStrings = (activeLanguagePack || staticI18n.fr).fastfetch || {};
 
   await typeText(
     fastfetchOutput,
@@ -1727,7 +1749,7 @@ function renderMonitorWidget() {
   const avgCpu = monitorState.cpus.reduce((sum, cpu) => sum + cpu, 0) / monitorState.cpus.length;
   const memPercent = (monitorState.memUsedMb / monitorMemoryTotalMb) * 100;
   const swapPercent = (monitorState.swapUsedMb / monitorSwapTotalMb) * 100;
-  const monitorStrings = getLanguagePack(activeLanguage).monitor || {};
+  const monitorStrings = (activeLanguagePack || staticI18n.fr).monitor || {};
   const monitorPrefix = monitorStrings.prefix || "htop@web";
   const tasksLabel = monitorStrings.tasks || "Tasks";
   const runningLabel = monitorStrings.running || "running";
@@ -1760,7 +1782,7 @@ function renderShellWidget() {
     return;
   }
 
-  const languagePack = getLanguagePack(activeLanguage);
+  const languagePack = activeLanguagePack || staticI18n.fr;
   const tips = Array.isArray(languagePack.shellTips) ? languagePack.shellTips : staticI18n.fr.shellTips;
 
   const pick = tips[Math.floor(Math.random() * tips.length)];
@@ -1818,13 +1840,9 @@ function setupFastfetchWidget() {
 }
 
 function isPhoneMode() {
-  const narrowViewport = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches;
-  const shortLandscapeViewport = window.matchMedia(
-    "(max-height: 560px) and (orientation: landscape)"
-  ).matches;
-  const coarseTabletViewport = window.matchMedia(
-    `(max-width: ${TOUCH_TABLET_BREAKPOINT}px) and (pointer: coarse)`
-  ).matches;
+  const narrowViewport = phoneWidthQuery.matches;
+  const shortLandscapeViewport = shortLandscapeQuery.matches;
+  const coarseTabletViewport = coarseTabletQuery.matches;
   return narrowViewport || shortLandscapeViewport || coarseTabletViewport;
 }
 
@@ -1867,7 +1885,7 @@ function syncViewportMode() {
   setAsciiExpanded(false, { immediate: true });
 
   ensureDesktopWidgetsReady();
-  updateShellLayoutFromDocks();
+  scheduleShellLayoutFromDocks();
 }
 
 function setAsciiExpanded(expanded, options = {}) {
@@ -2176,6 +2194,40 @@ function updateShellLayoutFromDocks(options = {}) {
   setShellLayoutTarget(shellWidth, marginLeft, marginRight, immediate);
 }
 
+function scheduleShellLayoutFromDocks(options = {}) {
+  const immediate = options.immediate === true;
+
+  if (immediate) {
+    if (shellLayoutScheduleRafId) {
+      cancelAnimationFrame(shellLayoutScheduleRafId);
+      shellLayoutScheduleRafId = 0;
+    }
+
+    updateShellLayoutFromDocks({ immediate: true });
+    return;
+  }
+
+  if (shellLayoutScheduleRafId) {
+    return;
+  }
+
+  shellLayoutScheduleRafId = requestAnimationFrame(() => {
+    shellLayoutScheduleRafId = 0;
+    updateShellLayoutFromDocks();
+  });
+}
+
+function scheduleViewportModeSync() {
+  if (viewportSyncRafId) {
+    return;
+  }
+
+  viewportSyncRafId = requestAnimationFrame(() => {
+    viewportSyncRafId = 0;
+    syncViewportMode();
+  });
+}
+
 function makeWindowDraggable(windowEl) {
   const handle = windowEl.querySelector("[data-drag-handle]");
   const closeButton = windowEl.querySelector("[data-window-close]");
@@ -2204,14 +2256,14 @@ function makeWindowDraggable(windowEl) {
       const safe = clampWindowPosition(windowEl, rawLeft, rawTop);
       windowEl.style.left = `${safe.left}px`;
       windowEl.style.top = `${safe.top}px`;
-      updateShellLayoutFromDocks();
+      scheduleShellLayoutFromDocks();
     };
 
     const onPointerUp = () => {
       windowEl.classList.remove("is-dragging");
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerUp);
-      updateShellLayoutFromDocks();
+      scheduleShellLayoutFromDocks();
     };
 
     window.addEventListener("pointermove", onPointerMove);
@@ -2236,7 +2288,7 @@ function makeWindowDraggable(windowEl) {
       windowEl.classList.add("is-hidden");
       windowHideTimers.delete(windowEl);
       updateResetWidgetsVisibility();
-      updateShellLayoutFromDocks();
+      scheduleShellLayoutFromDocks();
     }, 390);
 
     windowHideTimers.set(windowEl, hideTimer);
@@ -2266,14 +2318,14 @@ function makeWindowResizable(windowEl) {
       const size = clampWindowSize(windowEl, rawWidth, rawHeight);
       windowEl.style.width = `${size.width}px`;
       windowEl.style.height = `${size.height}px`;
-      updateShellLayoutFromDocks();
+      scheduleShellLayoutFromDocks();
     };
 
     const onPointerUp = () => {
       windowEl.classList.remove("is-resizing");
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerUp);
-      updateShellLayoutFromDocks();
+      scheduleShellLayoutFromDocks();
     };
 
     window.addEventListener("pointermove", onPointerMove);
@@ -2418,12 +2470,12 @@ function initializeFloatingWindows() {
         }
       });
       updateResetWidgetsVisibility();
-      updateShellLayoutFromDocks();
+      scheduleShellLayoutFromDocks();
     });
   }
 
   updateResetWidgetsVisibility();
-  updateShellLayoutFromDocks({ immediate: true });
+  scheduleShellLayoutFromDocks({ immediate: true });
 }
 
 function createActionElement(action) {
@@ -2864,7 +2916,7 @@ async function initializeApp() {
   runBootSequence();
   updateClock();
   setInterval(updateClock, 1000);
-  window.addEventListener("resize", syncViewportMode);
+  window.addEventListener("resize", scheduleViewportModeSync);
 }
 
 initializeApp();
