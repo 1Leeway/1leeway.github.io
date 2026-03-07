@@ -1103,6 +1103,13 @@ const TYPE_SPEED = {
   boot: 13,
 };
 
+const FASTFETCH_SPEED = {
+  collecting: 4,
+  collectingStep: 5,
+  render: 0,
+  renderStep: 10,
+};
+
 function wait(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
@@ -1595,9 +1602,9 @@ async function runFastfetch() {
   await typeText(
     fastfetchOutput,
     fastfetchStrings.collecting || "collecting browser diagnostics...",
-    8,
+    FASTFETCH_SPEED.collecting,
     cycleId,
-    3,
+    FASTFETCH_SPEED.collectingStep,
     () => cycleId !== fastfetchCycle
   );
   const info = await collectFastfetchInfo();
@@ -1607,7 +1614,14 @@ async function runFastfetch() {
   }
 
   const output = buildFastfetchText(info);
-  await typeText(fastfetchOutput, output, 1, cycleId, 4, () => cycleId !== fastfetchCycle);
+  await typeText(
+    fastfetchOutput,
+    output,
+    FASTFETCH_SPEED.render,
+    cycleId,
+    FASTFETCH_SPEED.renderStep,
+    () => cycleId !== fastfetchCycle
+  );
   runFastfetchButton.disabled = false;
 }
 
@@ -2303,12 +2317,36 @@ function getRandomWidgetPosition(width, height, occupiedRects = []) {
   };
 }
 
-function placeWidgetRandomly(windowEl, occupiedRects = [], preferredSize = null) {
-  const rect = windowEl.getBoundingClientRect();
-  const targetWidth = preferredSize?.width || rect.width;
-  const targetHeight = preferredSize?.height || rect.height;
+function getRandomWidgetSize(baseWidth, baseHeight) {
+  const maxWidthByViewport = Math.min(
+    WIDGET_MAX_WIDTH,
+    Math.max(WIDGET_MIN_WIDTH, Math.floor(window.innerWidth * 0.56))
+  );
+  const maxHeightByViewport = Math.min(
+    WIDGET_MAX_HEIGHT,
+    Math.max(WIDGET_MIN_HEIGHT, Math.floor(window.innerHeight * 0.64))
+  );
 
-  const size = clampWindowSize(windowEl, targetWidth, targetHeight);
+  const widthFactor = 0.82 + Math.random() * 0.62;
+  const heightFactor = 0.82 + Math.random() * 0.68;
+
+  return {
+    width: Math.round(clampNumber(baseWidth * widthFactor, WIDGET_MIN_WIDTH, maxWidthByViewport)),
+    height: Math.round(clampNumber(baseHeight * heightFactor, WIDGET_MIN_HEIGHT, maxHeightByViewport)),
+  };
+}
+
+function placeWidgetRandomly(windowEl, occupiedRects = [], options = null) {
+  const rect = windowEl.getBoundingClientRect();
+  const targetWidth = options?.width || rect.width;
+  const targetHeight = options?.height || rect.height;
+  const randomizeSize = options?.randomizeSize === true;
+
+  const sizeSource = randomizeSize
+    ? getRandomWidgetSize(targetWidth, targetHeight)
+    : { width: targetWidth, height: targetHeight };
+
+  const size = clampWindowSize(windowEl, sizeSource.width, sizeSource.height);
   const randomPos = getRandomWidgetPosition(size.width, size.height, occupiedRects);
   const safePos = clampWindowPosition(windowEl, randomPos.left, randomPos.top);
 
@@ -2336,11 +2374,17 @@ function initializeFloatingWindows() {
   const occupiedRects = [];
 
   floatingWindows.forEach((windowEl, index) => {
-    const placed = placeWidgetRandomly(windowEl, occupiedRects);
+    const baseRect = windowEl.getBoundingClientRect();
 
     windowDefaults.set(windowEl, {
-      width: placed.width,
-      height: placed.height,
+      width: baseRect.width,
+      height: baseRect.height,
+    });
+
+    placeWidgetRandomly(windowEl, occupiedRects, {
+      width: baseRect.width,
+      height: baseRect.height,
+      randomizeSize: true,
     });
 
     windowEl.style.right = "auto";
@@ -2368,6 +2412,7 @@ function initializeFloatingWindows() {
           placeWidgetRandomly(windowEl, resetOccupiedRects, {
             width: defaults.width,
             height: defaults.height,
+            randomizeSize: true,
           });
           windowEl.style.zIndex = String(topWindowZ + index);
         }
