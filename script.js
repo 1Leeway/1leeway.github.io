@@ -236,7 +236,6 @@ const languageSelect = document.getElementById("languageSelect");
 const languageLabel = document.getElementById("languageLabel");
 const floatingWindows = Array.from(document.querySelectorAll(".tui-window"));
 const resetWidgetsButton = document.getElementById("resetWidgets");
-const randomResizeWidgetsButton = document.getElementById("randomResizeWidgets");
 const runFastfetchButton = document.getElementById("runFastfetch");
 const fastfetchOutput = document.getElementById("fastfetchOutput");
 const monitorOutput = document.getElementById("monitorOutput");
@@ -466,7 +465,6 @@ const staticI18n = {
     statusTop: "Leeway@Portfolio:~$ panel online",
     statusBottom: "Leeway@Portfolio:~$ ~/.config/me",
     resetWidgets: "[ REOPEN_WIDGETS ]",
-    randomResizeWidgets: "[ RESIZE_RANDOM ]",
     fastfetchRefresh: "[ RAFRAICHIR_FASTFETCH ]",
     fastfetchLoading: "Demarrage fastfetch...",
     monitorLoading: "Demarrage du monitor...",
@@ -536,7 +534,6 @@ const staticI18n = {
     statusTop: "Leeway@Portfolio:~$ panel online",
     statusBottom: "Leeway@Portfolio:~$ ~/.config/me",
     resetWidgets: "[ REOPEN_WIDGETS ]",
-    randomResizeWidgets: "[ RANDOM_RESIZE ]",
     fastfetchRefresh: "[ REFRESH_FASTFETCH ]",
     fastfetchLoading: "Booting fastfetch...",
     monitorLoading: "Starting monitor stream...",
@@ -606,7 +603,6 @@ const staticI18n = {
     statusTop: "Leeway@Portfolio:~$ panel en linea",
     statusBottom: "Leeway@Portfolio:~$ ~/.config/me",
     resetWidgets: "[ REABRIR_WIDGETS ]",
-    randomResizeWidgets: "[ REDIMENSION_ALEATORIA ]",
     fastfetchRefresh: "[ ACTUALIZAR_FASTFETCH ]",
     fastfetchLoading: "Iniciando fastfetch...",
     monitorLoading: "Iniciando monitor...",
@@ -676,7 +672,6 @@ const staticI18n = {
     statusTop: "Leeway@Portfolio:~$ panel online",
     statusBottom: "Leeway@Portfolio:~$ ~/.config/me",
     resetWidgets: "[ WIDGETS_NEU_OEFFNEN ]",
-    randomResizeWidgets: "[ ZUFALLS_RESIZE ]",
     fastfetchRefresh: "[ FASTFETCH_AKTUALISIEREN ]",
     fastfetchLoading: "Fastfetch startet...",
     monitorLoading: "Monitor startet...",
@@ -746,7 +741,6 @@ const staticI18n = {
     statusTop: "Leeway@Portfolio:~$ panel online",
     statusBottom: "Leeway@Portfolio:~$ ~/.config/me",
     resetWidgets: "[ OTKRYT_WIDGETS ]",
-    randomResizeWidgets: "[ RANDOM_RESIZE ]",
     fastfetchRefresh: "[ OBNOVIT_FASTFETCH ]",
     fastfetchLoading: "Zapusk fastfetch...",
     monitorLoading: "Zapusk monitor potoka...",
@@ -977,11 +971,6 @@ function applyStaticUiTexts(languagePack) {
 
   if (resetWidgetsButton) {
     resetWidgetsButton.textContent = languagePack.resetWidgets || "[ REOPEN_WIDGETS ]";
-  }
-
-  if (randomResizeWidgetsButton) {
-    randomResizeWidgetsButton.textContent =
-      languagePack.randomResizeWidgets || "[ RANDOM_RESIZE ]";
   }
 
   if (runFastfetchButton) {
@@ -1847,10 +1836,6 @@ function applyPhoneWidgetVisibility(phoneMode) {
   if (resetWidgetsButton) {
     resetWidgetsButton.style.display = phoneMode ? "none" : "";
   }
-
-  if (randomResizeWidgetsButton) {
-    randomResizeWidgetsButton.style.display = phoneMode ? "none" : "";
-  }
 }
 
 function ensureDesktopWidgetsReady() {
@@ -2385,37 +2370,6 @@ function placeWidgetRandomly(windowEl, occupiedRects = [], options = null) {
   };
 }
 
-function randomResizeVisibleWidgets() {
-  const occupiedRects = [];
-
-  floatingWindows.forEach((windowEl) => {
-    if (!isWidgetVisible(windowEl)) {
-      return;
-    }
-
-    const rect = windowEl.getBoundingClientRect();
-    windowEl.style.right = "auto";
-    windowEl.style.bottom = "auto";
-
-    placeWidgetRandomly(windowEl, occupiedRects, {
-      width: rect.width,
-      height: rect.height,
-      randomizeSize: true,
-    });
-
-    windowEl.classList.remove("is-random-resizing");
-    void windowEl.offsetWidth;
-    windowEl.classList.add("is-random-resizing");
-    windowEl.style.zIndex = String(++topWindowZ);
-
-    setTimeout(() => {
-      windowEl.classList.remove("is-random-resizing");
-    }, 280);
-  });
-
-  updateShellLayoutFromDocks();
-}
-
 function initializeFloatingWindows() {
   const occupiedRects = [];
 
@@ -2465,13 +2419,6 @@ function initializeFloatingWindows() {
       });
       updateResetWidgetsVisibility();
       updateShellLayoutFromDocks();
-    });
-  }
-
-  if (randomResizeWidgetsButton) {
-    randomResizeWidgetsButton.addEventListener("click", () => {
-      pulseButton(randomResizeWidgetsButton);
-      randomResizeVisibleWidgets();
     });
   }
 
