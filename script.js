@@ -473,18 +473,18 @@ const staticI18n = {
       fastfetch: {
         title: "fastfetch@OS :: ~/sys/info",
         label: "+--------------- FASTFETCH_LIVE --------------+",
-        closeAria: "Fermer fastfetch",
+        closeAria: "Fermer fastfetch"
       },
       monitor: {
         title: "monitor@OS :: htop.live",
         label: "+---------------- SYS_MON ----------------+",
-        closeAria: "Fermer monitor",
+        closeAria: "Fermer monitor"
       },
       shell: {
         title: "shell@OS :: neon.exec",
         label: "+---------------- SHELL_NOTES ----------------+",
-        closeAria: "Fermer shell",
-      },
+        closeAria: "Fermer shell"
+      }
     },
     fastfetch: {
       collecting: "collecte des diagnostics navigateur...",
@@ -506,14 +506,14 @@ const staticI18n = {
         gpu: "GPU",
         cookies: "Cookies",
         touch: "Touch",
-        uptime: "Uptime",
-      },
+        uptime: "Uptime"
+      }
     },
     monitor: {
       prefix: "htop@web",
       tasks: "Tâches",
       running: "actives",
-      avgCpu: "CPU moy",
+      avgCpu: "CPU moy"
     },
     shellTips: [
       "ls -la          # lister les fichiers",
@@ -522,285 +522,285 @@ const staticI18n = {
       "du -sh *        # taille des dossiers",
       "cat ~/.bashrc   # config shell",
       "ipconfig        # infos réseau",
-      "git status      # état du repo",
-    ],
+      "git status      # état du repo"
+    ]
   },
   en: {
     locale: "en-US",
     htmlLang: "en",
     languageLabel: "LANGUAGE",
     navAriaLabel: "Main navigation",
-    bootSkipAria: "Skip boot",
-    statusTop: "Leeway@Portfolio:~$ panel online",
+    bootSkipAria: "Skip the boot",
+    statusTop: "Leeway@Portfolio:~$ online panel",
     statusBottom: "Leeway@Portfolio:~$ ~/.config/me",
     resetWidgets: "[ REOPEN_WIDGETS ]",
     fastfetchRefresh: "[ REFRESH_FASTFETCH ]",
-    fastfetchLoading: "Booting fastfetch...",
-    monitorLoading: "Starting monitor stream...",
+    fastfetchLoading: "Starting fastfetch...",
+    monitorLoading: "Starting the monitor...",
     shellLoading: "Loading shell notes...",
     windows: {
       fastfetch: {
         title: "fastfetch@OS :: ~/sys/info",
         label: "+--------------- FASTFETCH_LIVE --------------+",
-        closeAria: "Close fastfetch",
+        closeAria: "Close fastfetch"
       },
       monitor: {
         title: "monitor@OS :: htop.live",
         label: "+---------------- SYS_MON ----------------+",
-        closeAria: "Close monitor",
+        closeAria: "Close monitor"
       },
       shell: {
         title: "shell@OS :: neon.exec",
         label: "+---------------- SHELL_NOTES ----------------+",
-        closeAria: "Close shell",
-      },
+        closeAria: "Close shell"
+      }
     },
     fastfetch: {
-      collecting: "collecting browser diagnostics...",
+      collecting: "collection of browser diagnostics...",
       profileTitle: "FASTFETCH WEB PROFILE",
-      privacy: "privacy-mode: browser-exposed data only",
-      refreshHint: "refresh: updates runtime metrics and network state",
+      privacy: "private-mode: data exposed by the browser only",
+      refreshHint: "refresh: updates runtime and network metrics",
       labels: {
         host: "Host",
-        os: "OS",
+        os: "BONE",
         browser: "Browser",
         engine: "Engine",
         protocol: "Protocol",
         ip: "IP",
         locale: "Locale",
-        languages: "Languages",
-        timezone: "Timezone",
+        languages: "LANGUAGES",
+        timezone: "Spindle",
         resolution: "Resolution",
         cpuThreads: "CPU Threads",
         gpu: "GPU",
         cookies: "Cookies",
         touch: "Touch",
-        uptime: "Uptime",
-      },
+        uptime: "Uptime"
+      }
     },
     monitor: {
       prefix: "htop@web",
       tasks: "Tasks",
-      running: "running",
-      avgCpu: "Avg CPU",
+      running: "active",
+      avgCpu: "Avg CPU"
     },
     shellTips: [
       "ls -la          # list files",
-      "cd ..           # go parent",
-      "grep -R foo .   # search text",
-      "du -sh *        # folder sizes",
+      "cd ..           # parent folder",
+      "grep -R foo .   # search for text",
+      "du -sh *        # folder size",
       "cat ~/.bashrc   # shell config",
       "ipconfig        # network info",
-      "git status      # repo state",
-    ],
+      "git status      # repo status"
+    ]
   },
   es: {
     locale: "es-ES",
     htmlLang: "es",
     languageLabel: "IDIOMA",
     navAriaLabel: "Navegación principal",
-    bootSkipAria: "Saltar boot",
+    bootSkipAria: "Saltar el arranque",
     statusTop: "Leeway@Portfolio:~$ panel en línea",
-    statusBottom: "Leeway@Portfolio:~$ ~/.config/me",
+    statusBottom: "Margen de maniobra@Cartera:~$ ~/.config/me",
     resetWidgets: "[ REABRIR_WIDGETS ]",
     fastfetchRefresh: "[ ACTUALIZAR_FASTFETCH ]",
-    fastfetchLoading: "Iniciando fastfetch...",
-    monitorLoading: "Iniciando monitor...",
+    fastfetchLoading: "Iniciando búsqueda rápida...",
+    monitorLoading: "Iniciando el monitor...",
     shellLoading: "Cargando notas shell...",
     windows: {
       fastfetch: {
         title: "fastfetch@OS :: ~/sys/info",
         label: "+--------------- FASTFETCH_LIVE --------------+",
-        closeAria: "Cerrar fastfetch",
+        closeAria: "Cerrar búsqueda rápida"
       },
       monitor: {
         title: "monitor@OS :: htop.live",
         label: "+---------------- SYS_MON ----------------+",
-        closeAria: "Cerrar monitor",
+        closeAria: "Cerrar monitor"
       },
       shell: {
         title: "shell@OS :: neon.exec",
         label: "+---------------- SHELL_NOTES ----------------+",
-        closeAria: "Cerrar shell",
-      },
+        closeAria: "Cerrar caparazón"
+      }
     },
     fastfetch: {
-      collecting: "recopilando diagnósticos del navegador...",
-      profileTitle: "PERFIL WEB FASTFETCH",
-      privacy: "modo-privado: solo datos expuestos por el navegador",
-      refreshHint: "refresh: actualiza métricas runtime y estado de red",
+      collecting: "colección de diagnósticos del navegador...",
+      profileTitle: "PERFIL WEB DE FASTFETCH",
+      privacy: "modo privado: datos expuestos solo por el navegador",
+      refreshHint: "actualizar: actualiza el tiempo de ejecución y las métricas de red",
       labels: {
-        host: "Host",
-        os: "SO",
+        host: "Anfitrión",
+        os: "HUESO",
         browser: "Navegador",
         engine: "Motor",
         protocol: "Protocolo",
         ip: "IP",
-        locale: "Idioma",
-        languages: "Lenguajes",
-        timezone: "Zona horaria",
+        locale: "Locale",
+        languages: "IDIOMAS",
+        timezone: "Huso",
         resolution: "Resolución",
-        cpuThreads: "Hilos CPU",
+        cpuThreads: "Hilos de CPU",
         gpu: "GPU",
-        cookies: "Cookies",
-        touch: "Touch",
-        uptime: "Uptime",
-      },
+        cookies: "Galletas",
+        touch: "Tocar",
+        uptime: "tiempo de actividad"
+      }
     },
     monitor: {
       prefix: "htop@web",
       tasks: "Tareas",
-      running: "activas",
-      avgCpu: "CPU prom",
+      running: "activo",
+      avgCpu: "Promedio de CPU"
     },
     shellTips: [
       "ls -la          # listar archivos",
-      "cd ..           # carpeta padre",
+      "cd ..           # carpeta principal",
       "grep -R foo .   # buscar texto",
-      "du -sh *        # tamaño de carpetas",
-      "cat ~/.bashrc   # config shell",
-      "ipconfig        # info de red",
-      "git status      # estado del repo",
-    ],
+      "du -sh *        # tamaño de carpeta",
+      "cat ~/.bashrc   # configuración de shell",
+      "ipconfig        # información de red",
+      "git status      # estado del repositorio"
+    ]
   },
   de: {
     locale: "de-DE",
     htmlLang: "de",
     languageLabel: "SPRACHE",
     navAriaLabel: "Hauptnavigation",
-    bootSkipAria: "Boot überspringen",
-    statusTop: "Leeway@Portfolio:~$ panel online",
+    bootSkipAria: "Überspringen Sie den Stiefel",
+    statusTop: "Leeway@Portfolio:~$ Online-Panel",
     statusBottom: "Leeway@Portfolio:~$ ~/.config/me",
-    resetWidgets: "[ WIDGETS_NEU_ÖFFNEN ]",
+    resetWidgets: "[ WIDGETS_WIEDER_ÖFFNEN ]",
     fastfetchRefresh: "[ FASTFETCH_AKTUALISIEREN ]",
-    fastfetchLoading: "Fastfetch startet...",
-    monitorLoading: "Monitor startet...",
-    shellLoading: "Shell-Notizen laden...",
+    fastfetchLoading: "Fastfetch wird gestartet...",
+    monitorLoading: "Starten des Monitors...",
+    shellLoading: "Shell-Notizen werden geladen...",
     windows: {
       fastfetch: {
         title: "fastfetch@OS :: ~/sys/info",
         label: "+--------------- FASTFETCH_LIVE --------------+",
-        closeAria: "Fastfetch schließen",
+        closeAria: "Fastfetch schließen"
       },
       monitor: {
         title: "monitor@OS :: htop.live",
         label: "+---------------- SYS_MON ----------------+",
-        closeAria: "Monitor schließen",
+        closeAria: "Schließen Sie den Monitor"
       },
       shell: {
         title: "shell@OS :: neon.exec",
         label: "+---------------- SHELL_NOTES ----------------+",
-        closeAria: "Shell schließen",
-      },
+        closeAria: "Schale schließen"
+      }
     },
     fastfetch: {
-      collecting: "Browser-Diagnose wird gesammelt...",
-      profileTitle: "FASTFETCH WEB PROFIL",
-      privacy: "privacy-mode: nur browseroffengelegte daten",
-      refreshHint: "refresh: aktualisiert Runtime-Metriken und Netzwerkstatus",
+      collecting: "Sammlung von Browserdiagnosen...",
+      profileTitle: "FASTFETCH-WEB-PROFIL",
+      privacy: "Privatmodus: Daten werden nur vom Browser angezeigt",
+      refreshHint: "Aktualisieren: Aktualisiert Laufzeit- und Netzwerkmetriken",
       labels: {
-        host: "Host",
-        os: "OS",
+        host: "Gastgeber",
+        os: "KNOCHEN",
         browser: "Browser",
-        engine: "Engine",
+        engine: "Motor",
         protocol: "Protokoll",
         ip: "IP",
         locale: "Locale",
-        languages: "Sprachen",
-        timezone: "Zeitzone",
+        languages: "SPRACHEN",
+        timezone: "Spindel",
         resolution: "Auflösung",
-        cpuThreads: "CPU Threads",
+        cpuThreads: "CPU-Threads",
         gpu: "GPU",
-        cookies: "Cookies",
-        touch: "Touch",
-        uptime: "Uptime",
-      },
+        cookies: "Kekse",
+        touch: "Berühren",
+        uptime: "Betriebszeit"
+      }
     },
     monitor: {
       prefix: "htop@web",
       tasks: "Aufgaben",
       running: "aktiv",
-      avgCpu: "CPU-Schnitt",
+      avgCpu: "Durchschnittliche CPU"
     },
     shellTips: [
       "ls -la          # Dateien auflisten",
-      "cd ..           # zum Elternordner",
-      "grep -R foo .   # Text suchen",
-      "du -sh *        # Ordnergroessen",
-      "cat ~/.bashrc   # shell config",
-      "ipconfig        # Netzwerkinfo",
-      "git status      # Repo-Status",
-    ],
+      "cd ..           # übergeordneten Ordner",
+      "grep -R foo .   # Suche nach Text",
+      "du -sh *        # Ordnergröße",
+      "cat ~/.bashrc   # Shell-Konfiguration",
+      "ipconfig        # Netzwerkinformationen",
+      "git status      # Repo-Status"
+    ]
   },
   ru: {
     locale: "ru-RU",
     htmlLang: "ru",
     languageLabel: "ЯЗЫК",
-    navAriaLabel: "Главная навигация",
+    navAriaLabel: "Основная навигация",
     bootSkipAria: "Пропустить загрузку",
-    statusTop: "Leeway@Portfolio:~$ panel online",
-    statusBottom: "Leeway@Portfolio:~$ ~/.config/me",
-    resetWidgets: "[ ПЕРЕОТКРЫТЬ_WIDGETS ]",
-    fastfetchRefresh: "[ ОБНОВИТЬ_FASTFETCH ]",
-    fastfetchLoading: "Запуск fastfetch...",
-    monitorLoading: "Запуск потока мониторинга...",
-    shellLoading: "Загрузка заметок shell...",
+    statusTop: "Leeway@Portfolio: онлайн-панель ~$",
+    statusBottom: "Ливей@Портфолио:~$ ~/.config/me",
+    resetWidgets: "[ ПОВТОРНО_ОТКРЫТЬ_ВИДЖЕТЫ ]",
+    fastfetchRefresh: "[ ОБНОВИТЬ_БЫСТРУЮ_ЗАГРУЗКУ ]",
+    fastfetchLoading: "Запускаем быструю выборку...",
+    monitorLoading: "Запускаем монитор...",
+    shellLoading: "Загрузка заметок оболочки...",
     windows: {
       fastfetch: {
         title: "fastfetch@OS :: ~/sys/info",
         label: "+--------------- FASTFETCH_LIVE --------------+",
-        closeAria: "Закрыть fastfetch",
+        closeAria: "Закрыть быструю выборку"
       },
       monitor: {
         title: "monitor@OS :: htop.live",
         label: "+---------------- SYS_MON ----------------+",
-        closeAria: "Закрыть monitor",
+        closeAria: "Закрыть монитор"
       },
       shell: {
         title: "shell@OS :: neon.exec",
         label: "+---------------- SHELL_NOTES ----------------+",
-        closeAria: "Закрыть shell",
-      },
+        closeAria: "Закрыть оболочку"
+      }
     },
     fastfetch: {
       collecting: "сбор диагностики браузера...",
-      profileTitle: "WEB-ПРОФИЛЬ FASTFETCH",
-      privacy: "privacy-mode: только данные, доступные из браузера",
-      refreshHint: "refresh: обновляет runtime-метрики и состояние сети",
+      profileTitle: "БЫСТРАЯ ЗАГРУЗКА ВЕБ-ПРОФИЛЯ",
+      privacy: "приватный режим: данные предоставляются только браузером",
+      refreshHint: "обновить: обновляет показатели времени выполнения и сети.",
       labels: {
-        host: "Хост",
-        os: "OS",
+        host: "Хозяин",
+        os: "КОСТЬ",
         browser: "Браузер",
-        engine: "Движок",
+        engine: "Двигатель",
         protocol: "Протокол",
-        ip: "IP",
-        locale: "Локаль",
-        languages: "Языки",
-        timezone: "Часовой пояс",
+        ip: "ИП",
+        locale: "Locale",
+        languages: "ЯЗЫКИ",
+        timezone: "Шпиндель",
         resolution: "Разрешение",
-        cpuThreads: "Потоки CPU",
-        gpu: "GPU",
-        cookies: "Cookies",
-        touch: "Touch",
-        uptime: "Uptime",
-      },
+        cpuThreads: "Потоки ЦП",
+        gpu: "графический процессор",
+        cookies: "Файлы cookie",
+        touch: "Трогать",
+        uptime: "Время работы"
+      }
     },
     monitor: {
       prefix: "htop@web",
       tasks: "Задачи",
-      running: "активно",
-      avgCpu: "CPU ср.",
+      running: "активный",
+      avgCpu: "Среднее значение процессора"
     },
     shellTips: [
       "ls -la          # список файлов",
       "cd ..           # родительская папка",
       "grep -R foo .   # поиск текста",
-      "du -sh *        # размер папок",
-      "cat ~/.bashrc   # config shell",
-      "ipconfig        # сетевая информация",
-      "git status      # состояние репозитория",
-    ],
-  },
+      "du -sh *        # размер папки",
+      "cat ~/.bashrc   # конфигурация оболочки",
+      "ipconfig        # информация о сети",
+      "git status      # статус репо"
+    ]
+  }
 };
 
 function getLanguagePack(languageCode) {

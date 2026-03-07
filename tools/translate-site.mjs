@@ -39,7 +39,14 @@ const MYMEMORY_LANG_BY_CODE = {
   ru: "ru",
 };
 
-const HELP = `\ntranslate-site.mjs\n\nUsage:\n  node tools/translate-site.mjs [--provider deepl|libre|mymemory] [--dry-run]\n\nProviders:\n  deepl (recommended): set DEEPL_API_KEY\n  libre: set LIBRETRANSLATE_URL (optional) and LIBRETRANSLATE_API_KEY (optional)\n  mymemory: free public provider (no key)\n\nEnvironment variables:\n  DEEPL_API_KEY\n  LIBRETRANSLATE_URL (default: https://libretranslate.com/translate)\n  LIBRETRANSLATE_API_KEY\n\nWhat it updates:\n  - views-zones.json translations for all supported languages (except fr)\n  - staticI18n inside script.js for the same languages\n\nNotes:\n  - Source language is always fr\n  - URLs, mails, and technical separators are preserved\n`; 
+const GOOGLEFREE_LANG_BY_CODE = {
+  en: "en",
+  es: "es",
+  de: "de",
+  ru: "ru",
+};
+
+const HELP = `\ntranslate-site.mjs\n\nUsage:\n  node tools/translate-site.mjs [--provider deepl|libre|mymemory|googlefree] [--dry-run]\n\nProviders:\n  deepl (recommended): set DEEPL_API_KEY\n  libre: set LIBRETRANSLATE_URL (optional) and LIBRETRANSLATE_API_KEY (optional)\n  mymemory: free public provider (no key, quota-limited)\n  googlefree: free endpoint fallback (no key)\n\nEnvironment variables:\n  DEEPL_API_KEY\n  LIBRETRANSLATE_URL (default: https://libretranslate.com/translate)\n  LIBRETRANSLATE_API_KEY\n\nWhat it updates:\n  - views-zones.json translations for all supported languages (except fr)\n  - staticI18n inside script.js for the same languages\n\nNotes:\n  - Source language is always fr\n  - URLs, mails, and technical separators are preserved\n`; 
 
 function parseArgs(argv) {
   const args = {
@@ -74,7 +81,7 @@ function detectProvider(cliProvider) {
   if (cliProvider) {
     return cliProvider.toLowerCase();
   }
-  return process.env.DEEPL_API_KEY ? "deepl" : "mymemory";
+  return process.env.DEEPL_API_KEY ? "deepl" : "googlefree";
 }
 
 async function readJson(filePath, fallback = null) {
@@ -134,6 +141,10 @@ function normalizeLabelToken(text) {
 
 function getCacheKey(provider, targetLanguage, text) {
   return `${provider}::${targetLanguage}::${text}`;
+}
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function createTranslator({ provider, cache }) {
@@ -228,21 +239,103 @@ function createTranslator({ provider, cache }) {
     const out = [];
 
     for (const text of texts) {
-      const params = new URLSearchParams();
-      params.set("q", text);
-      params.set("langpair", `fr|${target}`);
+      let translatedText = text;
+      let done = false;
 
-      const url = `https://api.mymemory.translated.net/get?${params.toString()}`;
-      const response = await fetch(url, { method: "GET" });
+      for (let attempt = 1; attempt <= 5; attempt += 1) {
+        try {
+          const params = new URLSearchParams();
+          params.set("q", text);
+          params.set("langpair", `fr|${target}`);
 
-      if (!response.ok) {
-        const body = await response.text();
-        throw new Error(`MyMemory error ${response.status}: ${body}`);
+          const url = `https://api.mymemory.translated.net/get?${params.toString()}`;
+          const response = await fetch(url, { method: "GET" });
+
+          if (!response.ok) {
+            const body = await response.text();
+            const retryable = response.status === 429 || response.status >= 500;
+            if (retryable && attempt < 5) {
+              await wait(800 * attempt);
+              continue;
+            }
+            throw new Error(`MyMemory error ${response.status}: ${body}`);
+          }
+
+          const data = await response.json();
+          const translated = data?.responseData?.translatedText;
+          translatedText = typeof translated === "string" && translated.length > 0 ? translated : text;
+          done = true;
+          break;
+        } catch (error) {
+          if (attempt >= 5) {
+            throw error;
+          }
+          await wait(800 * attempt);
+        }
       }
 
-      const data = await response.json();
-      const translated = data?.responseData?.translatedText;
-      out.push(typeof translated === "string" && translated.length > 0 ? translated : text);
+      if (!done) {
+        throw new Error("MyMemory request failed after retries.");
+      }
+
+      out.push(translatedText);
+    }
+
+    return out;
+  }
+
+  async function requestGoogleFree(texts, targetLanguage) {
+    const target = GOOGLEFREE_LANG_BY_CODE[targetLanguage];
+    if (!target) {
+      throw new Error(`Unsupported language for GoogleFree: ${targetLanguage}`);
+    }
+
+    const out = [];
+
+    for (const text of texts) {
+      let translatedText = text;
+      let done = false;
+
+      for (let attempt = 1; attempt <= 6; attempt += 1) {
+        try {
+          const params = new URLSearchParams();
+          params.set("client", "gtx");
+          params.set("sl", "fr");
+          params.set("tl", target);
+          params.set("dt", "t");
+          params.set("q", text);
+
+          const url = `https://translate.googleapis.com/translate_a/single?${params.toString()}`;
+          const response = await fetch(url, { method: "GET" });
+
+          if (!response.ok) {
+            const body = await response.text();
+            const retryable = response.status === 429 || response.status >= 500;
+            if (retryable && attempt < 6) {
+              await wait(1000 * attempt);
+              continue;
+            }
+            throw new Error(`GoogleFree error ${response.status}: ${body}`);
+          }
+
+          const data = await response.json();
+          const translated = data?.[0]?.[0]?.[0];
+          translatedText = typeof translated === "string" && translated.length > 0 ? translated : text;
+          done = true;
+          break;
+        } catch (error) {
+          if (attempt >= 6) {
+            throw error;
+          }
+          await wait(1000 * attempt);
+        }
+      }
+
+      if (!done) {
+        throw new Error("GoogleFree request failed after retries.");
+      }
+
+      out.push(translatedText);
     }
 
     return out;
@@ -259,6 +352,10 @@ function createTranslator({ provider, cache }) {
 
     if (provider === "mymemory") {
       return requestMyMemory(texts, targetLanguage);
+    }
+
+    if (provider === "googlefree") {
+      return requestGoogleFree(texts, targetLanguage);
     }
 
     throw new Error(`Unknown provider: ${provider}`);
@@ -716,8 +813,8 @@ async function main() {
   }
 
   const provider = detectProvider(args.provider);
-  if (!provider || !["deepl", "libre", "mymemory"].includes(provider)) {
-    throw new Error("Provider must be deepl, libre, or mymemory.");
+  if (!provider || !["deepl", "libre", "mymemory", "googlefree"].includes(provider)) {
+    throw new Error("Provider must be deepl, libre, mymemory, or googlefree.");
   }
 
   const views = await readJson(VIEWS_PATH);
@@ -736,32 +833,36 @@ async function main() {
   const scriptContent = await fs.readFile(SCRIPT_PATH, "utf8");
   const extracted = extractStaticI18n(scriptContent);
 
-  console.log(`Provider: ${provider}`);
-  console.log(`Languages: ${targetLanguages.join(", ")}`);
-  console.log("Translating views-zones.json...");
-  const nextViews = await translateViewsConfig(views, targetLanguages, translator);
+  try {
+    console.log(`Provider: ${provider}`);
+    console.log(`Languages: ${targetLanguages.join(", ")}`);
+    console.log("Translating views-zones.json...");
+    const nextViews = await translateViewsConfig(views, targetLanguages, translator);
 
-  console.log("Translating staticI18n in script.js...");
-  const nextStatic = await translateStaticI18n(extracted.objectValue, targetLanguages, translator);
-  const nextLiteral = toJsLiteral(nextStatic, 0);
+    console.log("Translating staticI18n in script.js...");
+    const nextStatic = await translateStaticI18n(extracted.objectValue, targetLanguages, translator);
+    const nextLiteral = toJsLiteral(nextStatic, 0);
 
-  const nextScript =
-    `${scriptContent.slice(0, extracted.firstBrace)}${nextLiteral}` +
-    scriptContent.slice(extracted.end);
+    const nextScript =
+      `${scriptContent.slice(0, extracted.firstBrace)}${nextLiteral}` +
+      scriptContent.slice(extracted.end);
 
-  if (args.dryRun) {
-    console.log("Dry run complete. No files written.");
-    return;
+    if (args.dryRun) {
+      console.log("Dry run complete. No files written.");
+      return;
+    }
+
+    await writeJson(VIEWS_PATH, nextViews);
+    await fs.writeFile(SCRIPT_PATH, nextScript, "utf8");
+
+    console.log("Done. Files updated:");
+    console.log(`- ${path.relative(ROOT, VIEWS_PATH)}`);
+    console.log(`- ${path.relative(ROOT, SCRIPT_PATH)}`);
+    console.log(`- ${path.relative(ROOT, CACHE_PATH)}`);
+  } finally {
+    // Persist partial progress so a retry resumes instead of restarting all translations.
+    await writeJson(CACHE_PATH, cache);
   }
-
-  await writeJson(VIEWS_PATH, nextViews);
-  await fs.writeFile(SCRIPT_PATH, nextScript, "utf8");
-  await writeJson(CACHE_PATH, cache);
-
-  console.log("Done. Files updated:");
-  console.log(`- ${path.relative(ROOT, VIEWS_PATH)}`);
-  console.log(`- ${path.relative(ROOT, SCRIPT_PATH)}`);
-  console.log(`- ${path.relative(ROOT, CACHE_PATH)}`);
 }
 
 main().catch((error) => {
