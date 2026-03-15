@@ -3,143 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>1LEEWAY@PORTFOLIO</title>
+    <title>1LEEWAY | Accueil</title>
     <meta
       name="description"
-      content="Portfolio one-page TUI sans scroll, pilote avec menu gauche."
+      content="Accueil du site 1LEEWAY avec accès rapide au portfolio et aux ressources."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="home.css" />
   </head>
   <body>
-    <div id="bootScreen" class="boot-screen" aria-hidden="true">
-      <div class="boot-inner">
-        <button id="bootSkip" class="boot-skip" type="button" aria-label="Passer le boot">
-          >>>
-        </button>
-        <pre class="boot-frame" aria-hidden="true">
-+----------------------------------------------+
-|              1LEEWAY@PORTFOLIO               |
-+----------------------------------------------+
-        </pre>
-        <div id="bootLines" class="boot-lines"></div>
-      </div>
-    </div>
+    <div class="backdrop" aria-hidden="true"></div>
 
-    <div class="ambient-noise" aria-hidden="true"></div>
-    <div class="terminal-grid" aria-hidden="true"></div>
-    <div class="terminal-halo" aria-hidden="true"></div>
-    <div class="scanlines" aria-hidden="true"></div>
+    <main class="home-shell">
+      <section class="hero-card" aria-labelledby="heroTitle">
+        <p class="badge">Site principal</p>
+        <h1 id="heroTitle">Bienvenue sur 1LEEWAY</h1>
+        <p class="subtitle">
+          Accédez rapidement à mon portfolio et à mes ressources, entièrement en français.
+        </p>
 
-    <section class="floating-deck" aria-label="Widgets TUI flottants">
-      <article class="tui-window" data-window="fastfetch" aria-label="Widget fastfetch">
-        <header class="window-titlebar" data-drag-handle>
-          <span class="window-title">fastfetch@OS :: ~/sys/info</span>
-          <button class="window-close" type="button" data-window-close aria-label="Fermer fastfetch">
-            [x]
-          </button>
-        </header>
-        <pre class="window-label">+--------------- FASTFETCH_LIVE --------------+</pre>
-        <div class="window-body window-body-fastfetch">
-          <button id="runFastfetch" class="window-fastfetch-btn" type="button">
-            [ REFRESH_FASTFETCH ]
-          </button>
-          <pre id="fastfetchOutput" class="window-console">Booting fastfetch...</pre>
-        </div>
-        <div class="window-resize-handle" data-resize-handle aria-hidden="true"></div>
-      </article>
-
-      <article class="tui-window" data-window="monitor" aria-label="Widget monitor">
-        <header class="window-titlebar" data-drag-handle>
-          <span class="window-title">monitor@OS :: htop.live</span>
-          <button class="window-close" type="button" data-window-close aria-label="Fermer monitor">
-            [x]
-          </button>
-        </header>
-        <pre class="window-label">+---------------- SYS_MON ----------------+</pre>
-        <div class="window-body">
-          <pre id="monitorOutput" class="window-console">Starting monitor stream...</pre>
-        </div>
-        <div class="window-resize-handle" data-resize-handle aria-hidden="true"></div>
-      </article>
-
-      <article class="tui-window" data-window="shell" aria-label="Widget shell">
-        <header class="window-titlebar" data-drag-handle>
-          <span class="window-title">shell@OS :: neon.exec</span>
-          <button class="window-close" type="button" data-window-close aria-label="Fermer shell">
-            [x]
-          </button>
-        </header>
-        <pre class="window-label">+---------------- SHELL_NOTES ----------------+</pre>
-        <div class="window-body">
-          <pre id="shellOutput" class="window-console">Loading shell notes...</pre>
-        </div>
-        <div class="window-resize-handle" data-resize-handle aria-hidden="true"></div>
-      </article>
-
-      <button id="resetWidgets" class="reset-widgets" type="button">
-        [ REOPEN_WIDGETS ]
-      </button>
-    </section>
-
-    <main class="app-shell reveal">
-      <aside class="left-menu panel">
-        <div class="menu-status menu-status-top">
-          <p id="clockTop" class="clock">[ --:--:-- ]</p>
-          <p class="status-line-top">Leeway@Portfolio:~$ panel online</p>
-        </div>
-
-        <div class="lang-switch" aria-label="Language selector">
-          <label id="languageLabel" class="lang-label" for="languageSelect">LANGUE</label>
-          <select id="languageSelect" class="lang-select" aria-label="Select language">
-            <option value="fr">FR - Francais</option>
-            <option value="en">EN - English</option>
-            <option value="es">ES - Espanol</option>
-            <option value="de">DE - Deutsch</option>
-            <option value="ru">RU - Russkiy</option>
-          </select>
-        </div>
-
-        <nav class="menu-list" aria-label="Navigation principale">
-          <button class="menu-btn is-active" type="button" data-view="id">[ ID ]</button>
-          <button class="menu-btn" type="button" data-view="cv">[ CV ]</button>
-          <button class="menu-btn" type="button" data-view="taff">[ TAFF ]</button>
-          <button class="menu-btn" type="button" data-view="stack">[ STACK ]</button>
-          <button class="menu-btn" type="button" data-view="contact">[ CONTACT ]</button>
+        <nav class="action-grid" aria-label="Navigation principale">
+          <a class="action-link" href="/portfolio/">
+            <span class="action-title">Portfolio</span>
+            <span class="action-desc">Découvrir mes projets, mon parcours et mon stack.</span>
+          </a>
+          <a class="action-link" href="/ressources/">
+            <span class="action-title">Ressources</span>
+            <span class="action-desc">Voir mes liens, outils et contenus utiles.</span>
+          </a>
         </nav>
-
-        <div class="menu-status">
-          <p id="clock" class="clock">[ --:--:-- ]</p>
-          <p class="status-line">Leeway@Portfolio:~$ ~/.config/me</p>
-        </div>  
-      </aside>
-
-      <section class="workspace panel" aria-live="polite">
-        <header class="workspace-head">
-          <pre id="viewTitle" class="view-title" aria-hidden="true"></pre>
-          <p id="viewSubtitle" class="view-subtitle"></p>
-        </header>
-
-        <pre id="viewAscii" class="view-ascii"></pre>
-        <button id="asciiCloseBtn" class="ascii-close-btn" type="button" aria-label="Fermer le texte agrandi">
-          [ CLOSE ]
-        </button>
-
-        <div id="viewMeta" class="view-meta"></div>
-
-        <div id="viewActions" class="action-row"></div>
-
-        <footer class="workspace-footer">
-          <p>[ 1LEEWAY (c) <span id="year"></span> :: Portfolio ]</p>
-        </footer>
       </section>
     </main>
-
-    <script src="script.js"></script>
   </body>
 </html>
