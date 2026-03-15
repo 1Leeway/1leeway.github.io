@@ -3,41 +3,120 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>1LEEWAY | Accueil</title>
-    <meta
-      name="description"
-      content="Accueil du site 1LEEWAY avec accès rapide au portfolio et aux ressources."
-    />
+    <title>1LEEWAY@ROOT</title>
+    <meta name="description" content="Hub terminal 1LEEWAY avec accès au portfolio et aux ressources." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="home.css" />
   </head>
   <body>
-    <div class="backdrop" aria-hidden="true"></div>
+    <div id="bootScreen" class="boot-screen" aria-hidden="false">
+      <div class="boot-inner">
+        <button id="bootSkip" class="boot-skip" type="button" aria-label="Passer le boot">
+          [ SKIP_BOOT ]
+        </button>
+        <pre class="boot-frame" aria-hidden="true">+------------------------------------------------+
+|              1LEEWAY@ROOT_BOOT                |
++------------------------------------------------+</pre>
+        <div id="bootLines" class="boot-lines"></div>
+      </div>
+    </div>
 
-    <main class="home-shell">
-      <section class="hero-card" aria-labelledby="heroTitle">
-        <p class="badge">Site principal</p>
-        <h1 id="heroTitle">Bienvenue sur 1LEEWAY</h1>
-        <p class="subtitle">
-          Accédez rapidement à mon portfolio et à mes ressources, entièrement en français.
-        </p>
+    <div class="ambient-noise" aria-hidden="true"></div>
+    <div class="terminal-grid" aria-hidden="true"></div>
+    <div class="terminal-halo" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
 
-        <nav class="action-grid" aria-label="Navigation principale">
-          <a class="action-link" href="/portfolio/">
-            <span class="action-title">Portfolio</span>
-            <span class="action-desc">Découvrir mes projets, mon parcours et mon stack.</span>
-          </a>
-          <a class="action-link" href="/ressources/">
-            <span class="action-title">Ressources</span>
-            <span class="action-desc">Voir mes liens, outils et contenus utiles.</span>
-          </a>
+    <section class="floating-deck" aria-label="Widgets système flottants">
+      <article class="tui-window" data-window="routes" aria-label="Widget routes">
+        <header class="window-titlebar">
+          <span class="window-title">routes@root :: /srv/www</span>
+          <button class="window-close" type="button" data-window-close aria-label="Fermer routes">
+            [x]
+          </button>
+        </header>
+        <pre class="window-label">+---------------- ROUTE_MAP ----------------+</pre>
+        <div class="window-body">
+          <pre id="routesOutput" class="window-console">Loading route map...</pre>
+        </div>
+      </article>
+
+      <article class="tui-window" data-window="status" aria-label="Widget status">
+        <header class="window-titlebar">
+          <span class="window-title">status@root :: live.telemetry</span>
+          <button class="window-close" type="button" data-window-close aria-label="Fermer status">
+            [x]
+          </button>
+        </header>
+        <pre class="window-label">+---------------- LIVE_STATUS ---------------+</pre>
+        <div class="window-body">
+          <pre id="statusOutput" class="window-console">Collecting live status...</pre>
+        </div>
+      </article>
+
+      <article class="tui-window" data-window="notes" aria-label="Widget notes">
+        <header class="window-titlebar">
+          <span class="window-title">notes@root :: quick.hints</span>
+          <button class="window-close" type="button" data-window-close aria-label="Fermer notes">
+            [x]
+          </button>
+        </header>
+        <pre class="window-label">+---------------- QUICK_NOTES ---------------+</pre>
+        <div class="window-body">
+          <pre id="notesOutput" class="window-console">Hydrating notes buffer...</pre>
+        </div>
+      </article>
+
+      <button id="resetWidgets" class="reset-widgets" type="button">[ REOPEN_WIDGETS ]</button>
+    </section>
+
+    <main id="appShell" class="app-shell is-hidden">
+      <aside class="left-menu panel">
+        <pre class="menu-logo">+--------------------------+
+|      1LEEWAY@ROOT       |
++--------------------------+</pre>
+
+        <div class="menu-status menu-status-top">
+          <p id="clockTop" class="clock">[ --:--:-- ]</p>
+          <p id="statusLineTop" class="status-line">root@site:~$ boot --home</p>
+        </div>
+
+        <nav class="menu-list" aria-label="Navigation principale">
+          <button class="menu-btn is-active" type="button" data-view="root">[ ROOT ]</button>
+          <button class="menu-btn" type="button" data-view="portfolio">[ PORTFOLIO ]</button>
+          <button class="menu-btn" type="button" data-view="ressources">[ RESSOURCES ]</button>
+          <button class="menu-btn" type="button" data-view="access">[ ACCESS ]</button>
+          <button class="menu-btn" type="button" data-view="contact">[ CONTACT ]</button>
         </nav>
+
+        <div class="menu-status">
+          <p id="clock" class="clock">[ --:--:-- ]</p>
+          <p id="statusLine" class="status-line">root@site:~$ cat /routes/root</p>
+        </div>
+      </aside>
+
+      <section class="workspace panel" aria-live="polite">
+        <header class="workspace-head">
+          <pre id="viewTitle" class="view-title" aria-hidden="true"></pre>
+          <p id="viewSubtitle" class="view-subtitle"></p>
+        </header>
+
+        <pre id="viewAscii" class="view-ascii"></pre>
+
+        <div id="viewMeta" class="view-meta"></div>
+
+        <div id="viewActions" class="action-row"></div>
+
+        <footer class="workspace-footer">
+          <p>[ 1LEEWAY@ROOT :: ONLINE :: <span id="year"></span> ]</p>
+        </footer>
       </section>
     </main>
+
+    <script src="home.js"></script>
   </body>
 </html>
