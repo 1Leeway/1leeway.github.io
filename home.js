@@ -44,11 +44,7 @@ const views = {
       "> L'accueil reprend desormais le meme feeling d'execution que cette page.",
       "> Ouverture directe disponible sans ecran intermediaire impose.",
     ],
-    actions: [
-      { label: "[ ENTER_PORTFOLIO ]", href: "/portfolio/" },
-      { label: "[ OPEN_REPOS ]", href: "https://github.com/1leeway?tab=repositories" },
-      { label: "[ SEND_MAIL ]", href: "mailto:hello@1leeway.dev" },
-    ],
+    actions: [],
     prompt: "root@site:~$ open /portfolio/",
     promptTop: "root@site:~$ inspect --portfolio",
   },
@@ -70,11 +66,7 @@ const views = {
       "> Le root agit comme repartiteur visuel entre portfolio et ressources.",
       "> Navigation pensee pour aller vite, sans surcharge decorative.",
     ],
-    actions: [
-      { label: "[ OPEN_RESSOURCES ]", href: "/ressources/" },
-      { label: "[ VIEW_ACCESS ]", view: "access" },
-      { label: "[ BACK_ROOT ]", view: "root" },
-    ],
+    actions: [],
     prompt: "root@site:~$ ls /ressources/",
     promptTop: "root@site:~$ inspect --resources",
   },
@@ -218,7 +210,7 @@ const shellLayoutMotion = {
   initialized: false,
 };
 
-let activeView = "root";
+let activeView = "portfolio";
 let renderCycle = 0;
 let topWindowZ = 18;
 let bootSkipRequested = false;
@@ -388,6 +380,13 @@ async function renderActionButtons(actions, cycleId) {
     return;
   }
 
+  if (!Array.isArray(actions) || actions.length === 0) {
+    viewActions.innerHTML = "";
+    viewActions.style.display = "none";
+    return;
+  }
+
+  viewActions.style.display = "flex";
   viewActions.innerHTML = "";
 
   for (const action of actions) {
@@ -1018,6 +1017,19 @@ function initializeFloatingWindows() {
   });
 
   updateResetWidgetsVisibility();
+}
+
+const allowedViews = new Set(["portfolio", "ressources"]);
+for (let index = menuButtons.length - 1; index >= 0; index -= 1) {
+  const button = menuButtons[index];
+  if (!allowedViews.has(button.dataset.view)) {
+    button.remove();
+    menuButtons.splice(index, 1);
+  }
+}
+
+if (!allowedViews.has(activeView)) {
+  activeView = "portfolio";
 }
 
 menuButtons.forEach((button) => {
