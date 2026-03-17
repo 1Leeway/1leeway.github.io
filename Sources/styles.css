@@ -1,0 +1,363 @@
+/* ============================================================
+   GLOBAL TUI STYLES — shared across all pages
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:          #040404;
+  --bg-soft:     #0d0d0d;
+  --fg:          #f4f4f4;
+  --muted:       #888;
+  --dim:         #555;
+  --line:        #1e1e1e;
+  --line-strong: #3a3a3a;
+  --accent:      #f4f4f4;
+  --font:        'IBM Plex Mono', 'Courier New', monospace;
+  --r:           0px;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── CRT / terminal animation keyframes ──────────────────── */
+@keyframes scanDrift {
+  from { transform: translateY(0); }
+  to { transform: translateY(4px); }
+}
+@keyframes crtFlicker {
+  0%, 100% { opacity: .12; }
+  8% { opacity: .17; }
+  18% { opacity: .10; }
+  33% { opacity: .14; }
+  59% { opacity: .08; }
+  73% { opacity: .16; }
+  89% { opacity: .11; }
+}
+@keyframes phosGlow {
+  0%, 100% { opacity: .05; }
+  50% { opacity: .11; }
+}
+@keyframes terminalBoot {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.98) translateY(8px);
+    filter: blur(1px);
+  }
+  70% {
+    opacity: .95;
+    transform: scaleY(1.001) translateY(0);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+    filter: blur(0);
+  }
+}
+@keyframes linePowerOn {
+  from { opacity: 0; transform: scaleX(.98); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+@keyframes blinkBlock {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes textFlicker {
+  0%, 100% { opacity: 1; }
+  20% { opacity: .93; }
+  42% { opacity: .98; }
+  57% { opacity: .91; }
+  79% { opacity: .97; }
+}
+@keyframes riseInSteps {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+    filter: blur(.7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+@keyframes subtleJitter {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(.2px); }
+  50% { transform: translateX(-.25px); }
+  75% { transform: translateX(.1px); }
+}
+
+/* ── Scanlines decoration ─────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,.18) 2px,
+    rgba(0,0,0,.18) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  opacity: .12;
+  animation: scanDrift .18s linear infinite, crtFlicker 6.5s steps(24, end) infinite;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.08), rgba(0,0,0,0) 58%),
+    radial-gradient(circle at 10% 12%, rgba(255,255,255,.04), transparent 32%),
+    radial-gradient(circle at 88% 78%, rgba(255,255,255,.03), transparent 28%);
+  animation: phosGlow 4.5s ease-in-out infinite;
+}
+
+/* ── App shell ────────────────────────────────────────────── */
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  animation: terminalBoot .55s steps(14, end) both;
+}
+
+/* ── Top bar ──────────────────────────────────────────────── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line-strong);
+  padding: .5rem 0;
+  flex-shrink: 0;
+  gap: 1rem;
+  transform-origin: center;
+  animation: linePowerOn .42s steps(10, end) both;
+}
+.topbar-left  { display: flex; align-items: center; gap: 1.5rem; }
+.topbar-right { display: flex; align-items: center; gap: 1rem; }
+
+.site-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--fg);
+  text-decoration: none;
+  animation: textFlicker 5.2s steps(22, end) infinite;
+}
+.site-title span { color: var(--muted); font-weight: 400; }
+
+.nav-links { display: flex; gap: .75rem; list-style: none; }
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 12px;
+  padding: 2px 6px;
+  border: 1px solid transparent;
+  transition: color .12s, border-color .12s;
+}
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--fg);
+  border-color: var(--line-strong);
+}
+.nav-links a:hover { animation: subtleJitter .15s steps(2, end) 2; }
+
+.clock { font-size: 11px; color: var(--dim); letter-spacing: .06em; }
+
+/* ── Main area ────────────────────────────────────────────── */
+.main {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  min-height: 0;
+}
+
+/* ── Status bar ───────────────────────────────────────────── */
+.statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line-strong);
+  padding: .3rem 0;
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--dim);
+  gap: 1rem;
+  transform-origin: center;
+  animation: linePowerOn .46s steps(10, end) .06s both;
+}
+.statusbar-left  { display: flex; gap: 1rem; }
+.statusbar-right { color: var(--dim); }
+
+/* terminal cursor effect in command prompt area */
+.statusbar-left > span:first-child::after {
+  content: '█';
+  margin-left: .35rem;
+  font-size: .9em;
+  animation: blinkBlock .95s steps(1, end) infinite;
+}
+
+/* ── TUI Box ──────────────────────────────────────────────── */
+.tui-box {
+  border: 1px solid var(--line-strong);
+  background: var(--bg-soft);
+}
+.tui-box-title {
+  padding: .25rem .6rem;
+  border-bottom: 1px solid var(--line-strong);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* ── Button ───────────────────────────────────────────────── */
+.btn {
+  display: inline-block;
+  padding: 3px 10px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .1s, color .1s;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--fg); color: var(--bg); }
+.btn-muted { color: var(--muted); border-color: var(--line); }
+.btn-muted:hover { background: var(--fg); color: var(--bg); }
+.btn:hover,
+.badge:hover,
+.social-link:hover,
+.menu-item:hover,
+.category-btn:hover,
+.filter-chip:hover,
+.proj-chip:hover,
+.nav-tile:hover {
+  animation: subtleJitter .14s steps(2, end) 2;
+}
+
+/* ── Divider ──────────────────────────────────────────────── */
+.divider { border: none; border-top: 1px solid var(--line); margin: .5rem 0; }
+
+/* ── Scrollable inner zone ────────────────────────────────── */
+.inner-scroll {
+  overflow-y: auto;
+  height: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.inner-scroll::-webkit-scrollbar { width: 6px; }
+.inner-scroll::-webkit-scrollbar-track { background: transparent; }
+.inner-scroll::-webkit-scrollbar-thumb { background: var(--line-strong); }
+
+/* ── Muted / label text ───────────────────────────────────── */
+.txt-muted  { color: var(--muted); }
+.txt-dim    { color: var(--dim); }
+.txt-right  { text-align: right; }
+.txt-mono   { font-family: var(--font); }
+
+/* ── Modal overlay ────────────────────────────────────────── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--bg-soft);
+  border: 1px solid var(--line-strong);
+  padding: 1.5rem;
+  min-width: 340px;
+  max-width: 480px;
+  width: 100%;
+  animation: riseInSteps .22s steps(8, end) both;
+}
+.modal-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  letter-spacing: .05em;
+}
+.modal-close {
+  float: right;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--font);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+}
+.modal-close:hover { color: var(--fg); }
+
+/* ── Discord gate ─────────────────────────────────────────── */
+.discord-btn {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid #5865f2;
+  color: #5865f2;
+  font-family: var(--font);
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .1s, color .1s;
+}
+.discord-btn:hover { background: #5865f2; color: #fff; }
+
+/* ── Tag / badge ──────────────────────────────────────────── */
+.tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--line-strong);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+/* ── Stagger animation hooks (set by JS) ─────────────────── */
+.anim-in {
+  opacity: 0;
+  animation: riseInSteps .35s steps(12, end) forwards;
+  animation-delay: calc(var(--stagger, 0) * 38ms);
+}
+
+/* Keep low-motion users comfortable */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

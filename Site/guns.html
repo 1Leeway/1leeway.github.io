@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>guns profile - 1leeway</title>
+  <link rel="stylesheet" href="../Sources/styles.css" />
+  <style>
+    :root {
+      --bg: #000;
+      --bg-soft: #000;
+      --fg: #fff;
+      --muted: #fff;
+      --dim: #fff;
+      --line: #fff;
+      --line-strong: #fff;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+    }
+
+    .scene {
+      position: relative;
+      width: 100vw;
+      height: 100dvh;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      isolation: isolate;
+      padding: 1rem 1rem 150px;
+    }
+
+    .media-bg,
+    .media-bg video,
+    .media-bg img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .media-bg {
+      z-index: -3;
+      background: #000;
+    }
+
+    .media-bg video,
+    .media-bg img {
+      object-fit: cover;
+      filter: grayscale(1) contrast(1.15) brightness(0.5);
+      display: none;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.07), transparent 35%),
+        radial-gradient(circle at 80% 65%, rgba(255,255,255,0.05), transparent 30%),
+        linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.72));
+    }
+
+    .grain {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.15;
+      background-image:
+        radial-gradient(circle at 10% 20%, #fff 0.6px, transparent 0.7px),
+        radial-gradient(circle at 80% 60%, #fff 0.6px, transparent 0.7px),
+        radial-gradient(circle at 30% 80%, #fff 0.6px, transparent 0.7px);
+      background-size: 3px 3px;
+      mix-blend-mode: soft-light;
+    }
+
+    .profile-shell {
+      width: min(700px, 92vw);
+      border: 1px solid #fff;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(3px);
+      padding: 1.2rem 1rem 1rem;
+      text-align: center;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.12) inset;
+    }
+
+    .ascii-head {
+      font-size: clamp(7px, 1.5vw, 10px);
+      line-height: 1.15;
+      color: #fff;
+      white-space: pre;
+      margin-bottom: 1rem;
+      opacity: 0.9;
+      user-select: none;
+    }
+
+    .profile-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 112px;
+      height: 112px;
+      border: 1px solid #fff;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #000;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(1) contrast(1.1);
+    }
+
+    .avatar-deco {
+      position: absolute;
+      inset: -8px;
+      width: calc(100% + 16px);
+      height: calc(100% + 16px);
+      object-fit: contain;
+      pointer-events: none;
+      display: none;
+    }
+
+    .username {
+      font-size: clamp(20px, 3vw, 28px);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      line-height: 1.1;
+    }
+
+    .discord-line {
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      opacity: 0.95;
+    }
+
+    .discord-deco {
+      font-size: 11px;
+      line-height: 1.5;
+      opacity: 0.95;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .badges {
+      margin-top: 0.45rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .badge {
+      border: 1px solid #fff;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.75);
+      padding: 2px 8px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .badge:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .links {
+      margin-top: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+
+    .social-link {
+      border: 1px solid #fff;
+      color: #fff;
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      padding: 4px 10px;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .social-link:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .music-row {
+      margin-top: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .music-btn {
+      border: 1px solid #fff;
+      background: transparent;
+      color: #fff;
+      font-family: inherit;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .music-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .music-name {
+      font-size: 11px;
+      opacity: 0.95;
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .corner-home {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 20;
+      border: 1px solid #fff;
+      color: #fff;
+      text-decoration: none;
+      font-size: 11px;
+      padding: 3px 8px;
+      background: rgba(0,0,0,0.7);
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .corner-home:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .bottom-zones {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 10px;
+      width: min(1080px, 96vw);
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.5rem;
+      z-index: 18;
+    }
+
+    .zone-card {
+      border: 1px solid #fff;
+      background: rgba(0,0,0,0.78);
+      min-height: 78px;
+      padding: 0.42rem 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .zone-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: #cfcfcf;
+    }
+
+    .zone-row {
+      display: flex;
+      align-items: center;
+      gap: 0.36rem;
+      flex-wrap: wrap;
+    }
+
+    .zone-row-compact {
+      gap: 0.25rem;
+    }
+
+    .zone-btn {
+      border: 1px solid #fff;
+      background: transparent;
+      color: #fff;
+      font-family: inherit;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.12s, box-shadow 0.12s;
+      white-space: nowrap;
+    }
+
+    .zone-btn:hover,
+    .zone-btn:focus-visible {
+      border-color: #d7d7d7;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22);
+      outline: none;
+    }
+
+    .zone-btn[disabled] {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .zone-link-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .zone-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #cfcfcf;
+      width: 22px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .zone-slider {
+      width: 100px;
+      accent-color: #d9d9d9;
+    }
+
+    .zone-time {
+      font-size: 10px;
+      color: #cfcfcf;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .zone-note {
+      font-size: 10px;
+      color: #b8b8b8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 900px) {
+      .scene {
+        padding-bottom: 196px;
+      }
+
+      .bottom-zones {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .bottom-zones .zone-card:last-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .profile-shell {
+        width: min(94vw, 620px);
+        padding: 1rem 0.8rem 0.85rem;
+      }
+
+      .ascii-head {
+        display: none;
+      }
+
+      .discord-deco {
+        font-size: 10px;
+      }
+
+      .social-link {
+        font-size: 11px;
+      }
+
+      .zone-card {
+        min-height: 72px;
+      }
+
+      .zone-slider {
+        width: 82px;
+      }
+
+      .zone-note {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="corner-home" href="../index.html">&lt; home</a>
+
+  <main class="scene" aria-label="Profil 1leeway">
+    <div class="media-bg" aria-hidden="true">
+      <video id="bgVideo" autoplay muted loop playsinline preload="auto"></video>
+      <img id="bgImage" alt="background" />
+    </div>
+    <div class="overlay" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <section class="profile-shell">
+      <pre class="ascii-head">  _____ _      ______ _______          __     __
+ |_   _| |    |  ____|_   _\ \        / /\   / /
+   | | | |    | |__    | |  \ \  /\  / /  \_/ /
+   | | | |    |  __|   | |   \ \/  \/ /\   _  /
+  _| |_| |____| |____ _| |_   \  /\  /  | | \ \
+ |_____|______|______|_____|   \/  \/   |_|  \_\</pre>
+
+      <div class="profile-center">
+        <div class="avatar-wrap">
+          <img id="profileAvatar" class="avatar" src="" alt="avatar discord" />
+          <img id="avatarDeco" class="avatar-deco" src="" alt="avatar decoration" />
+        </div>
+
+        <h1 class="username" id="profileName">1leeway</h1>
+        <p class="discord-line" id="discordTag">@1leeway</p>
+        <p class="discord-deco" id="discordDecor">discord nitro style profile • custom theme • terminal identity</p>
+
+        <div class="badges" id="badgeList"></div>
+        <div class="links" id="socialList"></div>
+
+        <div class="music-row">
+          <button class="music-btn" id="musicBtn" type="button">play music</button>
+          <span class="music-name" id="musicName">no track</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="bottom-zones" aria-label="zones utilitaires">
+    <article class="zone-card">
+      <div class="zone-title">media</div>
+      <div class="zone-row">
+        <button class="zone-btn" id="bgShuffleBtn" type="button">shuffle bg</button>
+        <button class="zone-btn" id="grainToggleBtn" type="button">grain:on</button>
+      </div>
+      <div class="zone-note" id="bgStatus">background loaded</div>
+    </article>
+
+    <article class="zone-card">
+      <div class="zone-title">audio</div>
+      <div class="zone-row">
+        <button class="zone-btn" id="musicMiniToggleBtn" type="button">play</button>
+        <button class="zone-btn" id="musicMuteBtn" type="button">mute</button>
+      </div>
+      <div class="zone-row zone-row-compact">
+        <label class="zone-label" for="musicVolume">vol</label>
+        <input id="musicVolume" class="zone-slider" type="range" min="0" max="100" value="45" />
+        <span class="zone-time" id="musicTime">00:00 / --:--</span>
+      </div>
+    </article>
+
+    <article class="zone-card">
+      <div class="zone-title">quick actions</div>
+      <div class="zone-row">
+        <button class="zone-btn" id="copyTagBtn" type="button">copy @</button>
+        <a class="zone-btn zone-link-btn" id="quickDiscord" href="#" target="_blank" rel="noopener">discord</a>
+        <a class="zone-btn zone-link-btn" id="quickSpotify" href="#" target="_blank" rel="noopener">spotify</a>
+      </div>
+      <div class="zone-note" id="actionStatus">ready</div>
+    </article>
+  </section>
+
+  <audio id="bgMusic" loop preload="auto"></audio>
+
+  <script src="../Sources/scripts.js"></script>
+  <script>
+    const PROFILE = {
+      name: "1leeway",
+      discordTag: "@1leeway",
+      discordDecor: "terminal ui enjoyer • shooter • builder",
+      avatarUrl: "https://cdn.discordapp.com/embed/avatars/0.png",
+      avatarDecorationUrl: "",
+
+      background: {
+        type: "image",
+        src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80"
+      },
+
+      backgroundPool: [
+        { type: "image", src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80" },
+        { type: "image", src: "https://images.unsplash.com/photo-1511884642898-4c92249e20b6?auto=format&fit=crop&w=1600&q=80" },
+        { type: "image", src: "https://images.unsplash.com/photo-1473973266408-ed4e226a3d87?auto=format&fit=crop&w=1600&q=80" }
+      ],
+
+      music: {
+        src: "",
+        title: "your-track.mp3"
+      },
+
+      badges: [
+        { label: "owner" },
+        { label: "nitro" },
+        { label: "dev" },
+        { label: "guns" }
+      ],
+
+      links: [
+        { label: "discord", url: "https://discord.gg/1leeway" },
+        { label: "spotify", url: "https://open.spotify.com/" },
+        { label: "github", url: "https://github.com/1leeway" },
+        { label: "youtube", url: "https://youtube.com/" }
+      ]
+    };
+
+    function setupProfile() {
+      const nameEl = document.getElementById("profileName");
+      const tagEl = document.getElementById("discordTag");
+      const decorEl = document.getElementById("discordDecor");
+      const avatarEl = document.getElementById("profileAvatar");
+      const decoEl = document.getElementById("avatarDeco");
+      const badgeList = document.getElementById("badgeList");
+      const socialList = document.getElementById("socialList");
+      const musicName = document.getElementById("musicName");
+
+      nameEl.textContent = PROFILE.name || "1leeway";
+      tagEl.textContent = PROFILE.discordTag || "@1leeway";
+      decorEl.textContent = PROFILE.discordDecor || "";
+      avatarEl.src = PROFILE.avatarUrl || "https://cdn.discordapp.com/embed/avatars/0.png";
+
+      if (PROFILE.avatarDecorationUrl) {
+        decoEl.src = PROFILE.avatarDecorationUrl;
+        decoEl.style.display = "block";
+      }
+
+      badgeList.innerHTML = (PROFILE.badges || [])
+        .map((b) => `<span class="badge">${b.label}</span>`)
+        .join("");
+
+      socialList.innerHTML = (PROFILE.links || [])
+        .map((l) => `<a class="social-link" href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`)
+        .join("");
+
+      musicName.textContent = PROFILE.music && PROFILE.music.title ? PROFILE.music.title : "no track";
+    }
+
+    function setupBackground() {
+      const bgVideo = document.getElementById("bgVideo");
+      const bgImage = document.getElementById("bgImage");
+      const bgStatus = document.getElementById("bgStatus");
+      const shuffleBtn = document.getElementById("bgShuffleBtn");
+      const grainToggleBtn = document.getElementById("grainToggleBtn");
+      const grain = document.querySelector(".grain");
+      const pool = (PROFILE.backgroundPool && PROFILE.backgroundPool.length
+        ? PROFILE.backgroundPool
+        : [PROFILE.background]).filter((b) => b && b.src);
+
+      let bgIndex = 0;
+      let grainOn = true;
+
+      function applyBackground(item) {
+        if (!item || !item.src) {
+          if (bgStatus) bgStatus.textContent = "no background";
+          return;
+        }
+
+        bgVideo.pause();
+        bgVideo.removeAttribute("src");
+        bgVideo.style.display = "none";
+        bgImage.style.display = "none";
+
+        if (item.type === "video") {
+          bgVideo.src = item.src;
+          bgVideo.style.display = "block";
+          bgVideo.play().catch(() => {});
+        } else {
+          bgImage.src = item.src;
+          bgImage.style.display = "block";
+        }
+
+        if (bgStatus) {
+          bgStatus.textContent = `${item.type || "image"} ${bgIndex + 1}/${pool.length}`;
+        }
+      }
+
+      applyBackground(pool[bgIndex]);
+
+      if (shuffleBtn) {
+        shuffleBtn.addEventListener("click", () => {
+          if (pool.length <= 1) return;
+          bgIndex = (bgIndex + 1) % pool.length;
+          applyBackground(pool[bgIndex]);
+        });
+      }
+
+      if (grainToggleBtn && grain) {
+        grainToggleBtn.addEventListener("click", () => {
+          grainOn = !grainOn;
+          grain.style.opacity = grainOn ? "0.15" : "0";
+          grainToggleBtn.textContent = grainOn ? "grain:on" : "grain:off";
+        });
+      }
+    }
+
+    function setupMusic() {
+      const audio = document.getElementById("bgMusic");
+      const btn = document.getElementById("musicBtn");
+      const miniToggleBtn = document.getElementById("musicMiniToggleBtn");
+      const muteBtn = document.getElementById("musicMuteBtn");
+      const volumeSlider = document.getElementById("musicVolume");
+      const timeEl = document.getElementById("musicTime");
+
+      let playing = false;
+
+      function formatTime(seconds) {
+        if (!Number.isFinite(seconds) || seconds < 0) return "--:--";
+        const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+        const m = Math.floor(seconds / 60).toString().padStart(2, "0");
+        return `${m}:${s}`;
+      }
+
+      function setPlayLabels() {
+        const label = playing ? "pause" : "play";
+        btn.textContent = playing ? "pause music" : "play music";
+        if (miniToggleBtn) miniToggleBtn.textContent = label;
+      }
+
+      function setDisabledUI(message) {
+        btn.textContent = message;
+        btn.disabled = true;
+        btn.style.opacity = "0.5";
+        btn.style.cursor = "not-allowed";
+        if (miniToggleBtn) miniToggleBtn.disabled = true;
+        if (muteBtn) muteBtn.disabled = true;
+        if (volumeSlider) volumeSlider.disabled = true;
+        if (timeEl) timeEl.textContent = "--:-- / --:--";
+      }
+
+      if (!PROFILE.music || !PROFILE.music.src) {
+        setDisabledUI("no music");
+        return;
+      }
+
+      audio.src = PROFILE.music.src;
+      audio.volume = 0.45;
+      if (volumeSlider) volumeSlider.value = "45";
+
+      function updateTimer() {
+        if (!timeEl) return;
+        timeEl.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+      }
+
+      async function togglePlay() {
+        try {
+          if (!playing) {
+            await audio.play();
+            playing = true;
+          } else {
+            audio.pause();
+            playing = false;
+          }
+          setPlayLabels();
+          updateTimer();
+        } catch {
+          if (miniToggleBtn) miniToggleBtn.textContent = "retry";
+          btn.textContent = "click again";
+        }
+      }
+
+      btn.addEventListener("click", togglePlay);
+      if (miniToggleBtn) miniToggleBtn.addEventListener("click", togglePlay);
+
+      if (muteBtn) {
+        muteBtn.addEventListener("click", () => {
+          audio.muted = !audio.muted;
+          muteBtn.textContent = audio.muted ? "unmute" : "mute";
+        });
+      }
+
+      if (volumeSlider) {
+        volumeSlider.addEventListener("input", () => {
+          audio.volume = Math.max(0, Math.min(1, Number(volumeSlider.value) / 100));
+          if (audio.volume === 0) audio.muted = true;
+          else if (audio.muted) audio.muted = false;
+          if (muteBtn) muteBtn.textContent = audio.muted ? "unmute" : "mute";
+        });
+      }
+
+      audio.addEventListener("timeupdate", updateTimer);
+      audio.addEventListener("loadedmetadata", updateTimer);
+      audio.addEventListener("ended", () => {
+        playing = false;
+        setPlayLabels();
+      });
+
+      setPlayLabels();
+      updateTimer();
+    }
+
+    function setupQuickActions() {
+      const copyBtn = document.getElementById("copyTagBtn");
+      const actionStatus = document.getElementById("actionStatus");
+      const quickDiscord = document.getElementById("quickDiscord");
+      const quickSpotify = document.getElementById("quickSpotify");
+
+      function findLink(label) {
+        const item = (PROFILE.links || []).find((l) =>
+          String(l.label || "").toLowerCase() === label
+        );
+        return item ? item.url : null;
+      }
+
+      function setQuickHref(anchor, url) {
+        if (!anchor) return;
+        if (url) {
+          anchor.href = url;
+          anchor.removeAttribute("aria-disabled");
+          anchor.style.opacity = "1";
+          anchor.style.pointerEvents = "auto";
+        } else {
+          anchor.href = "#";
+          anchor.setAttribute("aria-disabled", "true");
+          anchor.style.opacity = "0.45";
+          anchor.style.pointerEvents = "none";
+        }
+      }
+
+      setQuickHref(quickDiscord, findLink("discord"));
+      setQuickHref(quickSpotify, findLink("spotify"));
+
+      if (!copyBtn) return;
+
+      copyBtn.addEventListener("click", async () => {
+        const txt = PROFILE.discordTag || "@1leeway";
+        try {
+          await navigator.clipboard.writeText(txt);
+          if (actionStatus) actionStatus.textContent = `copied ${txt}`;
+        } catch {
+          if (actionStatus) actionStatus.textContent = "clipboard blocked";
+        }
+      });
+    }
+
+    setupProfile();
+    setupBackground();
+    setupMusic();
+    setupQuickActions();
+  </script>
+</body>
+</html>

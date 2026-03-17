@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>portfolio — 1leeway</title>
+  <link rel="stylesheet" href="../Sources/styles.css" />
+  <style>
+    /* ── portfolio layout: 3 columns no-scroll ── */
+    .pf-main {
+      display: grid;
+      grid-template-columns: 220px 1fr 220px;
+      gap: 1px;
+      background: var(--line);
+      width: 100%;
+      height: 100%;
+    }
+    .pf-main > * { background: var(--bg); overflow: hidden; }
+
+    /* ── Left: identity ── */
+    .id-panel {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--line-strong);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--line-strong) transparent;
+    }
+    .id-block {
+      padding: 1rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .id-handle { font-size: 15px; font-weight: 700; }
+    .id-role   { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .id-bio    { font-size: 11px; color: var(--muted); line-height: 1.75; margin-top: .5rem; }
+
+    .id-section-title {
+      padding: .5rem 1rem .25rem;
+      font-size: 10px;
+      color: var(--dim);
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    .skill-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 3px 1rem;
+      font-size: 11px;
+      gap: .5rem;
+    }
+    .skill-name { color: var(--muted); }
+    .skill-bar {
+      flex: 1;
+      height: 3px;
+      background: var(--line);
+      position: relative;
+      overflow: hidden;
+    }
+    .skill-bar::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      background: var(--fg);
+      width: var(--lvl, 0%);
+    }
+    .skill-pct { font-size: 10px; color: var(--dim); width: 28px; text-align: right; }
+
+    .contact-line {
+      padding: 4px 1rem;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .contact-line a { color: var(--muted); text-decoration: none; }
+    .contact-line a:hover { color: var(--fg); }
+    .contact-icon { width: 14px; color: var(--dim); text-align: center; }
+
+    /* ── Center: projects ── */
+    .proj-panel {
+      display: flex;
+      flex-direction: column;
+    }
+    .proj-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .5rem .75rem;
+      border-bottom: 1px solid var(--line-strong);
+      flex-shrink: 0;
+      gap: .5rem;
+    }
+    .proj-toolbar-title { font-size: 11px; font-weight: 700; letter-spacing: .05em; }
+    .proj-filters { display: flex; gap: .3rem; }
+    .proj-chip {
+      padding: 2px 7px;
+      border: 1px solid var(--line);
+      font-size: 10px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: var(--font);
+      background: transparent;
+      transition: color .1s, border-color .1s;
+    }
+    .proj-chip:hover,
+    .proj-chip.active { color: var(--fg); border-color: var(--line-strong); }
+
+    .proj-list {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--line-strong) transparent;
+      padding: .5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--line);
+    }
+
+    .proj-card {
+      background: var(--bg);
+      padding: .75rem;
+      display: flex;
+      flex-direction: column;
+      gap: .35rem;
+      cursor: pointer;
+      transition: background .1s;
+    }
+    .proj-card:hover { background: var(--bg-soft); }
+    .proj-card.selected { outline: 1px solid var(--line-strong); outline-offset: -1px; }
+    .proj-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: .5rem;
+    }
+    .proj-name { font-size: 13px; font-weight: 700; }
+    .proj-lang {
+      font-size: 10px;
+      padding: 1px 5px;
+      border: 1px solid var(--line-strong);
+      color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .proj-desc { font-size: 11px; color: var(--muted); line-height: 1.65; }
+    .proj-card-bottom {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      flex-wrap: wrap;
+    }
+    .proj-tag  { font-size: 10px; color: var(--dim); }
+    .proj-link { font-size: 10px; color: var(--dim); text-decoration: none; margin-left: auto; }
+    .proj-link:hover { color: var(--fg); }
+
+    /* ── Right: detail / stack ── */
+    .detail-panel {
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--line-strong);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--line-strong) transparent;
+    }
+    .detail-placeholder {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--dim);
+    }
+    .detail-content { padding: 1rem; display: flex; flex-direction: column; gap: .6rem; }
+    .detail-name { font-size: 14px; font-weight: 700; }
+    .detail-desc { font-size: 12px; color: var(--muted); line-height: 1.7; }
+    .detail-meta-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .4rem;
+    }
+    .dm-item { font-size: 11px; }
+    .dm-item .dmk { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; display: block; }
+    .dm-item .dmv { color: var(--fg); }
+    .detail-stack-title {
+      font-size: 10px;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-top: .3rem;
+    }
+    .detail-stack { display: flex; flex-direction: column; gap: 2px; }
+    .ds-line { font-size: 11px; color: var(--muted); padding: 2px 0; border-bottom: 1px solid var(--line); }
+    .detail-actions { display: flex; gap: .4rem; margin-top: .25rem; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ── Topbar ── -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <a class="site-title" href="../index.html">1leeway<span>.github.io</span></a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="../index.html"       data-page="index.html">~</a></li>
+          <li><a href="portfolio.html"      data-page="portfolio.html">portfolio</a></li>
+          <li><a href="guns.html"           data-page="guns.html">guns</a></li>
+          <li><a href="ressources.html"     data-page="ressources.html">ressources</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <span class="clock txt-dim" id="clock">--:--:--</span>
+    </div>
+  </header>
+
+  <!-- ── Main ── -->
+  <main class="main">
+    <div class="pf-main">
+
+      <!-- ── Left: identity ── -->
+      <aside class="id-panel">
+        <div class="id-block">
+          <div class="id-handle">1leeway</div>
+          <div class="id-role">dev &amp; bidouilleur</div>
+          <p class="id-bio">
+            Je construis des outils minimalistes,<br>
+            des sites TUI, et j'automatise tout ce qui peut l'être.
+          </p>
+        </div>
+
+        <div class="id-section-title">Stack</div>
+        <!-- skill bars — set --lvl to % -->
+        <div class="skill-line">
+          <span class="skill-name">JavaScript</span>
+          <div class="skill-bar" style="--lvl:85%"></div>
+          <span class="skill-pct">85%</span>
+        </div>
+        <div class="skill-line">
+          <span class="skill-name">HTML / CSS</span>
+          <div class="skill-bar" style="--lvl:90%"></div>
+          <span class="skill-pct">90%</span>
+        </div>
+        <div class="skill-line">
+          <span class="skill-name">Python</span>
+          <div class="skill-bar" style="--lvl:70%"></div>
+          <span class="skill-pct">70%</span>
+        </div>
+        <div class="skill-line">
+          <span class="skill-name">Shell / Bash</span>
+          <div class="skill-bar" style="--lvl:65%"></div>
+          <span class="skill-pct">65%</span>
+        </div>
+        <div class="skill-line">
+          <span class="skill-name">Git</span>
+          <div class="skill-bar" style="--lvl:80%"></div>
+          <span class="skill-pct">80%</span>
+        </div>
+
+        <div class="id-section-title" style="margin-top:.5rem;">Contact</div>
+        <div class="contact-line"><span class="contact-icon">⌐</span><a href="https://github.com/1leeway" target="_blank" rel="noopener">github.com/1leeway</a></div>
+        <div class="contact-line"><span class="contact-icon">@</span><a href="mailto:contact@1leeway.dev">contact@1leeway.dev</a></div>
+        <div class="contact-line"><span class="contact-icon">◈</span><a href="guns.html">guns page</a></div>
+        <div class="contact-line"><span class="contact-icon">⊞</span><a href="ressources.html">ressources</a></div>
+      </aside>
+
+      <!-- ── Center: project list ── -->
+      <div class="proj-panel">
+        <div class="proj-toolbar">
+          <span class="proj-toolbar-title">PROJETS</span>
+          <div class="proj-filters">
+            <button class="proj-chip active" data-pfilter="all">TOUT</button>
+            <button class="proj-chip" data-pfilter="web">WEB</button>
+            <button class="proj-chip" data-pfilter="tool">TOOLS</button>
+            <button class="proj-chip" data-pfilter="misc">MISC</button>
+          </div>
+        </div>
+        <div class="proj-list" id="projList">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+
+      <!-- ── Right: detail ── -->
+      <div class="detail-panel" id="detailPanel">
+        <div class="detail-placeholder" id="detailPlaceholder">← sélectionne un projet</div>
+        <div class="detail-content" id="detailContent" style="display:none;"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Statusbar ── -->
+  <footer class="statusbar">
+    <div class="statusbar-left">
+      <span>root@1leeway:~/portfolio$</span>
+      <span class="txt-dim" id="projCount">0 projets</span>
+    </div>
+    <div class="statusbar-right">© <span id="year"></span> 1leeway</div>
+  </footer>
+</div>
+
+<script src="../Sources/scripts.js"></script>
+<script>
+/* ── Project data ── */
+const PROJECTS = [
+  {
+    name: "1leeway.github.io",
+    lang: "HTML / CSS / JS",
+    type: "web",
+    desc: "Ce site — portfolio personnel TUI no-scroll. Architecture multi-pages statique, aucun framework.",
+    year: 2024,
+    stack: ["HTML5", "CSS3 vanilla", "JavaScript ES6+", "IBM Plex Mono", "GitHub Pages"],
+    status: "live",
+    url: "https://1leeway.github.io",
+    repo: "https://github.com/1leeway/1leeway.github.io",
+  },
+  {
+    name: "guns-tracker",
+    lang: "JavaScript",
+    type: "tool",
+    desc: "Tracker d'inventaire personnel pour armes. Filtres, stats, modal détail. Données locales JSON.",
+    year: 2024,
+    stack: ["Vanilla JS", "LocalStorage", "TUI CSS"],
+    status: "wip",
+    url: null,
+    repo: "https://github.com/1leeway",
+  },
+  {
+    name: "file-cloud",
+    lang: "HTML / CSS / JS",
+    type: "web",
+    desc: "Partage de fichiers statique avec bannière, description, et gate Discord pour download.",
+    year: 2024,
+    stack: ["HTML5", "CSS3", "JavaScript", "Discord OAuth"],
+    status: "wip",
+    url: "ressources.html",
+    repo: "https://github.com/1leeway",
+  },
+  {
+    name: "tui-components",
+    lang: "CSS / JS",
+    type: "misc",
+    desc: "Bibliothèque perso de composants TUI réutilisables : box, panels, modals, statusbar, topbar.",
+    year: 2024,
+    stack: ["CSS custom properties", "Vanilla JS", "IBM Plex Mono"],
+    status: "wip",
+    url: null,
+    repo: "https://github.com/1leeway",
+  },
+];
+
+let activePFilter = 'all';
+let selectedIdx   = null;
+
+const statusLabel = { live: 'LIVE', wip: 'WIP', archived: 'ARCH' };
+
+function renderProjects() {
+  const list = PROJECTS.filter(p => activePFilter === 'all' || p.type === activePFilter);
+  document.getElementById('projCount').textContent = list.length + ' projet' + (list.length > 1 ? 's' : '');
+  document.getElementById('projList').innerHTML = list.map(p => {
+    const idx = PROJECTS.indexOf(p);
+    return `
+      <div class="proj-card${selectedIdx === idx ? ' selected' : ''}" data-idx="${idx}" tabindex="0" role="button" aria-label="${p.name}">
+        <div class="proj-card-top">
+          <span class="proj-name">${p.name}</span>
+          <span class="proj-lang">${p.lang}</span>
+        </div>
+        <div class="proj-desc">${p.desc}</div>
+        <div class="proj-card-bottom">
+          <span class="proj-tag">${p.year}</span>
+          <span class="proj-tag">${statusLabel[p.status] || p.status}</span>
+          ${p.url ? `<a class="proj-link" href="${p.url}" target="${p.url.startsWith('http') ? '_blank' : '_self'}" rel="noopener" onclick="event.stopPropagation()">↗ voir</a>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.querySelectorAll('.proj-card').forEach(card => {
+    card.addEventListener('click',   () => selectProject(parseInt(card.dataset.idx)));
+    card.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') selectProject(parseInt(card.dataset.idx)); });
+  });
+}
+
+function selectProject(idx) {
+  selectedIdx = idx;
+  const p = PROJECTS[idx];
+  document.getElementById('detailPlaceholder').style.display = 'none';
+  const dc = document.getElementById('detailContent');
+  dc.style.display = 'flex';
+  dc.innerHTML = `
+    <div class="detail-name">${p.name}</div>
+    <div class="detail-desc">${p.desc}</div>
+    <div class="detail-meta-row">
+      <div class="dm-item"><span class="dmk">Langage</span><span class="dmv">${p.lang}</span></div>
+      <div class="dm-item"><span class="dmk">Type</span><span class="dmv">${p.type}</span></div>
+      <div class="dm-item"><span class="dmk">Année</span><span class="dmv">${p.year}</span></div>
+      <div class="dm-item"><span class="dmk">Statut</span><span class="dmv">${statusLabel[p.status] || p.status}</span></div>
+    </div>
+    <div class="detail-stack-title">Stack</div>
+    <div class="detail-stack">${(p.stack || []).map(s => `<div class="ds-line">${s}</div>`).join('')}</div>
+    <div class="detail-actions">
+      ${p.url  ? `<a class="btn" href="${p.url}"  target="${p.url.startsWith('http')?'_blank':'_self'}"  rel="noopener">↗ voir le projet</a>` : ''}
+      ${p.repo ? `<a class="btn btn-muted" href="${p.repo}" target="_blank" rel="noopener">⌐ github</a>` : ''}
+    </div>
+  `;
+  renderProjects(); // refresh selected highlight
+}
+
+document.querySelectorAll('[data-pfilter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activePFilter = btn.dataset.pfilter;
+    document.querySelectorAll('[data-pfilter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProjects();
+  });
+});
+
+renderProjects();
+</script>
+</body>
+</html>

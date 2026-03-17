@@ -1,122 +1,897 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>1LEEWAY@ROOT</title>
-    <meta name="description" content="Hub terminal 1LEEWAY avec accès au portfolio et aux ressources." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="home.css" />
-  </head>
-  <body>
-    <div id="bootScreen" class="boot-screen" aria-hidden="false">
-      <div class="boot-inner">
-        <button id="bootSkip" class="boot-skip" type="button" aria-label="Passer le boot">
-          [ SKIP_BOOT ]
-        </button>
-        <pre class="boot-frame" aria-hidden="true">+------------------------------------------------+
-|              1LEEWAY@ROOT_BOOT                |
-+------------------------------------------------+</pre>
-        <div id="bootLines" class="boot-lines"></div>
-      </div>
-    </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1leeway</title>
+  <link rel="stylesheet" href="Sources/styles.css" />
+  <style>
+    :root {
+      --bg: #000;
+      --bg-soft: #050505;
+      --fg: #f5f5f5;
+      --muted: #bdbdbd;
+      --dim: #8a8a8a;
+      --line: #2a2a2a;
+      --line-strong: #7f7f7f;
+    }
 
-    <div class="ambient-noise" aria-hidden="true"></div>
-    <div class="terminal-grid" aria-hidden="true"></div>
-    <div class="terminal-halo" aria-hidden="true"></div>
-    <div class="scanlines" aria-hidden="true"></div>
+    html,
+    body {
+      background: #000;
+      color: var(--fg);
+      overflow: hidden;
+    }
 
-    <section class="floating-deck" aria-label="Widgets système flottants">
-      <article class="tui-window" data-window="routes" aria-label="Widget routes">
-        <header class="window-titlebar">
-          <span class="window-title">routes@root :: /srv/www</span>
-          <button class="window-close" type="button" data-window-close aria-label="Fermer routes">
-            [x]
-          </button>
-        </header>
-        <pre class="window-label">+---------------- ROUTE_MAP ----------------+</pre>
-        <div class="window-body">
-          <pre id="routesOutput" class="window-console">Loading route map...</pre>
-        </div>
-      </article>
+    .shell {
+      width: 100vw;
+      max-width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
 
-      <article class="tui-window" data-window="status" aria-label="Widget status">
-        <header class="window-titlebar">
-          <span class="window-title">status@root :: live.telemetry</span>
-          <button class="window-close" type="button" data-window-close aria-label="Fermer status">
-            [x]
-          </button>
-        </header>
-        <pre class="window-label">+---------------- LIVE_STATUS ---------------+</pre>
-        <div class="window-body">
-          <pre id="statusOutput" class="window-console">Collecting live status...</pre>
-        </div>
-      </article>
+    .topbar,
+    .statusbar {
+      padding-left: 0.8rem;
+      padding-right: 0.8rem;
+    }
 
-      <article class="tui-window" data-window="notes" aria-label="Widget notes">
-        <header class="window-titlebar">
-          <span class="window-title">notes@root :: quick.hints</span>
-          <button class="window-close" type="button" data-window-close aria-label="Fermer notes">
-            [x]
-          </button>
-        </header>
-        <pre class="window-label">+---------------- QUICK_NOTES ---------------+</pre>
-        <div class="window-body">
-          <pre id="notesOutput" class="window-console">Hydrating notes buffer...</pre>
-        </div>
-      </article>
+    .topbar {
+      border-bottom-color: var(--line-strong);
+    }
 
-      <button id="resetWidgets" class="reset-widgets" type="button">[ REOPEN_WIDGETS ]</button>
-    </section>
+    .statusbar {
+      border-top-color: var(--line-strong);
+    }
 
-    <main id="appShell" class="app-shell is-hidden">
-      <aside class="left-menu panel">
-        <pre class="menu-logo">+--------------------------+
-|      1LEEWAY@ROOT       |
-+--------------------------+</pre>
+    .home-main {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(320px, 1fr) minmax(360px, 1fr);
+      grid-template-rows: minmax(260px, 1fr) minmax(190px, .72fr);
+      gap: 0.8rem;
+      padding: 0.8rem;
+      background: #000;
+    }
 
-        <div class="menu-status menu-status-top">
-          <p id="clockTop" class="clock">[ --:--:-- ]</p>
-          <p id="statusLineTop" class="status-line">root@site:~$ boot --home</p>
-        </div>
+    .pane {
+      border: 1px solid var(--line-strong);
+      background: var(--bg-soft);
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
 
-        <nav class="menu-list" aria-label="Navigation principale">
-          <button class="menu-btn is-active" type="button" data-view="root">[ ROOT ]</button>
-          <button class="menu-btn" type="button" data-view="portfolio">[ PORTFOLIO ]</button>
-          <button class="menu-btn" type="button" data-view="ressources">[ RESSOURCES ]</button>
-          <button class="menu-btn" type="button" data-view="access">[ ACCESS ]</button>
-          <button class="menu-btn" type="button" data-view="contact">[ CONTACT ]</button>
+    .pane-head {
+      border-bottom: 1px solid var(--line-strong);
+      padding: 0.35rem 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .pane-body {
+      min-height: 0;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .pane-console .pane-body {
+      display: flex;
+      flex-direction: column;
+      padding: 0.75rem;
+      gap: 0.55rem;
+    }
+
+    .boot-stream {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .boot-line {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .prompt {
+      border-top: 1px solid var(--line);
+      padding-top: 0.45rem;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .prompt-prefix {
+      color: var(--muted);
+    }
+
+    .prompt-cmd {
+      color: var(--fg);
+    }
+
+    .caret {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: var(--fg);
+      vertical-align: -2px;
+      margin-left: 0.2rem;
+      animation: caretBlink 1s steps(1, end) infinite;
+    }
+
+    @keyframes caretBlink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    .pane-launch .pane-body {
+      display: flex;
+      flex-direction: column;
+      padding: 0.55rem;
+      gap: 0.45rem;
+    }
+
+    .launcher-link {
+      display: grid;
+      grid-template-columns: auto minmax(120px, 160px) 1fr auto;
+      align-items: center;
+      gap: 0.65rem;
+      border: 1px solid var(--line);
+      background: #030303;
+      color: var(--fg);
+      text-decoration: none;
+      padding: 0.65rem 0.7rem;
+      transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .launcher-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 1px;
+      background: var(--fg);
+      transition: width .22s ease;
+    }
+
+    .launcher-link:hover,
+    .launcher-link:focus-visible {
+      border-color: var(--line-strong);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .launcher-link:hover::after,
+    .launcher-link:focus-visible::after {
+      width: 100%;
+    }
+
+    .launch-num {
+      color: var(--dim);
+      font-size: 11px;
+      letter-spacing: .06em;
+      white-space: nowrap;
+    }
+
+    .launch-title {
+      font-size: 13px;
+      letter-spacing: .03em;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .launch-desc {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .launch-open {
+      font-size: 10px;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      white-space: nowrap;
+    }
+
+    .launch-foot {
+      margin-top: auto;
+      border-top: 1px solid var(--line);
+      padding-top: 0.45rem;
+      font-size: 11px;
+      color: var(--dim);
+    }
+
+    .pane-monitor {
+      grid-column: 1 / -1;
+    }
+
+    .pane-monitor .pane-body {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 0.8rem;
+      padding: 0.75rem;
+      min-height: 0;
+    }
+
+    .monitor-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
+      min-height: 0;
+    }
+
+    .monitor-card {
+      border: 1px solid var(--line);
+      background: #020202;
+      padding: 0.5rem 0.55rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.3rem;
+      min-height: 72px;
+    }
+
+    .monitor-card.interactive {
+      cursor: pointer;
+      transition: border-color .14s ease, box-shadow .14s ease, transform .14s ease;
+    }
+
+    .monitor-card.interactive:hover,
+    .monitor-card.interactive:focus-visible {
+      border-color: var(--line-strong);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.14);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .monitor-key {
+      font-size: 10px;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .monitor-val {
+      font-size: 15px;
+      letter-spacing: .02em;
+      color: var(--fg);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .monitor-tip {
+      font-size: 9px;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      white-space: nowrap;
+    }
+
+    .mini-ascii {
+      border: 1px solid var(--line);
+      background: #020202;
+      padding: 0.6rem;
+      font-size: clamp(7px, .9vw, 10px);
+      color: var(--muted);
+      line-height: 1.2;
+      white-space: pre;
+      overflow: hidden;
+    }
+
+    .utility-stack {
+      display: grid;
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
+      min-height: 0;
+    }
+
+    .utility-zone {
+      border: 1px solid var(--line);
+      background: #020202;
+      padding: 0.48rem 0.55rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      min-height: 0;
+    }
+
+    .uz-title {
+      font-size: 10px;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .uz-row {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .uz-btn {
+      border: 1px solid var(--line-strong);
+      background: transparent;
+      color: var(--fg);
+      font-family: inherit;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      text-decoration: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: box-shadow .12s ease, border-color .12s ease;
+    }
+
+    .uz-btn:hover,
+    .uz-btn:focus-visible {
+      border-color: var(--fg);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
+      outline: none;
+    }
+
+    .uz-label {
+      font-size: 10px;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .uz-slider {
+      width: 96px;
+      accent-color: #d8d8d8;
+    }
+
+    .uz-note {
+      margin-top: auto;
+      border-top: 1px solid var(--line);
+      padding-top: 0.25rem;
+      font-size: 10px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    body.fx-muted::before,
+    body.fx-muted::after {
+      display: none !important;
+    }
+
+    body.scan-soft::before {
+      opacity: .08;
+      animation: scanDrift .34s linear infinite, crtFlicker 12s steps(24, end) infinite;
+    }
+
+    body.contrast-boost .pane,
+    body.contrast-boost .monitor-card,
+    body.contrast-boost .utility-zone,
+    body.contrast-boost .launcher-link {
+      border-color: #bdbdbd;
+    }
+
+    .home-main .txt-dim,
+    .home-main .tile-meta {
+      color: var(--muted) !important;
+    }
+
+    @media (max-width: 980px) {
+      .home-main {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr .9fr;
+      }
+
+      .pane-monitor {
+        grid-column: auto;
+      }
+
+      .pane-monitor .pane-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .monitor-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .launcher-link {
+        grid-template-columns: auto 1fr auto;
+      }
+
+      .launch-desc {
+        display: none;
+      }
+
+      .utility-stack {
+        grid-template-rows: none;
+        grid-template-columns: 1fr;
+      }
+
+      .uz-slider {
+        width: 82px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="topbar-left">
+        <a class="site-title" href="index.html">1leeway<span>.github.io</span></a>
+        <nav>
+          <ul class="nav-links">
+            <li><a href="index.html" data-page="index.html">~</a></li>
+            <li><a href="Site/portfolio.html" data-page="portfolio.html">portfolio</a></li>
+            <li><a href="Site/guns.html" data-page="guns.html">guns</a></li>
+            <li><a href="Site/ressources.html" data-page="ressources.html">ressources</a></li>
+          </ul>
         </nav>
+      </div>
+      <div class="topbar-right">
+        <span class="clock txt-dim" id="clock">--:--:--</span>
+      </div>
+    </header>
 
-        <div class="menu-status">
-          <p id="clock" class="clock">[ --:--:-- ]</p>
-          <p id="statusLine" class="status-line">root@site:~$ cat /routes/root</p>
-        </div>
-      </aside>
+    <main class="main">
+      <div class="home-main">
+        <section class="pane pane-console">
+          <div class="pane-head">
+            <span>boot_console</span>
+            <span>node:online</span>
+          </div>
+          <div class="pane-body">
+            <div class="boot-stream" id="bootStream">
+              <div class="boot-line">[ok] session started</div>
+              <div class="boot-line">[ok] profile loaded: 1leeway</div>
+              <div class="boot-line">[ok] route map synced</div>
+              <div class="boot-line">[ok] modules ready</div>
+              <div class="boot-line">[ok] launcher exposed</div>
+              <div class="boot-line">[sys] awaiting command...</div>
+            </div>
+            <div class="prompt">
+              <span class="prompt-prefix">root@1leeway:~$</span>
+              <span class="prompt-cmd" id="promptCmd">open --menu</span><span class="caret"></span>
+            </div>
+          </div>
+        </section>
 
-      <section class="workspace panel" aria-live="polite">
-        <header class="workspace-head">
-          <pre id="viewTitle" class="view-title" aria-hidden="true"></pre>
-          <p id="viewSubtitle" class="view-subtitle"></p>
-        </header>
+        <section class="pane pane-launch">
+          <div class="pane-head">
+            <span>launcher</span>
+            <span>3 endpoints</span>
+          </div>
+          <div class="pane-body">
+            <a class="launcher-link" href="Site/portfolio.html">
+              <span class="launch-num">[01]</span>
+              <span class="launch-title">PORTFOLIO</span>
+              <span class="launch-desc">projets, stack, workflow et contact</span>
+              <span class="launch-open">open</span>
+            </a>
 
-        <pre id="viewAscii" class="view-ascii"></pre>
+            <a class="launcher-link" href="Site/guns.html">
+              <span class="launch-num">[02]</span>
+              <span class="launch-title">GUNS</span>
+              <span class="launch-desc">profil style guns.lol en version terminal UI</span>
+              <span class="launch-open">open</span>
+            </a>
 
-        <div id="viewMeta" class="view-meta"></div>
+            <a class="launcher-link" href="Site/ressources.html">
+              <span class="launch-num">[03]</span>
+              <span class="launch-title">RESSOURCES</span>
+              <span class="launch-desc">cloud perso, tuto et downloads protégés</span>
+              <span class="launch-open">open</span>
+            </a>
 
-        <div id="viewActions" class="action-row"></div>
+            <div class="launch-foot">tip: utilise tab + entree pour naviguer comme un terminal.</div>
+          </div>
+        </section>
 
-        <footer class="workspace-footer">
-          <p>[ 1LEEWAY@ROOT :: ONLINE :: <span id="year"></span> ]</p>
-        </footer>
-      </section>
+        <section class="pane pane-monitor">
+          <div class="pane-head">
+            <span>monitor</span>
+            <span>live</span>
+          </div>
+          <div class="pane-body">
+            <div class="monitor-grid">
+              <div class="monitor-card interactive" id="cardUptime" role="button" tabindex="0" aria-label="Reset uptime">
+                <span class="monitor-key">uptime</span>
+                <span class="monitor-val" id="uptime">0s</span>
+                <span class="monitor-tip">click reset</span>
+              </div>
+              <div class="monitor-card interactive" id="cardActiveZone" role="button" tabindex="0" aria-label="Open active zone">
+                <span class="monitor-key">active zone</span>
+                <span class="monitor-val" id="monitorActiveZone">index</span>
+                <span class="monitor-tip">hover links to preview</span>
+              </div>
+              <div class="monitor-card interactive" id="cardStatus" role="button" tabindex="0" aria-label="Run diagnostic">
+                <span class="monitor-key">status</span>
+                <span class="monitor-val" id="monitorStatus">ready</span>
+                <span class="monitor-tip">click diagnostic</span>
+              </div>
+              <div class="monitor-card interactive" id="cardLinks" role="button" tabindex="0" aria-label="Check links">
+                <span class="monitor-key">links</span>
+                <span class="monitor-val" id="monitorLinks">3 online</span>
+                <span class="monitor-tip">click check</span>
+              </div>
+              <div class="monitor-card interactive" id="cardTheme" role="button" tabindex="0" aria-label="Cycle theme">
+                <span class="monitor-key">theme</span>
+                <span class="monitor-val" id="monitorTheme">tui_bw</span>
+                <span class="monitor-tip">click cycle</span>
+              </div>
+              <div class="monitor-card interactive" id="cardBuild" role="button" tabindex="0" aria-label="Copy build info">
+                <span class="monitor-key">build</span>
+                <span class="monitor-val" id="monitorBuild">2026.03</span>
+                <span class="monitor-tip">click copy</span>
+              </div>
+            </div>
+
+            <div class="utility-stack">
+              <section class="utility-zone">
+                <div class="uz-title">quick actions</div>
+                <div class="uz-row">
+                  <button class="uz-btn" id="copySiteBtn" type="button">copy url</button>
+                  <button class="uz-btn" id="copyMailBtn" type="button">copy mail</button>
+                  <a class="uz-btn" href="Site/guns.html">open guns</a>
+                </div>
+                <div class="uz-note" id="quickNote">ready</div>
+              </section>
+
+              <section class="utility-zone">
+                <div class="uz-title">display</div>
+                <div class="uz-row">
+                  <button class="uz-btn" id="toggleFxBtn" type="button">fx:on</button>
+                  <button class="uz-btn" id="toggleScanBtn" type="button">scan:fast</button>
+                  <button class="uz-btn" id="toggleContrastBtn" type="button">contrast:base</button>
+                </div>
+                <div class="uz-note" id="displayNote">preset default</div>
+              </section>
+
+              <section class="utility-zone">
+                <div class="uz-title">session</div>
+                <div class="uz-row">
+                  <button class="uz-btn" id="cmdPauseBtn" type="button">cmd:run</button>
+                  <label class="uz-label" for="cmdSpeed">speed</label>
+                  <input class="uz-slider" type="range" id="cmdSpeed" min="900" max="5200" step="100" value="2400" />
+                </div>
+                <div class="uz-note" id="sessionNote">cycle 2400ms</div>
+              </section>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
 
-    <script src="home.js"></script>
-  </body>
+    <footer class="statusbar">
+      <div class="statusbar-left">
+        <span>root@1leeway:~$ index</span>
+        <span class="txt-dim" id="statusHint">ready</span>
+      </div>
+      <div class="statusbar-right">© <span id="year"></span> 1leeway</div>
+    </footer>
+  </div>
+
+  <script src="Sources/scripts.js"></script>
+  <script>
+    (() => {
+      const cmdEl = document.getElementById('promptCmd');
+      const uptimeEl = document.getElementById('uptime');
+      const hintEl = document.getElementById('statusHint');
+      const quickNoteEl = document.getElementById('quickNote');
+      const displayNoteEl = document.getElementById('displayNote');
+      const sessionNoteEl = document.getElementById('sessionNote');
+      const activeZoneEl = document.getElementById('monitorActiveZone');
+      const monitorStatusEl = document.getElementById('monitorStatus');
+      const monitorLinksEl = document.getElementById('monitorLinks');
+      const monitorThemeEl = document.getElementById('monitorTheme');
+      const monitorBuildEl = document.getElementById('monitorBuild');
+
+      const cardUptime = document.getElementById('cardUptime');
+      const cardActiveZone = document.getElementById('cardActiveZone');
+      const cardStatus = document.getElementById('cardStatus');
+      const cardLinks = document.getElementById('cardLinks');
+      const cardTheme = document.getElementById('cardTheme');
+      const cardBuild = document.getElementById('cardBuild');
+
+      const copySiteBtn = document.getElementById('copySiteBtn');
+      const copyMailBtn = document.getElementById('copyMailBtn');
+      const toggleFxBtn = document.getElementById('toggleFxBtn');
+      const toggleScanBtn = document.getElementById('toggleScanBtn');
+      const toggleContrastBtn = document.getElementById('toggleContrastBtn');
+      const cmdPauseBtn = document.getElementById('cmdPauseBtn');
+      const cmdSpeedInput = document.getElementById('cmdSpeed');
+      const launcherLinks = Array.from(document.querySelectorAll('.launcher-link'));
+
+      const BUILD_TAG = '2026.03';
+      const zoneToHref = {
+        index: 'index.html',
+        portfolio: 'Site/portfolio.html',
+        guns: 'Site/guns.html',
+        ressources: 'Site/ressources.html'
+      };
+
+      const cmds = [
+        'open --menu',
+        'show --zones',
+        'run --portfolio',
+        'check --resources',
+        'echo ready'
+      ];
+
+      let cmdIndex = 0;
+      let seconds = 0;
+      let cmdDelay = 2400;
+      let cmdPaused = false;
+      let cmdTimer;
+      let activeZone = 'index';
+
+      const state = {
+        fxOn: true,
+        scanSoft: false,
+        contrastBoost: false,
+      };
+
+      function updateUptime() {
+        if (seconds < 60) uptimeEl.textContent = seconds + 's';
+        else if (seconds < 3600) uptimeEl.textContent = Math.floor(seconds / 60) + 'm ' + (seconds % 60) + 's';
+        else uptimeEl.textContent = Math.floor(seconds / 3600) + 'h ' + Math.floor((seconds % 3600) / 60) + 'm';
+      }
+
+      function setMonitorStatus(msg) {
+        if (monitorStatusEl) monitorStatusEl.textContent = msg;
+      }
+
+      function setActiveZone(zone) {
+        activeZone = zone;
+        if (activeZoneEl) activeZoneEl.textContent = zone;
+      }
+
+      function setQuickNote(msg) {
+        if (quickNoteEl) quickNoteEl.textContent = msg;
+      }
+
+      function setDisplayNote() {
+        if (!displayNoteEl) return;
+        const fx = state.fxOn ? 'fx on' : 'fx off';
+        const scan = state.scanSoft ? 'scan soft' : 'scan fast';
+        const contrast = state.contrastBoost ? 'contrast boost' : 'contrast base';
+        displayNoteEl.textContent = `${fx} | ${scan} | ${contrast}`;
+
+        // Sync monitor "theme" card with current display state
+        if (monitorThemeEl) {
+          let themeLabel = 'custom';
+          if (state.fxOn && !state.scanSoft && !state.contrastBoost) themeLabel = 'tui_bw';
+          else if (state.fxOn && state.scanSoft && !state.contrastBoost) themeLabel = 'tui_soft';
+          else if (state.fxOn && !state.scanSoft && state.contrastBoost) themeLabel = 'tui_high';
+          else if (!state.fxOn) themeLabel = 'tui_raw';
+          monitorThemeEl.textContent = themeLabel;
+        }
+      }
+
+      function setSessionNote(msg) {
+        if (sessionNoteEl) sessionNoteEl.textContent = msg;
+      }
+
+      async function copyText(value, successLabel) {
+        try {
+          await navigator.clipboard.writeText(value);
+          setQuickNote(successLabel);
+        } catch {
+          setQuickNote('clipboard blocked');
+        }
+      }
+
+      async function checkLinks() {
+        const targets = ['Site/portfolio.html', 'Site/guns.html', 'Site/ressources.html'];
+        let online = 0;
+        let failed = 0;
+
+        setMonitorStatus('checking...');
+        await Promise.allSettled(
+          targets.map(async (t) => {
+            try {
+              const res = await fetch(t, { cache: 'no-store' });
+              if (res.ok) online += 1;
+              else failed += 1;
+            } catch {
+              failed += 1;
+            }
+          })
+        );
+
+        if (online === 0 && failed === targets.length) {
+          monitorLinksEl.textContent = `${targets.length} local`;
+          setMonitorStatus('local mode');
+          return;
+        }
+
+        monitorLinksEl.textContent = `${online}/${targets.length} online`;
+        setMonitorStatus(online === targets.length ? 'ready' : 'degraded');
+      }
+
+      function runDiagnostic() {
+        const fx = state.fxOn ? 'fx:on' : 'fx:off';
+        const cmd = cmdPaused ? 'cmd:paused' : 'cmd:run';
+        const links = monitorLinksEl ? monitorLinksEl.textContent : 'links:?';
+        setMonitorStatus(`${fx} ${cmd}`);
+        setQuickNote(`diag ${links}`);
+      }
+
+      function cycleThemePreset() {
+        const current = monitorThemeEl?.textContent || 'tui_bw';
+        const order = ['tui_bw', 'tui_soft', 'tui_high'];
+        const idx = order.indexOf(current);
+        const next = order[(idx + 1 + order.length) % order.length];
+
+        if (next === 'tui_bw') {
+          state.fxOn = true;
+          state.scanSoft = false;
+          state.contrastBoost = false;
+        } else if (next === 'tui_soft') {
+          state.fxOn = true;
+          state.scanSoft = true;
+          state.contrastBoost = false;
+        } else {
+          state.fxOn = true;
+          state.scanSoft = false;
+          state.contrastBoost = true;
+        }
+
+        document.body.classList.toggle('fx-muted', !state.fxOn);
+        document.body.classList.toggle('scan-soft', state.scanSoft);
+        document.body.classList.toggle('contrast-boost', state.contrastBoost);
+
+        if (toggleFxBtn) toggleFxBtn.textContent = state.fxOn ? 'fx:on' : 'fx:off';
+        if (toggleScanBtn) toggleScanBtn.textContent = state.scanSoft ? 'scan:soft' : 'scan:fast';
+        if (toggleContrastBtn) toggleContrastBtn.textContent = state.contrastBoost ? 'contrast:high' : 'contrast:base';
+
+        setDisplayNote();
+        setMonitorStatus('theme switched');
+      }
+
+      function bindCardAction(card, action) {
+        if (!card) return;
+        card.addEventListener('click', action);
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            action();
+          }
+        });
+      }
+
+      setInterval(() => {
+        seconds += 1;
+        updateUptime();
+      }, 1000);
+
+      function tickCommands() {
+        if (!cmdPaused) {
+          cmdIndex = (cmdIndex + 1) % cmds.length;
+          cmdEl.textContent = cmds[cmdIndex];
+          hintEl.textContent = cmds[cmdIndex].replace(' --', ':');
+        }
+        cmdTimer = setTimeout(tickCommands, cmdDelay);
+      }
+
+      copySiteBtn?.addEventListener('click', () => copyText(window.location.href, 'url copied'));
+      copyMailBtn?.addEventListener('click', () => copyText('contact@1leeway.dev', 'mail copied'));
+
+      toggleFxBtn?.addEventListener('click', () => {
+        state.fxOn = !state.fxOn;
+        document.body.classList.toggle('fx-muted', !state.fxOn);
+        toggleFxBtn.textContent = state.fxOn ? 'fx:on' : 'fx:off';
+        setDisplayNote();
+      });
+
+      toggleScanBtn?.addEventListener('click', () => {
+        state.scanSoft = !state.scanSoft;
+        document.body.classList.toggle('scan-soft', state.scanSoft);
+        toggleScanBtn.textContent = state.scanSoft ? 'scan:soft' : 'scan:fast';
+        setDisplayNote();
+      });
+
+      toggleContrastBtn?.addEventListener('click', () => {
+        state.contrastBoost = !state.contrastBoost;
+        document.body.classList.toggle('contrast-boost', state.contrastBoost);
+        toggleContrastBtn.textContent = state.contrastBoost ? 'contrast:high' : 'contrast:base';
+        setDisplayNote();
+      });
+
+      cmdPauseBtn?.addEventListener('click', () => {
+        cmdPaused = !cmdPaused;
+        cmdPauseBtn.textContent = cmdPaused ? 'cmd:pause' : 'cmd:run';
+        setSessionNote(cmdPaused ? `paused at ${cmdDelay}ms` : `cycle ${cmdDelay}ms`);
+      });
+
+      cmdSpeedInput?.addEventListener('input', () => {
+        cmdDelay = Number(cmdSpeedInput.value);
+        setSessionNote(cmdPaused ? `paused at ${cmdDelay}ms` : `cycle ${cmdDelay}ms`);
+      });
+
+      launcherLinks.forEach((link) => {
+        const href = link.getAttribute('href') || '';
+        const zone = href.includes('portfolio') ? 'portfolio'
+          : href.includes('guns') ? 'guns'
+          : href.includes('ressources') ? 'ressources'
+          : 'index';
+        link.addEventListener('mouseenter', () => setActiveZone(zone));
+        link.addEventListener('focus', () => setActiveZone(zone));
+        link.addEventListener('mouseleave', () => setActiveZone('index'));
+        link.addEventListener('blur', () => setActiveZone('index'));
+      });
+
+      bindCardAction(cardUptime, () => {
+        seconds = 0;
+        updateUptime();
+        setMonitorStatus('uptime reset');
+        setQuickNote('session timer reset');
+      });
+
+      bindCardAction(cardActiveZone, () => {
+        const target = zoneToHref[activeZone] || 'index.html';
+        if (target === 'index.html') {
+          setMonitorStatus('already in index');
+          return;
+        }
+        window.location.href = target;
+      });
+
+      bindCardAction(cardStatus, runDiagnostic);
+      bindCardAction(cardLinks, checkLinks);
+      bindCardAction(cardTheme, cycleThemePreset);
+      bindCardAction(cardBuild, async () => {
+        const meta = `build ${BUILD_TAG} | ${new Date().toISOString()}`;
+        await copyText(meta, 'build copied');
+        setMonitorStatus('build copied');
+      });
+
+      setDisplayNote();
+      setSessionNote('cycle 2400ms');
+      setActiveZone('index');
+      if (monitorBuildEl) monitorBuildEl.textContent = BUILD_TAG;
+      checkLinks();
+
+      cmdTimer = setTimeout(tickCommands, cmdDelay);
+
+      window.addEventListener('beforeunload', () => {
+        clearTimeout(cmdTimer);
+      });
+
+      setTimeout(() => {
+        cmdIndex = (cmdIndex + 1) % cmds.length;
+        cmdEl.textContent = cmds[cmdIndex];
+        hintEl.textContent = cmds[cmdIndex].replace(' --', ':');
+      }, 900);
+    })();
+  </script>
+</body>
 </html>
