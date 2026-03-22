@@ -1,500 +1,113 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ressources — 1leeway</title>
-  <link rel="stylesheet" href="../Sources/styles.css" />
-  <style>
-    /* ── ressources layout ── */
-    .res-main {
-      display: grid;
-      grid-template-columns: 200px 1fr;
-      gap: 1px;
-      background: var(--line);
-      width: 100%;
-      height: 100%;
-    }
-    .res-main > * { background: var(--bg); overflow: hidden; }
-
-    /* ── Left sidebar ── */
-    .res-sidebar {
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid var(--line-strong);
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: var(--line-strong) transparent;
-    }
-    .sidebar-block {
-      padding: .75rem;
-      border-bottom: 1px solid var(--line);
-    }
-    .sidebar-title {
-      font-size: 10px;
-      color: var(--dim);
-      text-transform: uppercase;
-      letter-spacing: .09em;
-      margin-bottom: .4rem;
-    }
-    .category-btn {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      padding: 4px 6px;
-      background: transparent;
-      border: 1px solid transparent;
-      color: var(--muted);
-      font-family: var(--font);
-      font-size: 12px;
-      cursor: pointer;
-      text-align: left;
-      transition: color .1s, border-color .1s;
-    }
-    .category-btn:hover,
-    .category-btn.active { color: var(--fg); border-color: var(--line-strong); }
-    .category-btn .cb-count { font-size: 10px; color: var(--dim); }
-
-    .upload-notice {
-      padding: .75rem;
-      font-size: 11px;
-      color: var(--dim);
-      line-height: 1.7;
-      border-bottom: 1px solid var(--line);
-    }
-    .upload-notice a { color: var(--muted); text-decoration: none; }
-    .upload-notice a:hover { color: var(--fg); }
-
-    /* ── Right: resource list ── */
-    .res-content {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .res-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: .5rem .75rem;
-      border-bottom: 1px solid var(--line-strong);
-      flex-shrink: 0;
-      gap: .5rem;
-    }
-    .res-toolbar-title { font-size: 11px; font-weight: 700; letter-spacing: .05em; }
-    .res-search {
-      padding: 3px 8px;
-      background: transparent;
-      border: 1px solid var(--line);
-      color: var(--fg);
-      font-family: var(--font);
-      font-size: 11px;
-      width: 180px;
-      outline: none;
-      transition: border-color .1s;
-    }
-    .res-search:focus { border-color: var(--line-strong); }
-    .res-search::placeholder { color: var(--dim); }
-
-    /* ── Resource cards grid ── */
-    .res-grid {
-      flex: 1;
-      overflow-y: auto;
-      padding: .75rem;
-      display: flex;
-      flex-direction: column;
-      gap: .75rem;
-      scrollbar-width: thin;
-      scrollbar-color: var(--line-strong) transparent;
-    }
-
-    /* ── Resource card ── */
-    .res-card {
-      border: 1px solid var(--line-strong);
-      background: var(--bg-soft);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .res-card-banner {
-      width: 100%;
-      /* fixed 680×240 ratio */
-      aspect-ratio: 680 / 240;
-      overflow: hidden;
-      background: var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      flex-shrink: 0;
-    }
-    .res-card-banner img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-      /* monochrome filter for TUI feel */
-      filter: grayscale(1) contrast(1.1);
-    }
-    .res-card-banner .banner-placeholder {
-      font-size: 10px;
-      color: var(--dim);
-      text-align: center;
-      padding: .5rem;
-    }
-    /* dimension indicator overlay */
-    .res-card-banner::after {
-      content: '680×240';
-      position: absolute;
-      bottom: 4px;
-      right: 6px;
-      font-size: 9px;
-      color: var(--dim);
-      opacity: .7;
-      font-family: var(--font);
-      pointer-events: none;
-    }
-
-    .res-card-body {
-      padding: .75rem;
-      display: flex;
-      flex-direction: column;
-      gap: .5rem;
-    }
-    .res-card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: .5rem;
-    }
-    .res-card-name { font-size: 14px; font-weight: 700; }
-    .res-card-cat {
-      font-size: 10px;
-      padding: 1px 5px;
-      border: 1px solid var(--line-strong);
-      color: var(--muted);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .res-card-desc {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-    .res-card-meta {
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-      flex-wrap: wrap;
-    }
-    .res-meta-item { font-size: 11px; color: var(--dim); }
-    .res-meta-item strong { color: var(--muted); font-weight: 500; }
-
-    .res-card-actions {
-      display: flex;
-      gap: .5rem;
-      flex-wrap: wrap;
-      padding-top: .4rem;
-      border-top: 1px solid var(--line);
-    }
-
-    /* Discord gate modal */
-    .discord-modal-inner { display: flex; flex-direction: column; gap: .8rem; }
-    .discord-modal-sub { font-size: 12px; color: var(--muted); line-height: 1.7; }
-    .discord-modal-actions { display: flex; gap: .5rem; align-items: center; }
-    .discord-file-name { font-size: 11px; color: var(--dim); }
-  </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>1leeway Store - Ressources</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../Sources/styles.css">
 </head>
-<body>
+<body data-page="ressources">
+	<div class="app-shell">
+		<main class="main">
+			<section class="header-box">
+<pre class="ascii"> ____.____                                       
+/_   |    |    ____   ______  _  _______  ___.__.
+ |   |    |  _/ __ \_/ __ \ \/ \/ /\__  \<   |  |
+ |   |    |__\  ___/\  ___/\     /  / __ \\___  |
+ |___|_______ \___  >\___  >\/\_/  (____  / ____|
+             \/   \/     \/             \/\/     </pre>
+				<p class="subline">Ressources en format store avec cartes uniformes et recherche.</p>
+			</section>
 
-<div class="shell">
+			<section class="box">
+				<div class="box-title">
+					<span>Ressources Store</span>
+					<span>Meme format de cards</span>
+				</div>
+				<p class="page-description">Recherche en haut, puis cartes a image fixe avec titre, download et popup tuto installation.</p>
+			</section>
 
-  <!-- ── Topbar ── -->
-  <header class="topbar">
-    <div class="topbar-left">
-      <a class="site-title" href="../index.html">1leeway<span>.github.io</span></a>
-      <nav>
-        <ul class="nav-links">
-          <li><a href="../index.html"       data-page="index.html">~</a></li>
-          <li><a href="portfolio.html"      data-page="portfolio.html">portfolio</a></li>
-          <li><a href="guns.html"           data-page="guns.html">guns</a></li>
-          <li><a href="ressources.html"     data-page="ressources.html">ressources</a></li>
-        </ul>
-      </nav>
-    </div>
-    <div class="topbar-right">
-      <span class="clock txt-dim" id="clock">--:--:--</span>
-    </div>
-  </header>
+			<section class="box store-scroll-box">
+				<div class="search-row">
+					<input id="search-ressources" class="search-input" type="search" placeholder="Chercher un guide / une ressource..." data-target="ressources">
+					<span id="count-ressources" class="search-result">0 resultat</span>
+				</div>
+				<div id="grid-ressources" class="cards-grid"></div>
+			</section>
 
-  <!-- ── Main ── -->
-  <main class="main">
-    <div class="res-main">
+			<div class="status-bar">
+				<span><span class="status-dot"></span>Online</span>
+				<span id="clock">00:00:00</span>
+				<span id="status-page">[ RESSOURCES ]</span>
+			</div>
+		</main>
 
-      <!-- ── Sidebar ── -->
-      <aside class="res-sidebar">
-        <div class="sidebar-block">
-          <div class="sidebar-title">Catégories</div>
-          <button class="category-btn active" data-cat="all">
-            Tout <span class="cb-count" id="catAll">0</span>
-          </button>
-          <button class="category-btn" data-cat="guide">
-            Guides <span class="cb-count" id="catGuide">0</span>
-          </button>
-          <button class="category-btn" data-cat="tool">
-            Outils <span class="cb-count" id="catTool">0</span>
-          </button>
-          <button class="category-btn" data-cat="media">
-            Médias <span class="cb-count" id="catMedia">0</span>
-          </button>
-          <button class="category-btn" data-cat="guns">
-            Guns <span class="cb-count" id="catGuns">0</span>
-          </button>
-          <button class="category-btn" data-cat="misc">
-            Misc <span class="cb-count" id="catMisc">0</span>
-          </button>
-        </div>
+		<aside class="sidebar">
+			<div class="box">
+				<div class="box-title">
+					<span>Menu</span>
+					<span>v2.1</span>
+				</div>
+				<div class="menu-buttons">
+					<a class="btn menu-link" data-page="home" href="home.html">Home</a>
+					<a class="btn menu-link" data-page="guns" href="index.html">Guns</a>
+					<a class="btn menu-link" data-page="portfolio" href="portfolio.html">Portfolio</a>
+					<a class="btn menu-link" data-page="ressources" href="ressources.html">Ressources</a>
+					<a class="btn menu-link" data-page="p2p" href="p2p.html">P2P</a>
+					<a class="btn menu-link" data-page="soon" href="soon.html">Soon</a>
+				</div>
+			</div>
 
-        <div class="upload-notice">
-          <div class="sidebar-title">À propos</div>
-          Ce cloud partage mes fichiers publics.<br>
-          Pour download, connecte-toi via Discord.<br><br>
-          <a href="https://discord.com/invite/1leeway" target="_blank" rel="noopener">↗ rejoindre le Discord</a>
-        </div>
-      </aside>
+			<div class="auth-box">
+				<div class="box-title">
+					<span>Discord</span>
+					<span id="auth-badge">Invite</span>
+				</div>
+				<button id="discord-login" class="btn btn-accent">Se connecter avec Discord</button>
+				<button id="discord-logout" class="btn btn-danger hidden">Se deconnecter</button>
+				<div id="auth-user" class="auth-user">
+					<span>Non connecte</span>
+					<span>Connecte-toi pour debloquer le mode admin.</span>
+				</div>
+			</div>
 
-      <!-- ── Content ── -->
-      <div class="res-content">
-        <div class="res-toolbar">
-          <span class="res-toolbar-title" id="resTitle">TOUTES LES RESSOURCES</span>
-          <input class="res-search" type="text" id="resSearch" placeholder="rechercher..." spellcheck="false" autocomplete="off" />
-        </div>
-        <div class="res-grid" id="resGrid">
-          <!-- rendered by JS -->
-        </div>
-      </div>
+			<form id="admin-panel" class="admin-panel">
+				<div class="box-title">
+					<span>Admin Upload</span>
+					<span>1leeway</span>
+				</div>
+				<select id="admin-target" required>
+					<option value="portfolio">Ajouter dans Portfolio</option>
+					<option value="ressources">Ajouter dans Ressources</option>
+				</select>
+				<input id="admin-title" type="text" placeholder="Titre de la carte" required>
+				<input id="admin-image" type="url" placeholder="URL image de fond (optionnel)">
+				<input id="admin-download" type="url" placeholder="URL de download (optionnel)">
+				<textarea id="admin-steps" placeholder="Tutoriel d'installation (une ligne = une etape)" required></textarea>
+				<input id="admin-file" type="file">
+				<button class="btn btn-accent" type="submit">Ajouter la carte</button>
+				<p class="admin-help">Le compte Discord 1leeway active ce panneau.</p>
+			</form>
 
-    </div>
-  </main>
+			<div class="box">
+				<p class="page-description">© 2026 1leeway</p>
+			</div>
+		</aside>
+	</div>
 
-  <!-- ── Statusbar ── -->
-  <footer class="statusbar">
-    <div class="statusbar-left">
-      <span>root@1leeway:~/ressources$</span>
-      <span class="txt-dim" id="resCount">0 fichiers</span>
-    </div>
-    <div class="statusbar-right">© <span id="year"></span> 1leeway</div>
-  </footer>
-</div>
+	<div id="install-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="install-title">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 id="install-title" class="modal-title">Guide d'installation</h2>
+				<button id="close-modal" class="btn">Fermer</button>
+			</div>
+			<div id="install-steps" class="modal-steps"></div>
+		</div>
+	</div>
 
-<!-- ── Discord gate modal ── -->
-<div class="modal-overlay" id="discord-modal">
-  <div class="modal-box">
-    <div class="modal-title">
-      <button class="modal-close" onclick="closeModal('discord-modal')">✕</button>
-      DOWNLOAD — CONNEXION DISCORD
-    </div>
-    <div class="discord-modal-inner">
-      <p class="discord-modal-sub">
-        Les téléchargements sont réservés aux membres du Discord.<br>
-        Connecte-toi ou rejoins le serveur pour accéder au fichier.
-      </p>
-      <div class="discord-file-name" id="discordFileName">—</div>
-      <div class="discord-modal-actions">
-        <button class="discord-btn" onclick="discordProceed()">
-          <svg width="16" height="12" viewBox="0 0 71 55" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.44077 45.4204 0.52529C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.52529C25.5141 0.44359 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978Z"/></svg>
-          Connecter Discord
-        </button>
-        <button class="btn btn-muted" onclick="closeModal('discord-modal')">Annuler</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="../Sources/scripts.js"></script>
-<script>
-/* ────────────────────────────────────────────────────────────
-   RESOURCE DATA
-   Pour ajouter un fichier :
-   {
-     name:     "Nom affiché",
-     cat:      "guide" | "tool" | "media" | "guns" | "misc",
-     desc:     "Description courte.",
-     banner:   "url/vers/image-680x240.png",  // laisser null pour placeholder
-     size:     "2.4 MB",
-     format:   "PDF" | "ZIP" | "PNG" | ...,
-     date:     "2024-03",
-     tutoUrl:  "url/vers/tuto",               // null si pas de tuto
-     dlUrl:    "url/vers/fichier",             // null si pas de DL
-   }
-──────────────────────────────────────────────────────────── */
-const RESOURCES = [
-  {
-    name:    "Guide de réglage optique",
-    cat:     "guns",
-    desc:    "Guide complet pour le réglage d'une lunette de tir sur carabine .22 LR. Inclut les calculs MOA, exemples pratiques, et checklist terrain.",
-    banner:  null,
-    size:    "1.2 MB",
-    format:  "PDF",
-    date:    "2024-02",
-    tutoUrl: null,
-    dlUrl:   "https://example.com/files/guide-optique.pdf",
-  },
-  {
-    name:    "Pack wallpapers TUI",
-    cat:     "media",
-    desc:    "Collection de fonds d'écran style terminal ASCII, résolution 1920×1080 et 2560×1440. 12 fichiers inclus.",
-    banner:  null,
-    size:    "8.7 MB",
-    format:  "ZIP",
-    date:    "2024-01",
-    tutoUrl: "https://example.com/tuto/wallpapers",
-    dlUrl:   "https://example.com/files/wallpapers-tui.zip",
-  },
-  {
-    name:    "Script backup Git auto",
-    cat:     "tool",
-    desc:    "Script bash pour backup automatique de dépôts Git locaux vers un dossier distant. Configurable via .env.",
-    banner:  null,
-    size:    "14 KB",
-    format:  "SH",
-    date:    "2024-03",
-    tutoUrl: "https://example.com/tuto/git-backup",
-    dlUrl:   "https://example.com/files/git-backup.sh",
-  },
-  {
-    name:    "Entretien Glock — notes",
-    cat:     "guns",
-    desc:    "Mes notes personnelles sur l'entretien complet d'un Glock 17. Démontage, nettoyage, lubrification, vérifications.",
-    banner:  null,
-    size:    "320 KB",
-    format:  "PDF",
-    date:    "2023-11",
-    tutoUrl: null,
-    dlUrl:   "https://example.com/files/entretien-glock.pdf",
-  },
-  {
-    name:    "TUI CSS starter",
-    cat:     "tool",
-    desc:    "Feuille de démarrage CSS pour construire des interfaces TUI dans le navigateur. Variables, composants, layout.",
-    banner:  null,
-    size:    "22 KB",
-    format:  "ZIP",
-    date:    "2024-03",
-    tutoUrl: "https://example.com/tuto/tui-css",
-    dlUrl:   "https://example.com/files/tui-css-starter.zip",
-  },
-];
-
-/* ── State ── */
-let activeCat    = 'all';
-let searchQuery  = '';
-
-/* ── Counts ── */
-function updateCounts() {
-  document.getElementById('catAll').textContent   = RESOURCES.length;
-  document.getElementById('catGuide').textContent = RESOURCES.filter(r=>r.cat==='guide').length;
-  document.getElementById('catTool').textContent  = RESOURCES.filter(r=>r.cat==='tool').length;
-  document.getElementById('catMedia').textContent = RESOURCES.filter(r=>r.cat==='media').length;
-  document.getElementById('catGuns').textContent  = RESOURCES.filter(r=>r.cat==='guns').length;
-  document.getElementById('catMisc').textContent  = RESOURCES.filter(r=>r.cat==='misc').length;
-}
-
-/* ── Render ── */
-function getVisible() {
-  let list = [...RESOURCES];
-  if (activeCat !== 'all') list = list.filter(r => r.cat === activeCat);
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    list = list.filter(r => r.name.toLowerCase().includes(q) || r.desc.toLowerCase().includes(q));
-  }
-  return list;
-}
-
-function renderGrid() {
-  const list = getVisible();
-  document.getElementById('resCount').textContent = list.length + ' fichier' + (list.length > 1 ? 's' : '');
-  document.getElementById('resGrid').innerHTML = list.length === 0
-    ? `<div style="padding:2rem;font-size:12px;color:var(--dim);">Aucune ressource trouvée.</div>`
-    : list.map((r, i) => {
-        const idx = RESOURCES.indexOf(r);
-        return `
-          <div class="res-card" data-res-idx="${idx}">
-            <div class="res-card-banner">
-              ${r.banner
-                ? `<img src="${r.banner}" alt="${r.name}" loading="lazy" />`
-                : `<div class="banner-placeholder">[ bannière 680×240 ]<br><span style="font-size:9px;color:var(--dim);">${r.name}</span></div>`
-              }
-            </div>
-            <div class="res-card-body">
-              <div class="res-card-header">
-                <span class="res-card-name">${r.name}</span>
-                <span class="res-card-cat">${r.cat.toUpperCase()}</span>
-              </div>
-              <div class="res-card-desc">${r.desc}</div>
-              <div class="res-card-meta">
-                <span class="res-meta-item"><strong>${r.format}</strong></span>
-                <span class="res-meta-item">${r.size}</span>
-                <span class="res-meta-item">${r.date}</span>
-              </div>
-              <div class="res-card-actions">
-                ${r.tutoUrl
-                  ? `<a class="btn btn-muted" href="${r.tutoUrl}" target="_blank" rel="noopener">▷ Tuto</a>`
-                  : `<button class="btn btn-muted" disabled style="opacity:.35;cursor:default;">▷ Tuto</button>`
-                }
-                ${r.dlUrl
-                  ? `<button class="btn discord-gate-btn" data-download-url="${r.dlUrl}" data-res-name="${r.name}">⬇ Download</button>`
-                  : `<button class="btn" disabled style="opacity:.35;cursor:default;">⬇ Download</button>`
-                }
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-  // Discord gate hookup
-  document.querySelectorAll('.discord-gate-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const modal = document.getElementById('discord-modal');
-      modal.dataset.pendingUrl = btn.dataset.downloadUrl || '';
-      const nameEl = document.getElementById('discordFileName');
-      if (nameEl) nameEl.textContent = btn.dataset.resName || '—';
-      modal.classList.add('open');
-    });
-  });
-}
-
-// Override discordProceed to use our pending url correctly
-window.discordProceed = function() {
-  const modal = document.getElementById('discord-modal');
-  if (!modal) return;
-  const url = modal.dataset.pendingUrl;
-  window.open('https://discord.com/invite/1leeway', '_blank');
-  if (url) setTimeout(() => { window.location.href = url; }, 800);
-  modal.classList.remove('open');
-};
-
-/* ── Category buttons ── */
-document.querySelectorAll('[data-cat]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    activeCat = btn.dataset.cat;
-    document.querySelectorAll('[data-cat]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const labels = { all:'TOUTES LES RESSOURCES', guide:'GUIDES', tool:'OUTILS', media:'MÉDIAS', guns:'GUNS', misc:'MISC' };
-    document.getElementById('resTitle').textContent = labels[activeCat] || 'RESSOURCES';
-    renderGrid();
-  });
-});
-
-/* ── Search ── */
-document.getElementById('resSearch').addEventListener('input', e => {
-  searchQuery = e.target.value.trim();
-  renderGrid();
-});
-
-updateCounts();
-renderGrid();
-</script>
+	<script src="../Sources/scripts.js"></script>
 </body>
 </html>

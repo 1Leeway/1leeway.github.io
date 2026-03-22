@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1leeway Store - Portfolio</title>
+    <title>1leeway Store - Home</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../Sources/styles.css">
 </head>
-<body data-page="portfolio">
+<body data-page="home">
     <div class="app-shell">
         <main class="main">
             <section class="header-box">
@@ -19,29 +19,66 @@
  |   |    |__\  ___/\  ___/\     /  / __ \\___  |
  |___|_______ \___  >\___  >\/\_/  (____  / ____|
              \/   \/     \/             \/\/     </pre>
-                <p class="subline">Portfolio en format store avec cartes uniformes et recherche.</p>
+                <p class="subline">Home dashboard: stats GitHub maintenant, et autres plateformes bientot.</p>
             </section>
 
             <section class="box">
                 <div class="box-title">
-                    <span>Portfolio Store</span>
-                    <span>Ajout dynamique possible</span>
+                    <span>Stats Dashboard</span>
+                    <span>Live GitHub</span>
                 </div>
-                <p class="page-description">Recherche rapide + grille de cartes de meme taille avec image, titre, download et popup d'installation.</p>
+                <div class="stats-controls">
+                    <input id="github-username" class="search-input" type="text" value="1leeway" placeholder="Pseudo GitHub (ex: 1leeway)">
+                    <button id="github-load" class="btn btn-accent">Actualiser</button>
+                </div>
+                <div class="stats-grid">
+                    <article class="stat-card">
+                        <span class="stat-label">Compte</span>
+                        <strong id="gh-account" class="stat-value">@1leeway</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Followers</span>
+                        <strong id="gh-followers" class="stat-value">0</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Following</span>
+                        <strong id="gh-following" class="stat-value">0</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Public Repos</span>
+                        <strong id="gh-repos" class="stat-value">0</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Total Stars</span>
+                        <strong id="gh-stars" class="stat-value">0</strong>
+                    </article>
+                </div>
+                <p id="gh-note" class="page-description" style="margin-top: 10px;">En attente de chargement...</p>
+                <p class="page-description">Profil: <a id="gh-profile-link" href="#" target="_blank" rel="noopener" class="btn" style="margin-top: 8px;">Profil indisponible</a></p>
             </section>
 
-            <section class="box store-scroll-box">
-                <div class="search-row">
-                    <input id="search-portfolio" class="search-input" type="search" placeholder="Rechercher une app / un outil..." data-target="portfolio">
-                    <span id="count-portfolio" class="search-result">0 resultat</span>
+            <section class="box">
+                <div class="box-title">
+                    <span>Bientot</span>
+                    <span>Autres stats</span>
                 </div>
-                <div id="grid-portfolio" class="cards-grid"></div>
+                <div class="platform-list">
+                    <div class="platform-item">Discord Stats
+                        <small>Place reservee: membres serveur, activite, roles.</small>
+                    </div>
+                    <div class="platform-item">YouTube / Twitch
+                        <small>Place reservee: vues, abonnements, watchtime.</small>
+                    </div>
+                    <div class="platform-item">Projets Perso
+                        <small>Place reservee: downloads, versions, changelog.</small>
+                    </div>
+                </div>
             </section>
 
             <div class="status-bar">
                 <span><span class="status-dot"></span>Online</span>
                 <span id="clock">00:00:00</span>
-                <span id="status-page">[ PORTFOLIO ]</span>
+                <span id="status-page">[ HOME ]</span>
             </div>
         </main>
 
@@ -49,7 +86,7 @@
             <div class="box">
                 <div class="box-title">
                     <span>Menu</span>
-                    <span>v2.1</span>
+                    <span>v2.2</span>
                 </div>
                 <div class="menu-buttons">
                     <a class="btn menu-link" data-page="home" href="home.html">Home</a>
