@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leeway - Portfolio</title>
+  <link rel="icon" type="image/png" href="src/favicon.png" />
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      font-family: 'Courier New', Courier, monospace;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #bg-video {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 32px;
+      gap: 24px;
+      flex-shrink: 0;
+    }
+
+    /* ── MEDIA CONTROLS ── */
+    .media-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.5);
+      cursor: pointer;
+      width: 28px; height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.35;
+      border-radius: 0;
+      transition: opacity 0.2s, border-radius 0.3s ease;
+    }
+
+    .ctrl-btn:hover { opacity: 0.8; }
+    .ctrl-btn.active {
+      opacity: 0.9;
+      border-radius: 50%;
+    }
+
+    .ctrl-btn svg {
+      width: 10px; height: 10px;
+      fill: #ffffff;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: opacity 0.2s, transform 0.2s ease;
+      display: inline-block;
+    }
+
+    .nav-links a:hover:not(.active) { opacity: 0.6; transform: scale(1.12); }
+
+    .nav-links a.active {
+      opacity: 0.28;
+      pointer-events: none;
+    }
+
+    /* ── SECTIONS WRAPPER ── */
+    .sections-wrapper {
+      flex: 1;
+      position: relative;
+    }
+
+    /* ── PERSISTENT VERTICAL LINE ── */
+    /* sits at the same x-position on every section */
+    .site-line {
+      position: absolute;
+      left: 80px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background-color: #ffffff;
+      pointer-events: none;
+      z-index: 10;
+      transition: top 0.35s ease;
+    }
+
+    .site-line::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background-color: #ffffff;
+    }
+
+    /* ── SECTIONS (all share the same left padding) ── */
+    /* 80px to reach the line + 3px line width + 32px gap = 115px */
+    .page-section {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      padding-left: 115px;
+      padding-right: 80px;
+    }
+
+    .page-section.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ── .is() ── */
+    #section-is {
+      align-items: center;
+      margin-top: -20px;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .hero-title {
+      font-size: 3.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .hero-subtitle {
+      font-size: 1.05rem;
+      font-weight: 400;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+      max-width: 320px;
+      line-height: 1.6;
+      margin-top: 4px;
+      opacity: 0.75;
+    }
+
+    /* ── .work() ── */
+    #section-work {
+      flex-direction: column;
+      padding-top: 48px;
+      padding-bottom: 48px;
+      gap: 36px;
+      overflow-y: auto;
+    }
+
+    .section-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      opacity: 0.3;
+      text-transform: uppercase;
+    }
+
+    .work-list {
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .work-item {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .work-row {
+      display: grid;
+      grid-template-columns: 2rem 1fr auto auto;
+      align-items: center;
+      gap: 24px;
+      padding: 18px 0;
+      text-decoration: none;
+      color: inherit;
+      transition: opacity 0.2s;
+    }
+
+    .work-item:hover .work-row { opacity: 0.55; }
+
+    .work-row-num {
+      font-size: 0.7rem;
+      opacity: 0.25;
+    }
+
+    .work-row-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .work-row-tags {
+      display: flex;
+      gap: 6px;
+    }
+
+    .work-row-year {
+      font-size: 0.72rem;
+      opacity: 0.3;
+      text-align: right;
+    }
+
+    .work-expand {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding-bottom 0.35s ease;
+      padding-left: calc(2rem + 24px);
+    }
+
+    .work-item:hover .work-expand {
+      max-height: 80px;
+      padding-bottom: 18px;
+    }
+
+    .work-expand-desc {
+      font-size: 0.82rem;
+      opacity: 0.45;
+      line-height: 1.7;
+    }
+
+    .tag {
+      font-size: 0.68rem;
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 2px 8px;
+      opacity: 0.6;
+    }
+
+    /* ── .about() ── */
+    #section-about {
+      align-items: center;
+    }
+
+    /* ── .bio() ── */
+    #section-bio {
+      align-items: center;
+    }
+
+    .bio-content {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      max-width: 480px;
+      width: 100%;
+    }
+
+    .bio-title {
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .bio-desc {
+      font-size: 0.92rem;
+      line-height: 1.9;
+      opacity: 0.7;
+      max-width: 420px;
+    }
+
+    .bio-icons {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .bio-icon-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: #ffffff;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.2s, transform 0.2s ease;
+    }
+
+    .bio-icon-link:hover {
+      opacity: 1;
+      transform: translateY(-3px);
+    }
+
+    .bio-icon-box {
+      width: 46px; height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 28%;
+      background: rgba(255,255,255,0.12);
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .bio-icon-link:hover .bio-icon-box {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .bio-icon-link svg {
+      width: 20px; height: 20px;
+      fill: #ffffff;
+    }
+
+    .bio-icon-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .bio-discord {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 16px 20px;
+      text-decoration: none;
+      color: #ffffff;
+      background: rgba(255,255,255,0.1);
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .bio-discord:hover {
+      border-color: rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.18);
+    }
+
+    .bio-discord img {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      object-fit: cover;
+    }
+
+    .bio-discord-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .bio-discord-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .bio-discord-sub {
+      font-size: 0.72rem;
+      opacity: 0.4;
+    }
+
+    .about-content {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      max-width: 540px;
+    }
+
+    .about-name {
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .about-role {
+      font-size: 0.9rem;
+      opacity: 0.45;
+      margin-top: -4px;
+    }
+
+    .about-bio {
+      font-size: 0.92rem;
+      line-height: 1.9;
+      opacity: 0.75;
+    }
+
+    .about-skills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .skill-tag {
+      font-size: 0.72rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 4px 10px;
+      opacity: 0.6;
+    }
+
+    /* ── .contact() ── */
+    #section-contact {
+      align-items: center;
+    }
+
+    .contact-content {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      max-width: 440px;
+      width: 100%;
+    }
+
+    .contact-heading {
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .contact-sub {
+      font-size: 0.85rem;
+      opacity: 0.4;
+      margin-top: -14px;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-field label {
+      font-size: 0.68rem;
+      opacity: 0.38;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .form-field input,
+    .form-field textarea {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      color: #ffffff;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9rem;
+      padding: 8px 0;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: none;
+      width: 100%;
+    }
+
+    .form-field input:focus,
+    .form-field textarea:focus {
+      border-bottom-color: rgba(255,255,255,0.8);
+    }
+
+    .form-field textarea { min-height: 90px; }
+
+    .contact-submit {
+      align-self: flex-start;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #ffffff;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.88rem;
+      padding: 9px 22px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .contact-submit:hover { border-color: #ffffff; }
+
+    /* ── .auteur ── */
+    .auteur {
+      position: fixed;
+      bottom: 24px;
+      right: 32px;
+      font-size: 0.78rem;
+      opacity: 0.3;
+      letter-spacing: 0.08em;
+      pointer-events: auto;
+      z-index: 10;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .auteur:hover { opacity: 0.8; }
+
+    .auteur::before {
+      content: 'Vidéo de fond filmée par TRAPHITHO';
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 0;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #ffffff;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      padding: 6px 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .auteur:hover::before { opacity: 1; }
+
+    /* ── Typewriter cursor ── */
+    .typewriter-cursor {
+      display: inline-block;
+      width: 2px;
+      background: #ffffff;
+      margin-left: 3px;
+      animation: blink 0.75s step-end infinite;
+      vertical-align: baseline;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+    [target="_blank"]:not(.bio-icon-link):not(.bio-discord)::after {
+      content: ' ↗';
+      font-size: 1em;
+      opacity: 0;
+      transition: opacity 0.2s;
+      display: inline-block;
+    }
+
+    [target="_blank"]:not(.bio-icon-link):not(.bio-discord):hover::after { opacity: 1; }
+
+    /* ── Dynamic Notch ── */
+    .dyn-notch {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #000;
+      border-radius: 0 0 22px 22px;
+      width: 148px;
+      height: 32px;
+      z-index: 200;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: width 0.5s cubic-bezier(0.34, 1.3, 0.64, 1),
+                  height 0.5s cubic-bezier(0.34, 1.3, 0.64, 1),
+                  border-radius 0.5s ease;
+      user-select: none;
+    }
+
+    .dyn-notch:hover {
+      width: 380px;
+      height: 66px;
+      border-radius: 0 0 30px 30px;
+    }
+
+    /* Idle layer (visible when not hovering) */
+    .dyn-notch-idle {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .dyn-notch:hover .dyn-notch-idle { opacity: 0; }
+
+    .dyn-idle-icon {
+      width: 13px; height: 13px;
+      fill: rgba(255,255,255,0.45);
+      transition: opacity 0.15s ease;
+    }
+
+    .dyn-notch.playing .dyn-idle-icon { opacity: 0; }
+
+    /* Scrolling track name — visible in collapsed pill when playing */
+    .dyn-idle-scroll {
+      position: absolute;
+      width: 116px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%);
+    }
+
+    .dyn-notch.playing .dyn-idle-scroll { opacity: 1; }
+    .dyn-notch:hover   .dyn-idle-scroll { opacity: 0; }
+
+    .dyn-idle-text {
+      display: inline-block;
+      white-space: nowrap;
+      font-size: 0.6rem;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.88);
+    }
+
+    /* Player layer (visible on hover) */
+    .dyn-notch-player {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 16px;
+      width: 100%;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease 0.2s;
+    }
+
+    .dyn-notch:hover .dyn-notch-player {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Big eq bars (in expanded player) */
+    .dyn-eq {
+      display: flex;
+      gap: 3px;
+      align-items: flex-end;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .dyn-eq span {
+      width: 3px;
+      background: #fff;
+      border-radius: 2px;
+      height: 5px;
+      opacity: 0.3;
+      transition: opacity 0.2s;
+    }
+
+    .dyn-notch.playing .dyn-eq span { opacity: 1; }
+    .dyn-notch.playing .dyn-eq span:nth-child(1) { animation: dyn-eq1 0.75s ease-in-out infinite alternate; }
+    .dyn-notch.playing .dyn-eq span:nth-child(2) { animation: dyn-eq2 0.55s ease-in-out infinite alternate 0.12s; }
+    .dyn-notch.playing .dyn-eq span:nth-child(3) { animation: dyn-eq3 0.9s ease-in-out infinite alternate 0.06s; }
+
+    @keyframes dyn-eq1 { from { height: 4px; } to { height: 18px; } }
+    @keyframes dyn-eq2 { from { height: 8px; } to { height: 14px; } }
+    @keyframes dyn-eq3 { from { height: 5px; } to { height: 20px; } }
+
+    /* Track info */
+    .dyn-track {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dyn-track-name {
+      font-size: 0.72rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dyn-track-sub {
+      font-size: 0.58rem;
+      opacity: 0.38;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* Controls group */
+    .dyn-controls {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .dyn-ctrl-btn {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      border-radius: 50%;
+      width: 26px; height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .dyn-ctrl-btn:hover { background: rgba(255,255,255,0.22); }
+
+    .dyn-ctrl-btn svg {
+      width: 9px; height: 9px;
+      fill: #ffffff;
+    }
+
+    .dyn-ctrl-btn.dyn-play-btn {
+      width: 30px; height: 30px;
+      background: rgba(255,255,255,0.14);
+    }
+
+    .dyn-ctrl-btn.dyn-play-btn svg { width: 10px; height: 10px; }
+
+    /* Volume control */
+    .dyn-volume {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+      margin-left: 2px;
+    }
+
+    .dyn-vol-icon {
+      width: 12px; height: 12px;
+      fill: rgba(255,255,255,0.6);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: fill 0.2s;
+    }
+
+    .dyn-vol-icon:hover { fill: #ffffff; }
+
+    .dyn-vol-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 56px;
+      height: 2px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .dyn-vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #ffffff;
+      cursor: pointer;
+    }
+
+    .dyn-vol-slider::-moz-range-thumb {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #ffffff;
+      cursor: pointer;
+      border: none;
+    }
+
+    /* ── LEGAL MENTIONS ── */
+    .legal-arrow-wrap {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 300;
+    }
+
+    .legal-arrow-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px 28px 6px;
+      display: flex;
+      align-items: center;
+      outline: none;
+    }
+
+    .legal-arrow-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: rgba(255,255,255,0.18);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke 0.2s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: block;
+    }
+
+    .legal-arrow-btn:hover svg,
+    .legal-arrow-btn.active svg {
+      stroke: rgba(255,255,255,0.65);
+    }
+
+    .legal-arrow-btn.active svg {
+      transform: rotate(180deg);
+    }
+
+    .legal-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 299;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(32px) brightness(0.6);
+      -webkit-backdrop-filter: blur(32px) brightness(0.6);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      transform: translateY(100%);
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .legal-panel.open {
+      transform: translateY(0);
+    }
+
+    .legal-panel-inner {
+      padding: 18px 60px 16px;
+      font-size: 0.67rem;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.45);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .legal-title-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .legal-title-row span:first-child {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .legal-title-row span:last-child {
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* Five-column flat layout */
+    .legal-cols {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0 28px;
+    }
+
+    .legal-lbl {
+      display: block;
+      font-size: 0.58rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      margin-bottom: 5px;
+    }
+
+    .legal-inspi-link {
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.25);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .legal-inspi-link:hover { color: rgba(255,255,255,0.75); }
+
+    /* ── SPLASH OVERLAY ── */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    /* Two halves that slide apart on dismiss */
+    .splash-half {
+      position: absolute;
+      left: 0; right: 0;
+      height: 50%;
+      background: #000;
+      transition: transform 0.65s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+    .splash-half-top    { top: 0; }
+    .splash-half-bottom { bottom: 0; }
+    #splash.exit .splash-half-top    { transform: translateY(-101%); }
+    #splash.exit .splash-half-bottom { transform: translateY(101%); }
+
+    /* Vertical line motif — draws down on load, matching site line */
+    .splash-vline {
+      position: absolute;
+      left: 80px; top: 0;
+      width: 3px;
+      background: #fff;
+      height: 0;
+      animation: splashLineGrow 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+      z-index: 2;
+      pointer-events: none;
+      transition: transform 0.65s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+    @keyframes splashLineGrow { to { height: 100%; } }
+    #splash.exit .splash-vline { transform: translateY(-100vh); }
+
+    /* Centered content layer */
+    .splash-wrap {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    #splash.exit .splash-wrap { opacity: 0; }
+
+    .splash-group {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      row-gap: 0;
+    }
+
+    .splash-name-row {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+    .splash-name {
+      font-size: 4.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: #fff;
+    }
+    .splash-cursor {
+      font-size: 4.2rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.7);
+      line-height: 1;
+      margin-left: 3px;
+      animation: splashCursorBlink 0.75s step-end infinite;
+    }
+    @keyframes splashCursorBlink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* Progress bar that sweeps left→right after typing */
+    .splash-bar {
+      height: 2px;
+      background: rgba(255,255,255,0.5);
+      /* width set by JS to match title; scaleX animates the sweep */
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .splash-bar.filled { transform: scaleX(1); }
+
+    .splash-hint {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0);
+      transition: color 0.5s ease;
+      margin-top: 18px;
+    }
+    .splash-hint.visible {
+      color: rgba(255,255,255,0.5);
+      animation: splashHintPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes splashHintPulse {
+      0%, 100% { opacity: 0.5; }
+      50%       { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Splash intro — typewriter reveal, click to enter & start music -->
+  <div id="splash">
+    <div class="splash-half splash-half-top"></div>
+    <div class="splash-half splash-half-bottom"></div>
+    <div class="splash-vline"></div>
+    <div class="splash-wrap">
+      <div class="splash-group">
+        <div class="splash-name-row">
+          <span class="splash-name" id="splash-name"></span><span class="splash-cursor" id="splash-cursor">_</span>
+        </div>
+        <div class="splash-bar" id="splash-bar"></div>
+        <span class="splash-hint" id="splash-hint">— click to enter —</span>
+      </div>
+    </div>
+  </div>
+
+  <video id="bg-video" src="src/Background.mp4" autoplay loop muted playsinline></video>
+
+  <audio id="bg-music" loop>
+    <source src="msc/music.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Dynamic Notch Music Player -->
+  <div class="dyn-notch" id="dyn-notch">
+    <div class="dyn-notch-idle">
+      <svg class="dyn-idle-icon" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+      <div class="dyn-idle-scroll" id="dyn-idle-scroll">
+        <span class="dyn-idle-text" id="dyn-idle-text"></span>
+      </div>
+    </div>
+    <div class="dyn-notch-player">
+      <div class="dyn-eq" id="dyn-eq">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="dyn-track">
+        <span class="dyn-track-name" id="dyn-track-name"></span>
+        <span class="dyn-track-sub">Ambient</span>
+      </div>
+      <div class="dyn-controls">
+        <button class="dyn-ctrl-btn" id="dyn-prev-btn" aria-label="Previous track">
+          <svg viewBox="0 0 24 24"><rect x="4" y="5" width="2" height="14"/><polygon points="19,5 9,12 19,19"/></svg>
+        </button>
+        <button class="dyn-ctrl-btn dyn-play-btn" id="dyn-play-btn" aria-label="Toggle music">
+          <svg id="dyn-icon-music" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+        <button class="dyn-ctrl-btn" id="dyn-next-btn" aria-label="Next track">
+          <svg viewBox="0 0 24 24"><polygon points="5,5 15,12 5,19"/><rect x="18" y="5" width="2" height="14"/></svg>
+        </button>
+      </div>
+      <div class="dyn-volume">
+        <svg class="dyn-vol-icon" id="dyn-vol-icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+        <input type="range" class="dyn-vol-slider" id="dyn-vol-slider" min="0" max="1" step="0.01" value="1" aria-label="Volume">
+      </div>
+    </div>
+  </div>
+
+  <nav>
+    <div class="media-controls">
+      <!-- Background play/pause -->
+      <button class="ctrl-btn active" id="btn-video" title="Background on/off" aria-label="Toggle background">
+        <!-- pause icon (default: playing) -->
+        <svg id="icon-video" viewBox="0 0 24 24"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>
+      </button>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#" class="nav-btn active" data-section="is">.is()</a></li>
+      <li><a href="#" class="nav-btn" data-section="work">.work()</a></li>
+      <li><a href="#" class="nav-btn" data-section="bio">.bio()</a></li>
+      <li><a href="#" class="nav-btn" data-section="about">.about()</a></li>
+      <li><a href="#" class="nav-btn" data-section="contact">.contact()</a></li>
+    </ul>
+  </nav>
+
+  <a class="auteur" href="https://pixabay.com/users/traphitho-3244107/" target="_blank" rel="noopener noreferrer">.TRAPHITHO</a>
+
+  <div class="sections-wrapper">
+
+    <!-- Persistent vertical line — same on every section -->
+    <div class="site-line"></div>
+
+    <!-- .is() — default -->
+    <section id="section-is" class="page-section active">
+      <div class="hero-content">
+        <h1 class="hero-title">1Leeway.</h1>
+        <p class="hero-subtitle">Private Developper</p>
+        <p class="hero-description">— Creative frontend developer,<br>designer, and illustrator.</p>
+      </div>
+    </section>
+
+    <!-- .work() -->
+    <section id="section-work" class="page-section">
+      <span class="section-label">.work()</span>
+      <div class="work-list">
+        <div class="work-item">
+          <a class="work-row" href="#">
+            <span class="work-row-num">01</span>
+            <span class="work-row-title">Project Name</span>
+            <div class="work-row-tags">
+              <span class="tag">React</span>
+              <span class="tag">TypeScript</span>
+            </div>
+            <span class="work-row-year">2025</span>
+          </a>
+          <div class="work-expand">
+            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
+          </div>
+        </div>
+        <div class="work-item">
+          <a class="work-row" href="#">
+            <span class="work-row-num">02</span>
+            <span class="work-row-title">Project Name</span>
+            <div class="work-row-tags">
+              <span class="tag">Figma</span>
+              <span class="tag">UI/UX</span>
+            </div>
+            <span class="work-row-year">2025</span>
+          </a>
+          <div class="work-expand">
+            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
+          </div>
+        </div>
+        <div class="work-item">
+          <a class="work-row" href="#">
+            <span class="work-row-num">03</span>
+            <span class="work-row-title">Project Name</span>
+            <div class="work-row-tags">
+              <span class="tag">CSS</span>
+              <span class="tag">Animation</span>
+            </div>
+            <span class="work-row-year">2024</span>
+          </a>
+          <div class="work-expand">
+            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
+          </div>
+        </div>
+        <div class="work-item">
+          <a class="work-row" href="#">
+            <span class="work-row-num">04</span>
+            <span class="work-row-title">Project Name</span>
+            <div class="work-row-tags">
+              <span class="tag">Illustration</span>
+            </div>
+            <span class="work-row-year">2024</span>
+          </a>
+          <div class="work-expand">
+            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- .bio() -->
+    <section id="section-bio" class="page-section">
+      <div class="bio-content">
+        <h2 class="bio-title">Who am i ?</h2>
+        <p class="bio-desc">UX-Dev | I'm codding for fun and help !</p>
+
+        <!-- Icônes réseaux -->
+        <div class="bio-icons">
+          <a class="bio-icon-link" href="https://github.com/1Leeway" target="_blank" rel="noopener noreferrer">
+            <div class="bio-icon-box"><svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></div>
+            <span class="bio-icon-label">GitHub</span>
+          </a>
+          <a class="bio-icon-link" href="https://x.com/Leewayyyyyyyy" target="_blank" rel="noopener noreferrer">
+            <div class="bio-icon-box"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div>
+            <span class="bio-icon-label">X</span>
+          </a>
+          <a class="bio-icon-link" href="https://www.instagram.com/1leeway/" target="_blank" rel="noopener noreferrer">
+            <div class="bio-icon-box"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></div>
+            <span class="bio-icon-label">Instagram</span>
+          </a>
+          <a class="bio-icon-link" href="https://buymeacoffee.com/1leewayy" target="_blank" rel="noopener noreferrer">
+            <div class="bio-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+            <span class="bio-icon-label">Coffee</span>
+          </a>
+          <a class="bio-icon-link" href="https://guns.lol/1leeway" target="_blank" rel="noopener noreferrer">
+            <div class="bio-icon-box"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 8h-1V6h1a1 1 0 0 0 0-2H8a1 1 0 0 0-.96.73L6.06 8H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h.23l.51 2.05A2 2 0 0 0 6.68 18h.64a2 2 0 0 0 1.94-1.52l.07-.29A2 2 0 0 0 11 18h4a2 2 0 0 0 2-2v-2h1a4 4 0 0 0 4-4 2 2 0 0 0-2-2zm-4 6h-1v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1 1 1 0 0 1-1 1h-.68a1 1 0 0 1-.97-.76L8.05 12H4v-2h2.56a1 1 0 0 0 .96-.73L8.5 6H20v2h-2a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2zm2-4a2 2 0 0 1-2 2v-2a1 1 0 0 1 1-1h1.73A2 2 0 0 1 20 10z"/></svg></div>
+            <span class="bio-icon-label">guns.lol</span>
+          </a>
+        </div> 
+        <!-- Bloc Discord -->
+        <a class="bio-discord" href="https://discord.gg/8Ru6dK4tp8" target="_blank" rel="noopener noreferrer">
+          <img src="https://cdn.discordapp.com/icons/1469433639585583106/c30a3838f1ef0d7b0f4da4314935bf30.png" alt="ゝLee-Box">
+          <div class="bio-discord-info">
+            <span class="bio-discord-name">ゝLee-Box</span>
+            <span class="bio-discord-sub">Leeway Official Discord | Script | FR | ToolBox</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- .about() -->
+    <section id="section-about" class="page-section">
+      <div class="about-content">
+        <h2 class="about-name">That's All.</h2>
+        <p class="about-role">Frontend Developer · Designer · Illustrator</p>
+        <p class="about-bio">
+          Based in [your city].<br><br>
+          I build and design digital experiences focused on clarity,
+          interaction, and detail. Currently working on [current project].
+          Previously at [previous company].
+        </p>
+        <div class="about-skills">
+          <span class="skill-tag">HTML / CSS</span>
+          <span class="skill-tag">JavaScript</span>
+          <span class="skill-tag">React</span>
+          <span class="skill-tag">Figma</span>
+          <span class="skill-tag">Illustration</span>
+          <span class="skill-tag">Motion</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- .contact() -->
+    <section id="section-contact" class="page-section">
+      <div class="contact-content">
+        <h2 class="contact-heading">You want me ?</h2>
+        <p class="contact-sub">Open to collaborations and opportunities.</p>
+        <form class="contact-form" id="contact-form" novalidate>
+          <div class="form-field">
+            <label for="c-name">Name</label>
+            <input type="text" id="c-name" name="name" autocomplete="off" required />
+          </div>
+          <div class="form-field">
+            <label for="c-email">Email</label>
+            <input type="email" id="c-email" name="email" autocomplete="off" required />
+          </div>
+          <div class="form-field">
+            <label for="c-message">Message</label>
+            <textarea id="c-message" name="message" required></textarea>
+          </div>
+          <button type="submit" class="contact-submit">Click to send</button>
+        </form>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // ── Site-line alignment ──
+    function updateSiteLine() {
+      const siteLine      = document.querySelector('.site-line');
+      const wrapper       = document.querySelector('.sections-wrapper');
+      const activeSection = document.querySelector('.page-section.active');
+      if (!siteLine || !wrapper || !activeSection) return;
+
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const firstEl = activeSection.querySelector('h1, h2, .section-label');
+
+      if (firstEl) {
+        const elRect = firstEl.getBoundingClientRect();
+        const top = elRect.top - wrapperRect.top + elRect.height / 2;
+        siteLine.style.top = Math.max(0, top) + 'px';
+      }
+    }
+
+    // ── Typewriter ──
+    let twGen = 0;
+
+    function typewrite(el, callback, gen) {
+      if (!el.dataset.text) el.dataset.text = el.innerText;
+      const text = el.dataset.text;
+      el.style.minHeight = el.offsetHeight + 'px';
+      el.style.opacity = '1';
+
+      const cursor = document.createElement('span');
+      cursor.className = 'typewriter-cursor';
+      cursor.style.height = '0.8em';
+      el.innerHTML = '';
+      el.appendChild(cursor);
+
+      let i = 0;
+      const spd = Math.round(500 / Math.max(text.length, 1));
+
+      (function type() {
+        if (gen !== twGen) return;
+        if (i <= text.length) {
+          el.innerHTML = text.slice(0, i).replace(/\n/g, '<br>');
+          el.appendChild(cursor);
+          i++;
+          setTimeout(type, spd);
+        } else {
+          setTimeout(() => {
+            if (gen === twGen) {
+              cursor.remove();
+              el.style.minHeight = '';
+              if (callback) callback();
+            }
+          }, 180);
+        }
+      })();
+    }
+
+    function typewriteSection(section) {
+      twGen++;
+      const gen = twGen;
+      const els = Array.from(section.querySelectorAll(
+        '.hero-description, .bio-desc, .about-bio, .contact-sub'
+      )).filter(el => el.innerText.trim());
+
+      els.forEach(el => {
+        if (!el.dataset.text) el.dataset.text = el.innerText;
+        el.style.opacity = '0';
+      });
+
+      let index = 0;
+      function next() {
+        if (gen !== twGen || index >= els.length) return;
+        typewrite(els[index++], () => setTimeout(next, 50), gen);
+      }
+      next();
+    }
+
+    window.addEventListener('resize', updateSiteLine);
+    updateSiteLine();
+
+    // Typewrite on load
+    typewriteSection(document.querySelector('.page-section.active'));
+
+    // ── Section switching ──
+    const navBtns  = document.querySelectorAll('.nav-btn');
+    const sections = document.querySelectorAll('.page-section');
+
+    function goToSection(id) {
+      const btn = document.querySelector(`.nav-btn[data-section="${id}"]`);
+      if (!btn || btn.classList.contains('active')) return;
+      navBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sections.forEach(s => s.classList.remove('active'));
+      const section = document.getElementById('section-' + id);
+      section.classList.add('active');
+      updateSiteLine();
+      typewriteSection(section);
+    }
+
+    navBtns.forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        goToSection(btn.dataset.section);
+      });
+    });
+
+    // ── Scroll to change section ──
+    const sectionIds = Array.from(navBtns).map(b => b.dataset.section);
+    let scrollLocked = false;
+
+    window.addEventListener('wheel', e => {
+      const activeSection = document.querySelector('.page-section.active');
+      if (activeSection.id === 'section-work' && activeSection.scrollHeight > activeSection.clientHeight) return;
+
+      if (scrollLocked) return;
+      const current = sectionIds.indexOf(document.querySelector('.nav-btn.active').dataset.section);
+      const next = e.deltaY > 0 ? current + 1 : current - 1;
+      if (next < 0 || next >= sectionIds.length) return;
+
+      scrollLocked = true;
+      goToSection(sectionIds[next]);
+      setTimeout(() => { scrollLocked = false; }, 700);
+    }, { passive: true });
+
+    // ── Media controls ──
+    const bgVideo      = document.getElementById('bg-video');
+    const bgMusic      = document.getElementById('bg-music');
+    const btnVideo     = document.getElementById('btn-video');
+    const iconVideo    = document.getElementById('icon-video');
+    const dynNotch     = document.getElementById('dyn-notch');
+    const dynPlayBtn   = document.getElementById('dyn-play-btn');
+    const dynPrevBtn   = document.getElementById('dyn-prev-btn');
+    const dynNextBtn   = document.getElementById('dyn-next-btn');
+    const dynIconMusic = document.getElementById('dyn-icon-music');
+    const dynTrackName = document.getElementById('dyn-track-name');
+
+    const pauseIcon = '<rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/>';
+    const playIcon  = '<polygon points="5,3 19,12 5,21"/>';
+
+    // ── Playlist ──
+    const tracks = [
+      'msc/Lofi - Lofi Girl - Lofi Chill |  Mondamusic.mp3',
+      'msc/Lofi - Lofi Girl - Lofi Music |  Mondamusic.mp3',
+      'msc/Lofi - Lofi Music - |  Mondamusic.mp3',
+      'msc/Lofi - Lofi Music - Lofi Chill |  Mondamusic.mp3',
+    ];
+    let currentTrack = 0;
+
+    function loadTrack(idx, autoplay) {
+      currentTrack = ((idx % tracks.length) + tracks.length) % tracks.length;
+      bgMusic.src = tracks[currentTrack];
+      var name = tracks[currentTrack].split('/').pop().replace(/\.[^.]+$/, '');
+      dynTrackName.textContent = name;
+      if (typeof marqueeEl !== 'undefined') {
+        marqueeEl.textContent = name;
+        marqueePos = 120;
+      }
+      if (autoplay) { bgMusic.play(); setPlaying(true); }
+    }
+
+    function setPlaying(on) {
+      dynIconMusic.innerHTML = on ? pauseIcon : playIcon;
+      dynNotch.classList.toggle('playing', on);
+      if (on) startMarquee(); else stopMarquee();
+    }
+
+    // —— Scrolling track name marquee ——
+    var marqueeEl   = document.getElementById('dyn-idle-text');
+    var marqueePos  = 120;
+    var marqueeLast = null;
+    var marqueeId   = null;
+    var MARQUEE_SPD = 38; // px/s
+
+    function marqueeStep(ts) {
+      if (!marqueeLast) marqueeLast = ts;
+      var dt = (ts - marqueeLast) / 1000;
+      marqueeLast = ts;
+      marqueePos -= MARQUEE_SPD * dt;
+      if (marqueePos < -(marqueeEl.offsetWidth)) {
+        marqueePos = marqueeEl.parentElement.offsetWidth;
+      }
+      marqueeEl.style.transform = 'translateX(' + marqueePos + 'px)';
+      marqueeId = requestAnimationFrame(marqueeStep);
+    }
+
+    function startMarquee() {
+      if (!marqueeId) {
+        marqueePos = marqueeEl.parentElement.offsetWidth;
+        marqueeLast = null;
+        marqueeId = requestAnimationFrame(marqueeStep);
+      }
+    }
+
+    function stopMarquee() {
+      if (marqueeId) {
+        cancelAnimationFrame(marqueeId);
+        marqueeId = null;
+      }
+    }
+
+    // Splash intro — typewriter + split-halves dismiss
+    loadTrack(0, false);
+    const splashEl      = document.getElementById('splash');
+    const splashNameEl  = document.getElementById('splash-name');
+    const splashBarEl   = document.getElementById('splash-bar');
+    const splashHintEl  = document.getElementById('splash-hint');
+    const splashText    = '1Leeway.';
+    let   splashCharIdx = 0;
+
+    function typeNextChar() {
+      if (splashCharIdx < splashText.length) {
+        splashNameEl.textContent += splashText[splashCharIdx++];
+        setTimeout(typeNextChar, 65 + Math.random() * 55);
+      } else {
+        // Set width to match title, force sync reflow, then trigger scaleX transition
+        splashBarEl.style.width = splashNameEl.getBoundingClientRect().width + 'px';
+        void splashBarEl.offsetWidth; // forces the browser to paint scaleX(0) first
+        splashBarEl.classList.add('filled');
+        setTimeout(() => splashHintEl.classList.add('visible'), 500);
+      }
+    }
+    setTimeout(typeNextChar, 350);
+
+    function dismissSplash() {
+      bgMusic.play().then(() => setPlaying(true)).catch(() => {});
+      splashEl.classList.add('exit');
+      setTimeout(() => { splashEl.style.display = 'none'; }, 700);
+    }
+    splashEl.addEventListener('click', (e) => {
+      if (e.button === 0) dismissSplash();
+    }, { once: true });
+    bgMusic.addEventListener('ended', () => loadTrack(currentTrack + 1, true));
+
+    btnVideo.addEventListener('click', () => {
+      if (bgVideo.paused) {
+        bgVideo.play();
+        iconVideo.innerHTML = pauseIcon;
+        btnVideo.classList.add('active');
+      } else {
+        bgVideo.pause();
+        iconVideo.innerHTML = playIcon;
+        btnVideo.classList.remove('active');
+      }
+    });
+
+    dynPlayBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (bgMusic.paused) { bgMusic.play(); setPlaying(true); }
+      else                { bgMusic.pause(); setPlaying(false); }
+    });
+
+    dynPrevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      loadTrack(currentTrack - 1, !bgMusic.paused);
+    });
+
+    dynNextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      loadTrack(currentTrack + 1, !bgMusic.paused);
+    });
+
+    // ── Volume control ──
+    const dynVolSlider = document.getElementById('dyn-vol-slider');
+    const dynVolIcon   = document.getElementById('dyn-vol-icon');
+    const savedVolume  = parseFloat(localStorage.getItem('vol') ?? '1');
+    let lastVolume     = savedVolume > 0 ? savedVolume : 1;
+    bgMusic.volume     = savedVolume;
+    bgMusic.muted      = (savedVolume === 0);
+    dynVolSlider.value = savedVolume;
+
+    const volHighIcon = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+    const volLowIcon  = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>';
+    const volMuteIcon = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+
+    function updateVolIcon(vol) {
+      if (vol === 0) dynVolIcon.innerHTML = volMuteIcon;
+      else if (vol < 0.5) dynVolIcon.innerHTML = volLowIcon;
+      else dynVolIcon.innerHTML = volHighIcon;
+    }
+    updateVolIcon(savedVolume); // init icon to match restored volume
+
+    dynVolSlider.addEventListener('input', (e) => {
+      e.stopPropagation();
+      const vol = parseFloat(e.target.value);
+      bgMusic.volume = vol;
+      bgMusic.muted = (vol === 0);
+      if (vol > 0) lastVolume = vol;
+      updateVolIcon(vol);
+      localStorage.setItem('vol', vol);
+    });
+
+    dynVolIcon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (bgMusic.volume > 0 || !bgMusic.muted) {
+        lastVolume = bgMusic.volume || lastVolume;
+        bgMusic.volume = 0;
+        bgMusic.muted = true;
+        dynVolSlider.value = 0;
+        updateVolIcon(0);
+        localStorage.setItem('vol', 0);
+      } else {
+        bgMusic.volume = lastVolume;
+        bgMusic.muted = false;
+        dynVolSlider.value = lastVolume;
+        updateVolIcon(lastVolume);
+        localStorage.setItem('vol', lastVolume);
+      }
+    });
+
+    // ── Contact form → mailto ──
+    document.getElementById('contact-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const name    = document.getElementById('c-name').value.trim();
+      const replyTo = document.getElementById('c-email').value.trim();
+      const message = document.getElementById('c-message').value.trim();
+
+      if (!name || !replyTo || !message) return;
+
+      const subject = encodeURIComponent('Message from ' + name);
+      const body    = encodeURIComponent('From: ' + name + '\nReply to: ' + replyTo + '\n\n' + message);
+
+      // TODO: replace YOUR_EMAIL@example.com with your actual email address
+      window.location.href = 'mailto:YOUR_EMAIL@example.com?subject=' + subject + '&body=' + body;
+    });
+  </script>
+
+  <!-- Mentions légales — flèche centrée, panel fixe par-dessus -->
+  <div class="legal-arrow-wrap" id="legal-arrow-wrap">
+    <button class="legal-arrow-btn" id="legal-arrow-btn" aria-label="Afficher les mentions légales">
+      <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+  </div>
+  <div class="legal-panel" id="legal-panel">
+    <div class="legal-panel-inner">
+
+        <div class="legal-title-row">
+          <span>Mentions Légales</span>
+          <span>Site non-commercial &mdash; usage personnel</span>
+        </div>
+
+        <div class="legal-cols">
+          <div class="legal-col">
+            <span class="legal-lbl">Éditeur</span>
+            1Leeway &mdash; Leeway Studio<br>
+            <a href="mailto:email@email.com" style="color:inherit">email@email.com</a>
+          </div>
+          <div class="legal-col">
+            <span class="legal-lbl">Hébergement</span>
+            GitHub Pages &mdash; GitHub, Inc.<br>
+            88 Colin P Kelly Jr St, San Francisco CA 94107<br>
+            <a href="https://pages.github.com" target="_blank" rel="noopener noreferrer" style="color:inherit">pages.github.com</a>
+          </div>
+          <div class="legal-col">
+            <span class="legal-lbl">Propriété intellectuelle</span>
+            Contenus &amp; identité visuelle propriété de 1Leeway / Leeway Studio.
+            Toute reproduction sans autorisation écrite est interdite.
+          </div>
+          <div class="legal-col">
+            <span class="legal-lbl">Données &amp; Cookies</span>
+            Aucune donnée collectée, aucun cookie de traçage.
+            Conforme au RGPD (UE)&nbsp;2016/679 et loi n&deg;&nbsp;78-17
+            (Informatique et Libertés).
+          </div>
+          <div class="legal-col">
+            <span class="legal-lbl">Loi applicable</span>
+            Droit français &mdash; LCEN n&deg;&nbsp;2004-575 du 21&nbsp;juin&nbsp;2004.<br><br>
+            <a href="https://iuris.is" target="_blank" rel="noopener noreferrer" class="legal-inspi-link">Design inspiré de Iuri De Paula &mdash; iuris.is</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  <script>
+    (function () {
+      var arrowBtn = document.getElementById('legal-arrow-btn');
+      var panel    = document.getElementById('legal-panel');
+      var leaveTimer;
+      function openPanel() {
+        clearTimeout(leaveTimer);
+        panel.classList.add('open');
+        arrowBtn.classList.add('active');
+      }
+      function closePanel() {
+        leaveTimer = setTimeout(function () {
+          panel.classList.remove('open');
+          arrowBtn.classList.remove('active');
+        }, 80);
+      }
+      arrowBtn.addEventListener('mouseenter', openPanel);
+      arrowBtn.addEventListener('mouseleave', closePanel);
+      panel.addEventListener('mouseenter', openPanel);
+      panel.addEventListener('mouseleave', closePanel);
+    })();
+  </script>
+
+</body>
+</html>
