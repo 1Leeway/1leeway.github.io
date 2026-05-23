@@ -1341,6 +1341,7 @@
       sections.forEach(s => s.classList.remove('active'));
       const section = document.getElementById('section-' + id);
       section.classList.add('active');
+      history.replaceState(null, '', '#' + id);
       updateSiteLine();
       typewriteSection(section);
     }
@@ -1350,6 +1351,22 @@
         e.preventDefault();
         goToSection(btn.dataset.section);
       });
+    });
+
+    // ── Hash navigation ──
+    (function () {
+      const hash = location.hash.slice(1);
+      if (hash && sectionIds.includes(hash)) {
+        goToSection(hash);
+      } else {
+        const defaultId = document.querySelector('.nav-btn.active')?.dataset.section || 'is';
+        history.replaceState(null, '', '#' + defaultId);
+      }
+    })();
+
+    window.addEventListener('hashchange', () => {
+      const hash = location.hash.slice(1);
+      if (hash && sectionIds.includes(hash)) goToSection(hash);
     });
 
     // ── Scroll to change section ──
