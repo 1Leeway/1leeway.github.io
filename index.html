@@ -35,9 +35,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 32px;
+      padding: 36px 32px 20px;
       gap: 24px;
       flex-shrink: 0;
+      position: relative;
+      z-index: 160;
     }
 
     /* ── MEDIA CONTROLS ── */
@@ -71,24 +73,86 @@
       fill: #ffffff;
     }
 
+    /* ── BURGER BTN ── */
+    .burger-btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.5);
+      cursor: pointer;
+      width: 28px; height: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      opacity: 0.35;
+      transition: opacity 0.2s, border-radius 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .burger-btn:hover { opacity: 0.8; }
+    .burger-btn.open {
+      opacity: 0.9;
+      border-radius: 50%;
+    }
+
+    .burger-btn span {
+      display: block;
+      width: 12px; height: 1.5px;
+      background: #ffffff;
+      transition: transform 0.25s ease, opacity 0.2s ease;
+      transform-origin: center;
+    }
+
+    .burger-btn.open span:nth-child(1) { transform: rotate(45deg) translate(0, 5.5px); }
+    .burger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .burger-btn.open span:nth-child(3) { transform: rotate(-45deg) translate(0, -5.5px); }
+
+    /* ── BURGER MENU PANEL ── */
+    .burger-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 200px;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-left: 1px solid rgba(255,255,255,0.08);
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .burger-menu.open {
+      transform: translateX(0);
+    }
+
     .nav-links {
       display: flex;
-      gap: 20px;
+      flex-direction: column;
       list-style: none;
+      width: 100%;
+      padding: 0 28px;
     }
 
     .nav-links a {
       color: #ffffff;
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       transition: opacity 0.2s, transform 0.2s ease;
-      display: inline-block;
+      display: block;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      opacity: 0.55;
     }
 
-    .nav-links a:hover:not(.active) { opacity: 0.6; transform: scale(1.12); }
+    .nav-links a:hover:not(.active) { opacity: 1; transform: translateX(6px); }
 
     .nav-links a.active {
-      opacity: 0.28;
+      opacity: 0.22;
       pointer-events: none;
     }
 
@@ -596,6 +660,7 @@
       align-items: center;
       justify-content: center;
       pointer-events: none;
+      transition: opacity 0.25s ease;
     }
 
     .dyn-notch:hover .dyn-notch-idle { opacity: 0; }
@@ -1025,16 +1090,12 @@
     /* ── MOBILE ── */
     @media (max-width: 640px) {
       nav {
-        padding: 10px 14px;
+        padding: 62px 14px 10px;
         gap: 8px;
       }
 
-      .nav-links {
-        gap: 6px;
-      }
-
-      .nav-links a {
-        font-size: 0.62rem;
+      .burger-menu {
+        width: 180px;
       }
 
       .ctrl-btn {
@@ -1270,6 +1331,13 @@
         <svg id="icon-video" viewBox="0 0 24 24"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>
       </button>
     </div>
+    <button class="burger-btn" id="burger-btn" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Burger navigation panel -->
+  <div class="burger-menu" id="burger-menu">
     <ul class="nav-links">
       <li><a href="#" class="nav-btn active" data-section="is">.is()</a></li>
       <li><a href="#" class="nav-btn" data-section="work">.work()</a></li>
@@ -1277,7 +1345,7 @@
       <li><a href="#" class="nav-btn" data-section="about">.about()</a></li>
       <li><a href="#" class="nav-btn" data-section="contact">.contact()</a></li>
     </ul>
-  </nav>
+  </div>
 
   <a class="auteur" href="https://pixabay.com/users/traphitho-3244107/" target="_blank" rel="noopener noreferrer">.TRAPHITHO</a>
 
@@ -1476,6 +1544,12 @@
     const sections = document.querySelectorAll('.page-section');
 
     function goToSection(id) {
+      // close burger menu if open
+      const bMenu = document.getElementById('burger-menu');
+      const bBtn  = document.getElementById('burger-btn');
+      if (bMenu) { bMenu.classList.remove('open'); }
+      if (bBtn)  { bBtn.classList.remove('open'); }
+
       const btn = document.querySelector(`.nav-btn[data-section="${id}"]`);
       if (!btn || btn.classList.contains('active')) return;
       navBtns.forEach(b => b.classList.remove('active'));
@@ -1752,6 +1826,25 @@
         goToSection(sectionIds[next]);
         setTimeout(function () { scrollLocked = false; }, 700);
       }, { passive: true });
+    })();
+
+    // ── Burger menu ──
+    (function () {
+      var burgerBtn  = document.getElementById('burger-btn');
+      var burgerMenu = document.getElementById('burger-menu');
+
+      burgerBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = burgerMenu.classList.toggle('open');
+        burgerBtn.classList.toggle('open', isOpen);
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!burgerMenu.contains(e.target) && !burgerBtn.contains(e.target)) {
+          burgerMenu.classList.remove('open');
+          burgerBtn.classList.remove('open');
+        }
+      });
     })();
   </script>
 
