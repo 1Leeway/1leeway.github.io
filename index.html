@@ -1006,6 +1006,200 @@
       0%, 100% { opacity: 0.5; }
       50%       { opacity: 1; }
     }
+
+    /* ── .work() soon placeholder ── */
+    .work-soon {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .work-soon-text {
+      font-size: 0.88rem;
+      letter-spacing: 0.4em;
+      opacity: 0.2;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 640px) {
+      nav {
+        padding: 10px 14px;
+        gap: 8px;
+      }
+
+      .nav-links {
+        gap: 6px;
+      }
+
+      .nav-links a {
+        font-size: 0.62rem;
+      }
+
+      .ctrl-btn {
+        width: 24px;
+        height: 24px;
+      }
+
+      /* Vertical line repositioned */
+      .site-line {
+        left: 20px;
+      }
+
+      /* 20px line + 3px + 18px gap = 41px → rounded to 48px */
+      .page-section {
+        padding-left: 48px;
+        padding-right: 14px;
+      }
+
+      #section-work {
+        padding-top: 36px;
+        padding-bottom: 36px;
+        gap: 20px;
+      }
+
+      .hero-title {
+        font-size: 2.4rem;
+      }
+
+      .hero-subtitle {
+        font-size: 0.9rem;
+      }
+
+      .hero-description {
+        font-size: 0.88rem;
+        max-width: 100%;
+      }
+
+      .work-row {
+        grid-template-columns: 1.5rem 1fr auto;
+        gap: 10px;
+        padding: 14px 0;
+      }
+
+      .work-row-tags {
+        display: none;
+      }
+
+      .work-row-title {
+        font-size: 0.85rem;
+      }
+
+      .bio-title {
+        font-size: 1.9rem;
+      }
+
+      .bio-content {
+        max-width: 100%;
+        gap: 22px;
+      }
+
+      .bio-icons {
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .bio-icon-box {
+        width: 40px;
+        height: 40px;
+      }
+
+      .bio-icon-link svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .bio-desc {
+        font-size: 0.85rem;
+      }
+
+      .bio-discord {
+        padding: 12px 14px;
+      }
+
+      .bio-discord img {
+        width: 34px;
+        height: 34px;
+      }
+
+      .about-name {
+        font-size: 1.9rem;
+      }
+
+      .about-content {
+        max-width: 100%;
+      }
+
+      .about-bio {
+        font-size: 0.85rem;
+      }
+
+      .contact-heading {
+        font-size: 1.9rem;
+      }
+
+      .contact-content {
+        max-width: 100%;
+      }
+
+      .auteur {
+        right: 14px;
+        bottom: 38px;
+        font-size: 0.62rem;
+      }
+
+      .auteur::before {
+        white-space: normal;
+        max-width: 190px;
+        text-align: right;
+      }
+
+      /* Dynamic Notch — always expanded on mobile */
+      .dyn-notch {
+        width: 240px;
+        height: 58px;
+        transition: none;
+      }
+
+      .dyn-notch:hover {
+        width: 240px;
+        height: 58px;
+        border-radius: 0 0 22px 22px;
+      }
+
+      .dyn-notch-idle {
+        display: none;
+      }
+
+      .dyn-notch-player {
+        opacity: 1;
+        pointer-events: auto;
+        transition: none;
+      }
+
+      .dyn-vol-slider {
+        width: 42px;
+      }
+
+      /* Legal panel */
+      .legal-cols {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px 14px;
+      }
+
+      .legal-panel-inner {
+        padding: 14px 16px 12px;
+      }
+
+      /* Splash */
+      .splash-vline {
+        left: 20px;
+      }
+
+      .splash-name,
+      .splash-cursor {
+        font-size: 2.6rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1102,62 +1296,8 @@
     <!-- .work() -->
     <section id="section-work" class="page-section">
       <span class="section-label">.work()</span>
-      <div class="work-list">
-        <div class="work-item">
-          <a class="work-row" href="#">
-            <span class="work-row-num">01</span>
-            <span class="work-row-title">Project Name</span>
-            <div class="work-row-tags">
-              <span class="tag">React</span>
-              <span class="tag">TypeScript</span>
-            </div>
-            <span class="work-row-year">2025</span>
-          </a>
-          <div class="work-expand">
-            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
-          </div>
-        </div>
-        <div class="work-item">
-          <a class="work-row" href="#">
-            <span class="work-row-num">02</span>
-            <span class="work-row-title">Project Name</span>
-            <div class="work-row-tags">
-              <span class="tag">Figma</span>
-              <span class="tag">UI/UX</span>
-            </div>
-            <span class="work-row-year">2025</span>
-          </a>
-          <div class="work-expand">
-            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
-          </div>
-        </div>
-        <div class="work-item">
-          <a class="work-row" href="#">
-            <span class="work-row-num">03</span>
-            <span class="work-row-title">Project Name</span>
-            <div class="work-row-tags">
-              <span class="tag">CSS</span>
-              <span class="tag">Animation</span>
-            </div>
-            <span class="work-row-year">2024</span>
-          </a>
-          <div class="work-expand">
-            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
-          </div>
-        </div>
-        <div class="work-item">
-          <a class="work-row" href="#">
-            <span class="work-row-num">04</span>
-            <span class="work-row-title">Project Name</span>
-            <div class="work-row-tags">
-              <span class="tag">Illustration</span>
-            </div>
-            <span class="work-row-year">2024</span>
-          </a>
-          <div class="work-expand">
-            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
-          </div>
-        </div>
+      <div class="work-soon">
+        <span class="work-soon-text">soon</span>
       </div>
     </section>
 
@@ -1587,6 +1727,28 @@
       // TODO: replace YOUR_EMAIL@example.com with your actual email address
       window.location.href = 'mailto:YOUR_EMAIL@example.com?subject=' + subject + '&body=' + body;
     });
+
+    // ── Touch swipe — section navigation on mobile ──
+    (function () {
+      var touchStartY = 0;
+      var touchStartX = 0;
+      window.addEventListener('touchstart', function (e) {
+        touchStartY = e.touches[0].clientY;
+        touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+      window.addEventListener('touchend', function (e) {
+        var deltaY = touchStartY - e.changedTouches[0].clientY;
+        var deltaX = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(deltaX) > Math.abs(deltaY) || Math.abs(deltaY) < 45) return;
+        if (scrollLocked) return;
+        var current = sectionIds.indexOf(document.querySelector('.nav-btn.active').dataset.section);
+        var next = deltaY > 0 ? current + 1 : current - 1;
+        if (next < 0 || next >= sectionIds.length) return;
+        scrollLocked = true;
+        goToSection(sectionIds[next]);
+        setTimeout(function () { scrollLocked = false; }, 700);
+      }, { passive: true });
+    })();
   </script>
 
   <!-- Mentions légales — flèche centrée, panel fixe par-dessus -->
