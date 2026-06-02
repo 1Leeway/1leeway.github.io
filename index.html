@@ -35,11 +35,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 36px 32px 20px;
+      padding: 20px 32px;
       gap: 24px;
       flex-shrink: 0;
-      position: relative;
-      z-index: 160;
     }
 
     /* ── MEDIA CONTROLS ── */
@@ -73,86 +71,24 @@
       fill: #ffffff;
     }
 
-    /* ── BURGER BTN ── */
-    .burger-btn {
-      background: none;
-      border: 1px solid rgba(255,255,255,0.5);
-      cursor: pointer;
-      width: 28px; height: 28px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      opacity: 0.35;
-      transition: opacity 0.2s, border-radius 0.3s ease;
-      flex-shrink: 0;
-    }
-
-    .burger-btn:hover { opacity: 0.8; }
-    .burger-btn.open {
-      opacity: 0.9;
-      border-radius: 50%;
-    }
-
-    .burger-btn span {
-      display: block;
-      width: 12px; height: 1.5px;
-      background: #ffffff;
-      transition: transform 0.25s ease, opacity 0.2s ease;
-      transform-origin: center;
-    }
-
-    .burger-btn.open span:nth-child(1) { transform: rotate(45deg) translate(0, 5.5px); }
-    .burger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-    .burger-btn.open span:nth-child(3) { transform: rotate(-45deg) translate(0, -5.5px); }
-
-    /* ── BURGER MENU PANEL ── */
-    .burger-menu {
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 200px;
-      background: rgba(0, 0, 0, 0.95);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-left: 1px solid rgba(255,255,255,0.08);
-      transform: translateX(100%);
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 155;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .burger-menu.open {
-      transform: translateX(0);
-    }
-
     .nav-links {
       display: flex;
-      flex-direction: column;
+      gap: 20px;
       list-style: none;
-      width: 100%;
-      padding: 0 28px;
     }
 
     .nav-links a {
       color: #ffffff;
       text-decoration: none;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       transition: opacity 0.2s, transform 0.2s ease;
-      display: block;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      opacity: 0.55;
+      display: inline-block;
     }
 
-    .nav-links a:hover:not(.active) { opacity: 1; transform: translateX(6px); }
+    .nav-links a:hover:not(.active) { opacity: 0.6; transform: scale(1.12); }
 
     .nav-links a.active {
-      opacity: 0.22;
+      opacity: 0.28;
       pointer-events: none;
     }
 
@@ -660,7 +596,6 @@
       align-items: center;
       justify-content: center;
       pointer-events: none;
-      transition: opacity 0.25s ease;
     }
 
     .dyn-notch:hover .dyn-notch-idle { opacity: 0; }
@@ -968,8 +903,6 @@
       z-index: 9999;
       cursor: pointer;
       overflow: hidden;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
     }
 
     /* Two halves that slide apart on dismiss */
@@ -1073,196 +1006,6 @@
       0%, 100% { opacity: 0.5; }
       50%       { opacity: 1; }
     }
-
-    /* ── .work() soon placeholder ── */
-    .work-soon {
-      flex: 1;
-      display: flex;
-      align-items: center;
-    }
-
-    .work-soon-text {
-      font-size: 0.88rem;
-      letter-spacing: 0.4em;
-      opacity: 0.2;
-    }
-
-    /* ── MOBILE ── */
-    @media (max-width: 640px) {
-      nav {
-        padding: 62px 14px 10px;
-        gap: 8px;
-      }
-
-      .burger-menu {
-        width: 180px;
-      }
-
-      .ctrl-btn {
-        width: 24px;
-        height: 24px;
-      }
-
-      /* Vertical line repositioned */
-      .site-line {
-        left: 20px;
-      }
-
-      /* 20px line + 3px + 18px gap = 41px → rounded to 48px */
-      .page-section {
-        padding-left: 48px;
-        padding-right: 14px;
-      }
-
-      #section-work {
-        padding-top: 36px;
-        padding-bottom: 36px;
-        gap: 20px;
-      }
-
-      .hero-title {
-        font-size: 2.4rem;
-      }
-
-      .hero-subtitle {
-        font-size: 0.9rem;
-      }
-
-      .hero-description {
-        font-size: 0.88rem;
-        max-width: 100%;
-      }
-
-      .work-row {
-        grid-template-columns: 1.5rem 1fr auto;
-        gap: 10px;
-        padding: 14px 0;
-      }
-
-      .work-row-tags {
-        display: none;
-      }
-
-      .work-row-title {
-        font-size: 0.85rem;
-      }
-
-      .bio-title {
-        font-size: 1.9rem;
-      }
-
-      .bio-content {
-        max-width: 100%;
-        gap: 22px;
-      }
-
-      .bio-icons {
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-
-      .bio-icon-box {
-        width: 40px;
-        height: 40px;
-      }
-
-      .bio-icon-link svg {
-        width: 18px;
-        height: 18px;
-      }
-
-      .bio-desc {
-        font-size: 0.85rem;
-      }
-
-      .bio-discord {
-        padding: 12px 14px;
-      }
-
-      .bio-discord img {
-        width: 34px;
-        height: 34px;
-      }
-
-      .about-name {
-        font-size: 1.9rem;
-      }
-
-      .about-content {
-        max-width: 100%;
-      }
-
-      .about-bio {
-        font-size: 0.85rem;
-      }
-
-      .contact-heading {
-        font-size: 1.9rem;
-      }
-
-      .contact-content {
-        max-width: 100%;
-      }
-
-      .auteur {
-        right: 14px;
-        bottom: 38px;
-        font-size: 0.62rem;
-      }
-
-      .auteur::before {
-        white-space: normal;
-        max-width: 190px;
-        text-align: right;
-      }
-
-      /* Dynamic Notch — always expanded on mobile */
-      .dyn-notch {
-        width: 240px;
-        height: 58px;
-        transition: none;
-      }
-
-      .dyn-notch:hover {
-        width: 240px;
-        height: 58px;
-        border-radius: 0 0 22px 22px;
-      }
-
-      .dyn-notch-idle {
-        display: none;
-      }
-
-      .dyn-notch-player {
-        opacity: 1;
-        pointer-events: auto;
-        transition: none;
-      }
-
-      .dyn-vol-slider {
-        width: 42px;
-      }
-
-      /* Legal panel */
-      .legal-cols {
-        grid-template-columns: 1fr 1fr;
-        gap: 14px 14px;
-      }
-
-      .legal-panel-inner {
-        padding: 14px 16px 12px;
-      }
-
-      /* Splash */
-      .splash-vline {
-        left: 20px;
-      }
-
-      .splash-name,
-      .splash-cursor {
-        font-size: 2.6rem;
-      }
-    }
   </style>
 </head>
 <body>
@@ -1331,13 +1074,6 @@
         <svg id="icon-video" viewBox="0 0 24 24"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>
       </button>
     </div>
-    <button class="burger-btn" id="burger-btn" aria-label="Toggle navigation">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
-
-  <!-- Burger navigation panel -->
-  <div class="burger-menu" id="burger-menu">
     <ul class="nav-links">
       <li><a href="#" class="nav-btn active" data-section="is">.is()</a></li>
       <li><a href="#" class="nav-btn" data-section="work">.work()</a></li>
@@ -1345,7 +1081,7 @@
       <li><a href="#" class="nav-btn" data-section="about">.about()</a></li>
       <li><a href="#" class="nav-btn" data-section="contact">.contact()</a></li>
     </ul>
-  </div>
+  </nav>
 
   <a class="auteur" href="https://pixabay.com/users/traphitho-3244107/" target="_blank" rel="noopener noreferrer">.TRAPHITHO</a>
 
@@ -1366,8 +1102,62 @@
     <!-- .work() -->
     <section id="section-work" class="page-section">
       <span class="section-label">.work()</span>
-      <div class="work-soon">
-        <span class="work-soon-text">soon</span>
+      <div class="work-list">
+        <div class="work-item">
+          <a class="work-row" href="#">
+            <span class="work-row-num">01</span>
+            <span class="work-row-title">Project Name</span>
+            <div class="work-row-tags">
+              <span class="tag">React</span>
+              <span class="tag">TypeScript</span>
+            </div>
+            <span class="work-row-year">2025</span>
+          </a>
+          <div class="work-expand">
+            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
+          </div>
+        </div>
+        <div class="work-item">
+          <a class="work-row" href="#">
+            <span class="work-row-num">02</span>
+            <span class="work-row-title">Project Name</span>
+            <div class="work-row-tags">
+              <span class="tag">Figma</span>
+              <span class="tag">UI/UX</span>
+            </div>
+            <span class="work-row-year">2025</span>
+          </a>
+          <div class="work-expand">
+            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
+          </div>
+        </div>
+        <div class="work-item">
+          <a class="work-row" href="#">
+            <span class="work-row-num">03</span>
+            <span class="work-row-title">Project Name</span>
+            <div class="work-row-tags">
+              <span class="tag">CSS</span>
+              <span class="tag">Animation</span>
+            </div>
+            <span class="work-row-year">2024</span>
+          </a>
+          <div class="work-expand">
+            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
+          </div>
+        </div>
+        <div class="work-item">
+          <a class="work-row" href="#">
+            <span class="work-row-num">04</span>
+            <span class="work-row-title">Project Name</span>
+            <div class="work-row-tags">
+              <span class="tag">Illustration</span>
+            </div>
+            <span class="work-row-year">2024</span>
+          </a>
+          <div class="work-expand">
+            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1544,12 +1334,6 @@
     const sections = document.querySelectorAll('.page-section');
 
     function goToSection(id) {
-      // close burger menu if open
-      const bMenu = document.getElementById('burger-menu');
-      const bBtn  = document.getElementById('burger-btn');
-      if (bMenu) { bMenu.classList.remove('open'); }
-      if (bBtn)  { bBtn.classList.remove('open'); }
-
       const btn = document.querySelector(`.nav-btn[data-section="${id}"]`);
       if (!btn || btn.classList.contains('active')) return;
       navBtns.forEach(b => b.classList.remove('active'));
@@ -1557,7 +1341,6 @@
       sections.forEach(s => s.classList.remove('active'));
       const section = document.getElementById('section-' + id);
       section.classList.add('active');
-      history.replaceState(null, '', '#' + id);
       updateSiteLine();
       typewriteSection(section);
     }
@@ -1569,25 +1352,9 @@
       });
     });
 
-    // ── Scroll / swipe shared state ──
+    // ── Scroll to change section ──
     const sectionIds = Array.from(navBtns).map(b => b.dataset.section);
     let scrollLocked = false;
-
-    // ── Hash navigation ──
-    (function () {
-      const hash = location.hash.slice(1);
-      if (hash && sectionIds.includes(hash)) {
-        goToSection(hash);
-      } else {
-        const defaultId = document.querySelector('.nav-btn.active')?.dataset.section || 'is';
-        history.replaceState(null, '', '#' + defaultId);
-      }
-    })();
-
-    window.addEventListener('hashchange', () => {
-      const hash = location.hash.slice(1);
-      if (hash && sectionIds.includes(hash)) goToSection(hash);
-    });
 
     window.addEventListener('wheel', e => {
       const activeSection = document.querySelector('.page-section.active');
@@ -1703,7 +1470,6 @@
     setTimeout(typeNextChar, 350);
 
     function dismissSplash() {
-      if (splashEl.classList.contains('exit')) return;
       bgMusic.play().then(() => setPlaying(true)).catch(() => {});
       splashEl.classList.add('exit');
       setTimeout(() => { splashEl.style.display = 'none'; }, 700);
@@ -1711,7 +1477,6 @@
     splashEl.addEventListener('click', (e) => {
       if (e.button === 0) dismissSplash();
     }, { once: true });
-    splashEl.addEventListener('touchend', () => dismissSplash(), { once: true });
     bgMusic.addEventListener('ended', () => loadTrack(currentTrack + 1, true));
 
     btnVideo.addEventListener('click', () => {
@@ -1805,47 +1570,6 @@
       // TODO: replace YOUR_EMAIL@example.com with your actual email address
       window.location.href = 'mailto:YOUR_EMAIL@example.com?subject=' + subject + '&body=' + body;
     });
-
-    // ── Touch swipe — section navigation on mobile ──
-    (function () {
-      var touchStartY = 0;
-      var touchStartX = 0;
-      window.addEventListener('touchstart', function (e) {
-        touchStartY = e.touches[0].clientY;
-        touchStartX = e.touches[0].clientX;
-      }, { passive: true });
-      window.addEventListener('touchend', function (e) {
-        var deltaY = touchStartY - e.changedTouches[0].clientY;
-        var deltaX = touchStartX - e.changedTouches[0].clientX;
-        if (Math.abs(deltaX) > Math.abs(deltaY) || Math.abs(deltaY) < 45) return;
-        if (scrollLocked) return;
-        var current = sectionIds.indexOf(document.querySelector('.nav-btn.active').dataset.section);
-        var next = deltaY > 0 ? current + 1 : current - 1;
-        if (next < 0 || next >= sectionIds.length) return;
-        scrollLocked = true;
-        goToSection(sectionIds[next]);
-        setTimeout(function () { scrollLocked = false; }, 700);
-      }, { passive: true });
-    })();
-
-    // ── Burger menu ──
-    (function () {
-      var burgerBtn  = document.getElementById('burger-btn');
-      var burgerMenu = document.getElementById('burger-menu');
-
-      burgerBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var isOpen = burgerMenu.classList.toggle('open');
-        burgerBtn.classList.toggle('open', isOpen);
-      });
-
-      document.addEventListener('click', function (e) {
-        if (!burgerMenu.contains(e.target) && !burgerBtn.contains(e.target)) {
-          burgerMenu.classList.remove('open');
-          burgerBtn.classList.remove('open');
-        }
-      });
-    })();
   </script>
 
   <!-- Mentions légales — flèche centrée, panel fixe par-dessus -->
