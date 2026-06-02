@@ -1495,6 +1495,10 @@
       });
     });
 
+    // ── Scroll / swipe shared state ──
+    const sectionIds = Array.from(navBtns).map(b => b.dataset.section);
+    let scrollLocked = false;
+
     // ── Hash navigation ──
     (function () {
       const hash = location.hash.slice(1);
@@ -1510,10 +1514,6 @@
       const hash = location.hash.slice(1);
       if (hash && sectionIds.includes(hash)) goToSection(hash);
     });
-
-    // ── Scroll to change section ──
-    const sectionIds = Array.from(navBtns).map(b => b.dataset.section);
-    let scrollLocked = false;
 
     window.addEventListener('wheel', e => {
       const activeSection = document.querySelector('.page-section.active');
