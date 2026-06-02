@@ -903,6 +903,8 @@
       z-index: 9999;
       cursor: pointer;
       overflow: hidden;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
 
     /* Two halves that slide apart on dismiss */
@@ -1627,6 +1629,7 @@
     setTimeout(typeNextChar, 350);
 
     function dismissSplash() {
+      if (splashEl.classList.contains('exit')) return;
       bgMusic.play().then(() => setPlaying(true)).catch(() => {});
       splashEl.classList.add('exit');
       setTimeout(() => { splashEl.style.display = 'none'; }, 700);
@@ -1634,6 +1637,7 @@
     splashEl.addEventListener('click', (e) => {
       if (e.button === 0) dismissSplash();
     }, { once: true });
+    splashEl.addEventListener('touchend', () => dismissSplash(), { once: true });
     bgMusic.addEventListener('ended', () => loadTrack(currentTrack + 1, true));
 
     btnVideo.addEventListener('click', () => {
