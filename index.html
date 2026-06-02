@@ -1006,6 +1006,110 @@
       0%, 100% { opacity: 0.5; }
       50%       { opacity: 1; }
     }
+
+    /* ═══════════════════════════════
+       MOBILE — orientation portrait
+       (height > width)
+    ═══════════════════════════════ */
+    @media (orientation: portrait) {
+
+      nav {
+        padding: 12px 18px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .media-controls {
+        order: 1;
+        margin-right: auto;
+      }
+
+      .nav-links {
+        order: 2;
+        width: 100%;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .nav-links a { font-size: 0.75rem; }
+
+      /* Vertical line closer to edge */
+      .site-line { left: 20px; }
+
+      /* 20px + 3px line + 18px gap = 41px → use 48px for comfort */
+      .page-section {
+        padding-left: 48px;
+        padding-right: 18px;
+      }
+
+      #section-work {
+        padding-top: 28px;
+        padding-bottom: 28px;
+        gap: 20px;
+      }
+
+      /* .is() */
+      .hero-title { font-size: 2.4rem; }
+      .hero-description { max-width: 100%; font-size: 0.9rem; }
+
+      /* .work() */
+      .work-row {
+        grid-template-columns: 1.8rem 1fr;
+        gap: 10px;
+        padding: 14px 0;
+      }
+      .work-row-tags,
+      .work-row-year { display: none; }
+      .work-expand { padding-left: calc(1.8rem + 10px); }
+
+      /* .bio() */
+      .bio-title { font-size: 2rem; }
+      .bio-content { max-width: 100%; gap: 22px; }
+      .bio-icons { flex-wrap: wrap; gap: 12px; }
+      .bio-icon-box { width: 40px; height: 40px; }
+      .bio-icon-link svg { width: 18px; height: 18px; }
+
+      /* .about() */
+      .about-name { font-size: 2rem; }
+      .about-content { max-width: 100%; }
+
+      /* .contact() */
+      .contact-heading { font-size: 2rem; }
+      .contact-content { max-width: 100%; }
+
+      /* Auteur */
+      .auteur {
+        bottom: 36px;
+        right: 18px;
+        font-size: 0.68rem;
+      }
+      .auteur::before { display: none; }
+
+      /* Legal panel */
+      .legal-cols {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px 16px;
+      }
+      .legal-panel-inner { padding: 14px 18px 12px; }
+
+      /* Splash */
+      .splash-vline { left: 20px; }
+      .splash-name  { font-size: 2.8rem; }
+      .splash-cursor { font-size: 2.8rem; }
+
+      /* Dynamic notch: tap to expand */
+      .dyn-notch.mobile-expanded {
+        width: min(92vw, 360px);
+        height: 66px;
+        border-radius: 0 0 30px 30px;
+      }
+      .dyn-notch.mobile-expanded .dyn-notch-idle { opacity: 0; }
+      .dyn-notch.mobile-expanded .dyn-notch-player {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1570,6 +1674,39 @@
       // TODO: replace YOUR_EMAIL@example.com with your actual email address
       window.location.href = 'mailto:YOUR_EMAIL@example.com?subject=' + subject + '&body=' + body;
     });
+
+    // ── Touch swipe: navigate between sections ──
+    (function () {
+      var startY = 0;
+      document.addEventListener('touchstart', function (e) {
+        startY = e.touches[0].clientY;
+      }, { passive: true });
+
+      document.addEventListener('touchend', function (e) {
+        var dy = startY - e.changedTouches[0].clientY;
+        if (Math.abs(dy) < 50) return; // ignore tiny swipes
+        var activeSection = document.querySelector('.page-section.active');
+        // Let native scroll handle a scrollable work list
+        if (activeSection.id === 'section-work' &&
+            activeSection.scrollHeight > activeSection.clientHeight) return;
+        if (scrollLocked) return;
+        var current = sectionIds.indexOf(document.querySelector('.nav-btn.active').dataset.section);
+        var next = dy > 0 ? current + 1 : current - 1;
+        if (next < 0 || next >= sectionIds.length) return;
+        scrollLocked = true;
+        goToSection(sectionIds[next]);
+        setTimeout(function () { scrollLocked = false; }, 700);
+      }, { passive: true });
+
+      // ── Dynamic notch: tap to expand on mobile ──
+      var notchExpanded = false;
+      dynNotch.addEventListener('click', function (e) {
+        if (!window.matchMedia('(orientation: portrait)').matches) return;
+        if (e.target.closest('button, input')) return;
+        notchExpanded = !notchExpanded;
+        dynNotch.classList.toggle('mobile-expanded', notchExpanded);
+      });
+    })();
   </script>
 
   <!-- Mentions légales — flèche centrée, panel fixe par-dessus -->
