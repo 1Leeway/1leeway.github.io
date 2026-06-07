@@ -188,66 +188,202 @@
       text-transform: uppercase;
     }
 
-    .work-list {
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      width: 100%;
+      align-content: start;
+    }
+
+    .work-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.1);
+      height: 170px;
+      transition: border-color 0.25s, opacity 0.35s;
+    }
+
+    .work-card:hover {
+      border-color: rgba(255,255,255,0.28);
+    }
+
+    .work-card.active {
+      border-color: rgba(255,255,255,0.55);
+    }
+
+    .work-grid.has-active .work-card:not(.active) {
+      opacity: 0.32;
+    }
+
+    .work-card-bg {
+      position: absolute;
+      inset: -4px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .work-card:hover .work-card-bg,
+    .work-card.active .work-card-bg {
+      transform: scale(1.05);
+    }
+
+    .work-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.35) 55%, rgba(0,0,0,0.08) 100%);
+    }
+
+    .work-card-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
-      border-top: 1px solid rgba(255,255,255,0.1);
+      gap: 5px;
+      z-index: 1;
     }
 
-    .work-item {
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+    .work-card-header {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
     }
 
-    .work-row {
-      display: grid;
-      grid-template-columns: 2rem 1fr auto auto;
-      align-items: center;
-      gap: 24px;
-      padding: 18px 0;
-      text-decoration: none;
-      color: inherit;
-      transition: opacity 0.2s;
+    .work-card-num {
+      font-size: 0.62rem;
+      opacity: 0.28;
     }
 
-    .work-item:hover .work-row { opacity: 0.55; }
-
-    .work-row-num {
-      font-size: 0.7rem;
-      opacity: 0.25;
-    }
-
-    .work-row-title {
-      font-size: 0.95rem;
+    .work-card-title {
+      font-size: 0.9rem;
       font-weight: 700;
     }
 
-    .work-row-tags {
+    .work-card-year {
+      font-size: 0.62rem;
+      opacity: 0.28;
+      margin-left: auto;
+    }
+
+    .work-card-tags {
       display: flex;
-      gap: 6px;
+      gap: 5px;
+      flex-wrap: wrap;
     }
 
-    .work-row-year {
-      font-size: 0.72rem;
-      opacity: 0.3;
-      text-align: right;
-    }
-
-    .work-expand {
+    /* ── Detail panel ── */
+    .work-detail {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.35s ease, padding-bottom 0.35s ease;
-      padding-left: calc(2rem + 24px);
+      transition: max-height 0.52s cubic-bezier(0.16,1,0.3,1);
     }
 
-    .work-item:hover .work-expand {
-      max-height: 80px;
-      padding-bottom: 18px;
+    .work-detail.open {
+      max-height: 280px;
     }
 
-    .work-expand-desc {
-      font-size: 0.82rem;
-      opacity: 0.45;
-      line-height: 1.7;
+    .work-detail-inner {
+      display: flex;
+      gap: 22px;
+      padding: 18px 0 22px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.28s ease, transform 0.28s ease;
+    }
+
+    .work-detail.open .work-detail-inner {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.28s ease 0.22s, transform 0.28s ease 0.22s;
+    }
+
+    .work-detail-img {
+      flex: 0 0 220px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #0a0a0a;
+    }
+
+    .work-detail-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    .work-detail-meta {
+      display: flex;
+      align-items: baseline;
+      gap: 9px;
+    }
+
+    .work-detail-num  { font-size: 0.62rem; opacity: 0.28; }
+
+    .work-detail-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .work-detail-year { font-size: 0.62rem; opacity: 0.28; }
+
+    .work-detail-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.3);
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.2s;
+    }
+
+    .work-detail-close:hover { color: rgba(255,255,255,0.85); }
+
+    .work-detail-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .work-detail-desc {
+      font-size: 0.78rem;
+      opacity: 0.5;
+      line-height: 1.65;
+    }
+
+    .work-detail-link {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.22);
+      color: #ffffff;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      padding: 6px 14px;
+      text-decoration: none;
+      margin-top: 2px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .work-detail-link:hover {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.5);
     }
 
     .tag {
@@ -550,7 +686,7 @@
       0%, 100% { opacity: 1; }
       50%       { opacity: 0; }
     }
-    [target="_blank"]:not(.bio-icon-link):not(.bio-discord)::after {
+    [target="_blank"]:not(.bio-icon-link):not(.bio-discord):not(.work-detail-link)::after {
       content: ' ↗';
       font-size: 1em;
       opacity: 0;
@@ -558,7 +694,7 @@
       display: inline-block;
     }
 
-    [target="_blank"]:not(.bio-icon-link):not(.bio-discord):hover::after { opacity: 1; }
+    [target="_blank"]:not(.bio-icon-link):not(.bio-discord):not(.work-detail-link):hover::after { opacity: 1; }
 
     /* ── Dynamic Notch ── */
     .dyn-notch {
@@ -1054,14 +1190,10 @@
       .hero-description { max-width: 100%; font-size: 0.9rem; }
 
       /* .work() */
-      .work-row {
-        grid-template-columns: 1.8rem 1fr;
-        gap: 10px;
-        padding: 14px 0;
-      }
-      .work-row-tags,
-      .work-row-year { display: none; }
-      .work-expand { padding-left: calc(1.8rem + 10px); }
+      .work-grid { grid-template-columns: 1fr; }
+      .work-card { height: 150px; }
+      .work-detail-img { flex: 0 0 110px; }
+      .work-detail.open { max-height: 340px; }
 
       /* .bio() */
       .bio-title { font-size: 2rem; }
@@ -1206,60 +1338,87 @@
     <!-- .work() -->
     <section id="section-work" class="page-section">
       <span class="section-label">.work()</span>
-      <div class="work-list">
-        <div class="work-item">
-          <a class="work-row" href="#">
-            <span class="work-row-num">01</span>
-            <span class="work-row-title">Project Name</span>
-            <div class="work-row-tags">
+      <div class="work-grid" id="work-grid">
+
+        <div class="work-card">
+          <div class="work-card-bg" style="background-image: linear-gradient(135deg, #0d1b2a 0%, #1e3a5f 100%)"></div>
+          <div class="work-card-overlay"></div>
+          <div class="work-card-info">
+            <div class="work-card-header">
+              <span class="work-card-num">01</span>
+              <span class="work-card-title">Project Name</span>
+              <span class="work-card-year">2025</span>
+            </div>
+            <div class="work-card-tags">
               <span class="tag">React</span>
               <span class="tag">TypeScript</span>
             </div>
-            <span class="work-row-year">2025</span>
-          </a>
-          <div class="work-expand">
-            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
           </div>
         </div>
-        <div class="work-item">
-          <a class="work-row" href="#">
-            <span class="work-row-num">02</span>
-            <span class="work-row-title">Project Name</span>
-            <div class="work-row-tags">
+
+        <div class="work-card">
+          <div class="work-card-bg" style="background-image: linear-gradient(135deg, #0a1a12 0%, #0f3326 100%)"></div>
+          <div class="work-card-overlay"></div>
+          <div class="work-card-info">
+            <div class="work-card-header">
+              <span class="work-card-num">02</span>
+              <span class="work-card-title">Project Name</span>
+              <span class="work-card-year">2025</span>
+            </div>
+            <div class="work-card-tags">
               <span class="tag">Figma</span>
               <span class="tag">UI/UX</span>
             </div>
-            <span class="work-row-year">2025</span>
-          </a>
-          <div class="work-expand">
-            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
           </div>
         </div>
-        <div class="work-item">
-          <a class="work-row" href="#">
-            <span class="work-row-num">03</span>
-            <span class="work-row-title">Project Name</span>
-            <div class="work-row-tags">
+
+        <div class="work-card">
+          <div class="work-card-bg" style="background-image: linear-gradient(135deg, #1a0a2e 0%, #2d1b52 100%)"></div>
+          <div class="work-card-overlay"></div>
+          <div class="work-card-info">
+            <div class="work-card-header">
+              <span class="work-card-num">03</span>
+              <span class="work-card-title">Project Name</span>
+              <span class="work-card-year">2024</span>
+            </div>
+            <div class="work-card-tags">
               <span class="tag">CSS</span>
               <span class="tag">Animation</span>
             </div>
-            <span class="work-row-year">2024</span>
-          </a>
-          <div class="work-expand">
-            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
           </div>
         </div>
-        <div class="work-item">
-          <a class="work-row" href="#">
-            <span class="work-row-num">04</span>
-            <span class="work-row-title">Project Name</span>
-            <div class="work-row-tags">
+
+        <div class="work-card">
+          <div class="work-card-bg" style="background-image: linear-gradient(135deg, #111318 0%, #1e2130 100%)"></div>
+          <div class="work-card-overlay"></div>
+          <div class="work-card-info">
+            <div class="work-card-header">
+              <span class="work-card-num">04</span>
+              <span class="work-card-title">Project Name</span>
+              <span class="work-card-year">2024</span>
+            </div>
+            <div class="work-card-tags">
               <span class="tag">Illustration</span>
             </div>
-            <span class="work-row-year">2024</span>
-          </a>
-          <div class="work-expand">
-            <p class="work-expand-desc">Short description of the project and what was built or designed.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Detail panel -->
+      <div class="work-detail" id="work-detail">
+        <div class="work-detail-inner">
+          <div class="work-detail-img" id="work-detail-img"></div>
+          <div class="work-detail-body">
+            <div class="work-detail-meta">
+              <span class="work-detail-num" id="work-detail-num"></span>
+              <span class="work-detail-title" id="work-detail-title"></span>
+              <span class="work-detail-year" id="work-detail-year"></span>
+              <button class="work-detail-close" id="work-detail-close">&times;&nbsp;close</button>
+            </div>
+            <div class="work-detail-tags" id="work-detail-tags"></div>
+            <p class="work-detail-desc" id="work-detail-desc"></p>
+            <a class="work-detail-link" id="work-detail-link" href="#" target="_blank" rel="noopener noreferrer">Visit &#8599;</a>
           </div>
         </div>
       </div>
@@ -1296,7 +1455,7 @@
         </div> 
         <!-- Bloc Discord -->
         <a class="bio-discord" href="https://discord.gg/8Ru6dK4tp8" target="_blank" rel="noopener noreferrer">
-          <img src="https://cdn.discordapp.com/icons/1469433639585583106/c30a3838f1ef0d7b0f4da4314935bf30.png" alt="ゝLee-Box">
+          <img id="discord-server-icon" src="https://cdn.discordapp.com/icons/1469433639585583106/c30a3838f1ef0d7b0f4da4314935bf30.png" alt="ゝLee-Box">
           <div class="bio-discord-info">
             <span class="bio-discord-name">ゝLee-Box</span>
             <span class="bio-discord-sub">Leeway Official Discord | Script | FR | ToolBox</span>
@@ -1707,6 +1866,79 @@
         dynNotch.classList.toggle('mobile-expanded', notchExpanded);
       });
     })();
+
+    // ── Work cards — detail panel ──
+    (function () {
+      var grid       = document.getElementById('work-grid');
+      var detail     = document.getElementById('work-detail');
+      var detailImg  = document.getElementById('work-detail-img');
+      var detailNum  = document.getElementById('work-detail-num');
+      var detailTitle= document.getElementById('work-detail-title');
+      var detailYear = document.getElementById('work-detail-year');
+      var detailTags = document.getElementById('work-detail-tags');
+      var detailDesc = document.getElementById('work-detail-desc');
+      var detailLink = document.getElementById('work-detail-link');
+      var closeBtn   = document.getElementById('work-detail-close');
+
+      // Project data — replace img / href with real screenshot URL / project URL
+      var projects = [
+        { num:'01', title:'Project Name', year:'2025', tags:['React','TypeScript'],
+          desc:'Short description of the project and what was built or designed.',
+          img:'linear-gradient(135deg,#0d1b2a,#1e3a5f)', href:'#' },
+        { num:'02', title:'Project Name', year:'2025', tags:['Figma','UI/UX'],
+          desc:'Short description of the project and what was built or designed.',
+          img:'linear-gradient(135deg,#0a1a12,#0f3326)', href:'#' },
+        { num:'03', title:'Project Name', year:'2024', tags:['CSS','Animation'],
+          desc:'Short description of the project and what was built or designed.',
+          img:'linear-gradient(135deg,#1a0a2e,#2d1b52)', href:'#' },
+        { num:'04', title:'Project Name', year:'2024', tags:['Illustration'],
+          desc:'Short description of the project and what was built or designed.',
+          img:'linear-gradient(135deg,#111318,#1e2130)', href:'#' }
+      ];
+
+      var activeIdx = -1;
+
+      function openDetail(idx) {
+        var p = projects[idx];
+        // Populate content before opening so height is correct
+        detailImg.style.backgroundImage  = p.img.startsWith('url') ? p.img : p.img;
+        detailNum.textContent   = p.num;
+        detailTitle.textContent = p.title;
+        detailYear.textContent  = p.year;
+        detailDesc.textContent  = p.desc;
+        detailLink.href         = p.href;
+        detailTags.innerHTML    = p.tags.map(function (t) {
+          return '<span class="tag">' + t + '</span>';
+        }).join('');
+        detail.classList.add('open');
+        setTimeout(function () {
+          detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 60);
+      }
+
+      function closeDetail() {
+        detail.classList.remove('open');
+        document.querySelectorAll('.work-card').forEach(function (c) { c.classList.remove('active'); });
+        grid.classList.remove('has-active');
+        activeIdx = -1;
+      }
+
+      document.querySelectorAll('.work-card').forEach(function (card, i) {
+        card.addEventListener('click', function () {
+          if (activeIdx === i) {
+            closeDetail();
+          } else {
+            document.querySelectorAll('.work-card').forEach(function (c) { c.classList.remove('active'); });
+            card.classList.add('active');
+            grid.classList.add('has-active');
+            activeIdx = i;
+            openDetail(i);
+          }
+        });
+      });
+
+      closeBtn.addEventListener('click', closeDetail);
+    })();
   </script>
 
   <!-- Mentions légales — flèche centrée, panel fixe par-dessus -->
@@ -1755,6 +1987,23 @@
 
       </div>
     </div>
+
+  <script>
+    (function () {
+      var img = document.getElementById('discord-server-icon');
+      if (img) {
+        fetch('https://discord.com/api/v10/invites/8Ru6dK4tp8?with_counts=false')
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+          .then(function (data) {
+            var guild = data.guild;
+            if (guild && guild.icon) {
+              img.src = 'https://cdn.discordapp.com/icons/' + guild.id + '/' + guild.icon + '.webp?size=128';
+            }
+          })
+          .catch(function () { /* keep hardcoded fallback */ });
+      }
+    })();
+  </script>
 
   <script>
     (function () {
