@@ -7,6 +7,7 @@ import { buildDiscordAuthorizeUrl, exchangeDiscordCode, fetchDiscordUser } from 
 import { signSessionToken } from "../utils/jwt.js";
 
 const SESSION_COOKIE = "cloud_session";
+const isProd = env.NODE_ENV === "production";
 
 export const authRouter = Router();
 
@@ -66,8 +67,9 @@ authRouter.get("/discord/callback", async (req, res, next) => {
 
     res.cookie(SESSION_COOKIE, signedToken, {
       httpOnly: true,
-      secure: env.COOKIE_SECURE,
-      sameSite: "lax",
+      // GitHub Pages frontend is cross-site with API in production.
+      secure: isProd ? true : env.COOKIE_SECURE,
+      sameSite: isProd ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/"
     });
