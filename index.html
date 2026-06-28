@@ -400,64 +400,124 @@
 
     /* ── .cloud() ── */
     #section-cloud {
-      align-items: center;
+      flex-direction: column;
+      padding-top: 48px;
+      padding-bottom: 48px;
+      gap: 28px;
+      overflow-y: auto;
     }
 
-    .cloud-content {
+    .cloud-header {
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      max-width: 620px;
-      width: 100%;
+      gap: 8px;
     }
 
-    .cloud-title {
+    .cloud-name {
       font-size: 2.6rem;
       font-weight: 700;
       letter-spacing: -0.02em;
       line-height: 1.1;
     }
 
-    .cloud-role {
+    .cloud-sub {
       font-size: 0.9rem;
       opacity: 0.45;
-      margin-top: -4px;
     }
 
-    .cloud-desc {
+    .cloud-bio {
       font-size: 0.92rem;
       line-height: 1.9;
       opacity: 0.75;
-      min-height: 2.1em;
+      max-width: 480px;
     }
 
-    .cloud-tags {
+    .cloud-stack {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-      margin-top: 2px;
     }
 
-    .cloud-link {
-      align-self: flex-start;
+    .cloud-modules {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      max-width: 520px;
+    }
+
+    .cloud-module {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: border-color 0.22s, background 0.22s;
+    }
+
+    .cloud-module + .cloud-module {
+      margin-top: -1px;
+    }
+
+    .cloud-module:hover {
+      border-color: rgba(255,255,255,0.26);
+      background: rgba(255,255,255,0.03);
+      z-index: 1;
+      position: relative;
+    }
+
+    .cloud-module-num {
+      font-size: 0.62rem;
+      opacity: 0.28;
+      flex-shrink: 0;
+      width: 18px;
+    }
+
+    .cloud-module-name {
+      font-size: 0.84rem;
+      font-weight: 700;
+      flex: 0 0 76px;
+    }
+
+    .cloud-module-desc {
+      font-size: 0.72rem;
+      opacity: 0.38;
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cloud-module-arrow {
+      font-size: 0.7rem;
+      opacity: 0.18;
+      flex-shrink: 0;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .cloud-module:hover .cloud-module-arrow {
+      opacity: 0.7;
+      transform: translateX(3px);
+    }
+
+    .cloud-launch {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      background: rgba(255,255,255,0.09);
-      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.2);
       color: #ffffff;
       font-family: 'Courier New', Courier, monospace;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       letter-spacing: 0.06em;
-      padding: 7px 14px;
+      padding: 8px 18px;
       text-decoration: none;
-      margin-top: 3px;
       transition: background 0.2s, border-color 0.2s;
     }
 
-    .cloud-link:hover {
-      background: rgba(255,255,255,0.2);
-      border-color: rgba(255,255,255,0.5);
+    .cloud-launch:hover {
+      background: rgba(255,255,255,0.16);
+      border-color: rgba(255,255,255,0.52);
     }
 
     /* ── .bio() ── */
@@ -1269,8 +1329,10 @@
       .about-content { max-width: 100%; }
 
       /* .cloud() */
-      .cloud-title { font-size: 2rem; }
-      .cloud-content { max-width: 100%; }
+      .cloud-name { font-size: 2rem; }
+      .cloud-modules { max-width: 100%; }
+      .cloud-bio { max-width: 100%; }
+      .cloud-module-desc { white-space: normal; }
 
       /* .contact() */
       .contact-heading { font-size: 2rem; }
@@ -1519,15 +1581,7 @@
             <div class="bio-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="9" width="13" height="7" rx="1.5"/><path d="M15 11h3l2 2-2 2h-3"/><path d="M6 16v2"/><line x1="5" y1="9" x2="7" y2="6"/><line x1="7" y1="6" x2="11" y2="6"/></svg></div>
             <span class="bio-icon-label">guns.lol</span>
           </a>
-        </div> 
-        <!-- Bloc Discord -->
-        <a class="bio-discord" href="https://discord.gg/8Ru6dK4tp8" target="_blank" rel="noopener noreferrer">
-          <img id="discord-server-icon" src="https://cdn.discordapp.com/icons/1469433639585583106/c30a3838f1ef0d7b0f4da4314935bf30.png" alt="ゝLee-Box">
-          <div class="bio-discord-info">
-            <span class="bio-discord-name">ゝLee-Box</span>
-            <span class="bio-discord-sub">Leeway Official Discord | Script | FR | ToolBox</span>
-          </div>
-        </a>
+        </div>
       </div>
     </section>
 
@@ -1555,17 +1609,51 @@
 
     <!-- .cloud() -->
     <section id="section-cloud" class="page-section">
-      <div class="cloud-content">
-        <h2 class="cloud-title">Nebula Cloud.</h2>
-        <p class="cloud-role">Connected to ./cloud</p>
-        <p class="cloud-desc" id="cloud-desc">Loading cloud description...</p>
-        <div class="cloud-tags" id="cloud-tags">
-          <span class="skill-tag">Cloud</span>
-          <span class="skill-tag">Drive</span>
-          <span class="skill-tag">Sync</span>
-        </div>
-        <a class="cloud-link" href="cloud/README.md" target="_blank" rel="noopener noreferrer">Open cloud README &#8599;</a>
+      <span class="section-label">.cloud()</span>
+
+      <div class="cloud-header">
+        <h2 class="cloud-name">Nebula Cloud.</h2>
+        <p class="cloud-sub">Personal cloud storage &mdash; self-hosted.</p>
       </div>
+
+      <p class="cloud-bio" id="cloud-bio">Modern personal cloud platform with dark UI, Discord authentication, and real-time uploads.</p>
+
+      <div class="cloud-stack" id="cloud-stack">
+        <span class="skill-tag">React</span>
+        <span class="skill-tag">TypeScript</span>
+        <span class="skill-tag">Node.js</span>
+        <span class="skill-tag">Prisma</span>
+        <span class="skill-tag">SQLite</span>
+      </div>
+
+      <div class="cloud-modules">
+        <div class="cloud-module">
+          <span class="cloud-module-num">01</span>
+          <span class="cloud-module-name">Auth</span>
+          <span class="cloud-module-desc">Discord OAuth2 &middot; JWT &middot; HttpOnly cookie</span>
+          <span class="cloud-module-arrow">&#8594;</span>
+        </div>
+        <div class="cloud-module">
+          <span class="cloud-module-num">02</span>
+          <span class="cloud-module-name">Files</span>
+          <span class="cloud-module-desc">Upload &middot; Pause &middot; Resume &middot; Cancel</span>
+          <span class="cloud-module-arrow">&#8594;</span>
+        </div>
+        <div class="cloud-module">
+          <span class="cloud-module-num">03</span>
+          <span class="cloud-module-name">Folders</span>
+          <span class="cloud-module-desc">Tree navigation &middot; Drag &amp; drop</span>
+          <span class="cloud-module-arrow">&#8594;</span>
+        </div>
+        <div class="cloud-module">
+          <span class="cloud-module-num">04</span>
+          <span class="cloud-module-name">Share</span>
+          <span class="cloud-module-desc">Public links &middot; Token-based access</span>
+          <span class="cloud-module-arrow">&#8594;</span>
+        </div>
+      </div>
+
+      <a class="cloud-launch" href="http://localhost:5173" target="_blank" rel="noopener noreferrer">Launch cloud &#8599;</a>
     </section>
 
     <!-- .contact() -->
@@ -1652,7 +1740,7 @@
       twGen++;
       const gen = twGen;
       const els = Array.from(section.querySelectorAll(
-        '.hero-description, .bio-desc, .about-bio, .cloud-desc, .contact-sub'
+        '.hero-description, .bio-desc, .about-bio, .cloud-bio, .contact-sub'
       )).filter(el => el.innerText.trim());
 
       els.forEach(el => {
@@ -1773,49 +1861,43 @@
 
     // ── Cloud section dynamic content (from ./cloud/README.md) ──
     (function () {
-      var cloudDesc = document.getElementById('cloud-desc');
-      var cloudTags = document.getElementById('cloud-tags');
-      if (!cloudDesc || !cloudTags) return;
+      var cloudBio   = document.getElementById('cloud-bio');
+      var cloudStack = document.getElementById('cloud-stack');
+      if (!cloudBio) return;
 
       fetch('cloud/README.md', { cache: 'no-store' })
         .then(function (r) { return r.ok ? r.text() : Promise.reject(); })
         .then(function (md) {
           var lines = md.split(/\r?\n/);
-          var firstTextLine = lines.find(function (line) {
+
+          // First non-heading, non-list, non-code line → bio
+          var descLine = lines.find(function (line) {
             var t = line.trim();
-            return t && !t.startsWith('#') && !t.startsWith('-') && !t.startsWith('```');
+            return t && !t.startsWith('#') && !t.startsWith('-') && !t.startsWith('`');
           });
+          if (descLine) cloudBio.textContent = descLine.trim();
 
-          cloudDesc.textContent = firstTextLine || 'Cloud module connected and ready for your next additions.';
-
-          var tags = [];
-          var stackLine = lines.find(function (line) {
-            return /^-\s*(Frontend|Backend|Database|Auth)\s*:/i.test(line.trim());
-          });
-
-          if (stackLine) {
-            tags = stackLine
-              .replace(/^-\s*[^:]+:\s*/i, '')
-              .split(',')
-              .map(function (item) { return item.trim(); })
-              .filter(Boolean)
-              .slice(0, 5);
-          }
-
-          if (tags.length) {
-            cloudTags.innerHTML = tags.map(function (tag) {
-              return '<span class="skill-tag">' + tag + '</span>';
-            }).join('');
-          }
-
-          if (document.querySelector('.page-section.active') &&
-              document.querySelector('.page-section.active').id === 'section-cloud') {
-            typewriteSection(document.getElementById('section-cloud'));
+          // Stack tags from first "Frontend:" bullet
+          if (cloudStack) {
+            var stackLine = lines.find(function (line) {
+              return /^-\s*Frontend\s*:/i.test(line.trim());
+            });
+            if (stackLine) {
+              var tags = stackLine
+                .replace(/^-\s*Frontend\s*:\s*/i, '')
+                .split(',')
+                .map(function (t) { return t.trim().split(/\s+/)[0]; })
+                .filter(Boolean)
+                .slice(0, 6);
+              if (tags.length) {
+                cloudStack.innerHTML = tags.map(function (tag) {
+                  return '<span class="skill-tag">' + tag + '</span>';
+                }).join('');
+              }
+            }
           }
         })
-        .catch(function () {
-          cloudDesc.textContent = 'Unable to read ./cloud/README.md right now, but the cloud section is active.';
-        });
+        .catch(function () { /* keep defaults */ });
     })();
 
     // ── Scroll to change section ──
