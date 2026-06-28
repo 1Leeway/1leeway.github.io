@@ -9,7 +9,7 @@
       var locationObj = window.location;
       var parts = locationObj.pathname.split('/').filter(Boolean);
       var first = (parts[0] || '').toLowerCase();
-      var categories = { is: true, work: true, bio: true, about: true, contact: true };
+      var categories = { is: true, work: true, bio: true, about: true, cloud: true, contact: true };
 
       var basePath = '';
       if (first && first !== 'index.html' && !categories[first]) {

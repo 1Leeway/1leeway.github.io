@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  discordId      String    @unique
+  username       String
+  avatar         String?
+  banner         String?
+  displayName    String?
+  theme          String    @default("dark")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  lastLoginAt    DateTime?
+
+  folders        Folder[]
+  files          File[]
+  shareLinks     ShareLink[]
+  sessions       Session[]
+}
+
+model Folder {
+  id           String    @id @default(cuid())
+  ownerId      String
+  parentId     String?
+  name         String
+  path         String
+  isFavorite   Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  owner        User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  parent       Folder?   @relation("FolderHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children     Folder[]  @relation("FolderHierarchy")
+  files        File[]
+
+  @@index([ownerId])
+  @@index([parentId])
+  @@unique([ownerId, path])
+}
+
+model File {
+  id               String      @id @default(cuid())
+  ownerId          String
+  folderId         String?
+  name             String
+  originalName     String
+  mimeType         String
+  extension        String?
+  sizeBytes        BigInt
+  path             String
+  isFavorite       Boolean     @default(false)
+  isDeleted        Boolean     @default(false)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  owner            User        @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  folder           Folder?     @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  shareLinks       ShareLink[]
+
+  @@index([ownerId])
+  @@index([folderId])
+  @@index([name])
+  @@unique([ownerId, path])
+}
+
+model ShareLink {
+  id                   String    @id @default(cuid())
+  token                String    @unique
+  ownerId              String
+  fileId               String
+  readOnly             Boolean   @default(true)
+  allowDownload        Boolean   @default(true)
+  passwordHash         String?
+  expiresAt            DateTime?
+  maxDownloads         Int?
+  downloadCount        Int       @default(0)
+  createdAt            DateTime  @default(now())
+
+  owner                User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  file                 File      @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@index([fileId])
+}
+
+model Session {
+  id             String    @id @default(cuid())
+  userId         String
+  token          String    @unique
+  userAgent      String?
+  ipAddress      String?
+  expiresAt      DateTime
+  createdAt      DateTime  @default(now())
+
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

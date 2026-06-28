@@ -398,6 +398,68 @@
       align-items: center;
     }
 
+    /* ── .cloud() ── */
+    #section-cloud {
+      align-items: center;
+    }
+
+    .cloud-content {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      max-width: 620px;
+      width: 100%;
+    }
+
+    .cloud-title {
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .cloud-role {
+      font-size: 0.9rem;
+      opacity: 0.45;
+      margin-top: -4px;
+    }
+
+    .cloud-desc {
+      font-size: 0.92rem;
+      line-height: 1.9;
+      opacity: 0.75;
+      min-height: 2.1em;
+    }
+
+    .cloud-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .cloud-link {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.22);
+      color: #ffffff;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      padding: 7px 14px;
+      text-decoration: none;
+      margin-top: 3px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .cloud-link:hover {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.5);
+    }
+
     /* ── .bio() ── */
     #section-bio {
       align-items: center;
@@ -1206,6 +1268,10 @@
       .about-name { font-size: 2rem; }
       .about-content { max-width: 100%; }
 
+      /* .cloud() */
+      .cloud-title { font-size: 2rem; }
+      .cloud-content { max-width: 100%; }
+
       /* .contact() */
       .contact-heading { font-size: 2rem; }
       .contact-content { max-width: 100%; }
@@ -1315,6 +1381,7 @@
       <li><a href="#" class="nav-btn" data-section="work">.work()</a></li>
       <li><a href="#" class="nav-btn" data-section="bio">.bio()</a></li>
       <li><a href="#" class="nav-btn" data-section="about">.about()</a></li>
+      <li><a href="#" class="nav-btn" data-section="cloud">.cloud()</a></li>
       <li><a href="#" class="nav-btn" data-section="contact">.contact()</a></li>
     </ul>
   </nav>
@@ -1486,6 +1553,21 @@
       </div>
     </section>
 
+    <!-- .cloud() -->
+    <section id="section-cloud" class="page-section">
+      <div class="cloud-content">
+        <h2 class="cloud-title">Nebula Cloud.</h2>
+        <p class="cloud-role">Connected to ./cloud</p>
+        <p class="cloud-desc" id="cloud-desc">Loading cloud description...</p>
+        <div class="cloud-tags" id="cloud-tags">
+          <span class="skill-tag">Cloud</span>
+          <span class="skill-tag">Drive</span>
+          <span class="skill-tag">Sync</span>
+        </div>
+        <a class="cloud-link" href="cloud/README.md" target="_blank" rel="noopener noreferrer">Open cloud README &#8599;</a>
+      </div>
+    </section>
+
     <!-- .contact() -->
     <section id="section-contact" class="page-section">
       <div class="contact-content">
@@ -1570,7 +1652,7 @@
       twGen++;
       const gen = twGen;
       const els = Array.from(section.querySelectorAll(
-        '.hero-description, .bio-desc, .about-bio, .contact-sub'
+        '.hero-description, .bio-desc, .about-bio, .cloud-desc, .contact-sub'
       )).filter(el => el.innerText.trim());
 
       els.forEach(el => {
@@ -1688,6 +1770,53 @@
 
     const initialSection = sectionFromPath(window.location.pathname) || 'is';
     goToSection(initialSection, { replacePath: true, force: true });
+
+    // ── Cloud section dynamic content (from ./cloud/README.md) ──
+    (function () {
+      var cloudDesc = document.getElementById('cloud-desc');
+      var cloudTags = document.getElementById('cloud-tags');
+      if (!cloudDesc || !cloudTags) return;
+
+      fetch('cloud/README.md', { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.text() : Promise.reject(); })
+        .then(function (md) {
+          var lines = md.split(/\r?\n/);
+          var firstTextLine = lines.find(function (line) {
+            var t = line.trim();
+            return t && !t.startsWith('#') && !t.startsWith('-') && !t.startsWith('```');
+          });
+
+          cloudDesc.textContent = firstTextLine || 'Cloud module connected and ready for your next additions.';
+
+          var tags = [];
+          var stackLine = lines.find(function (line) {
+            return /^-\s*(Frontend|Backend|Database|Auth)\s*:/i.test(line.trim());
+          });
+
+          if (stackLine) {
+            tags = stackLine
+              .replace(/^-\s*[^:]+:\s*/i, '')
+              .split(',')
+              .map(function (item) { return item.trim(); })
+              .filter(Boolean)
+              .slice(0, 5);
+          }
+
+          if (tags.length) {
+            cloudTags.innerHTML = tags.map(function (tag) {
+              return '<span class="skill-tag">' + tag + '</span>';
+            }).join('');
+          }
+
+          if (document.querySelector('.page-section.active') &&
+              document.querySelector('.page-section.active').id === 'section-cloud') {
+            typewriteSection(document.getElementById('section-cloud'));
+          }
+        })
+        .catch(function () {
+          cloudDesc.textContent = 'Unable to read ./cloud/README.md right now, but the cloud section is active.';
+        });
+    })();
 
     // ── Scroll to change section ──
     let scrollLocked = false;
