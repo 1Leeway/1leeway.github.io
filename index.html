@@ -1311,11 +1311,11 @@
       </button>
     </div>
     <ul class="nav-links">
-      <li><a href="/is" class="nav-btn active" data-section="is">.is()</a></li>
-      <li><a href="/work" class="nav-btn" data-section="work">.work()</a></li>
-      <li><a href="/bio" class="nav-btn" data-section="bio">.bio()</a></li>
-      <li><a href="/about" class="nav-btn" data-section="about">.about()</a></li>
-      <li><a href="/contact" class="nav-btn" data-section="contact">.contact()</a></li>
+      <li><a href="#" class="nav-btn active" data-section="is">.is()</a></li>
+      <li><a href="#" class="nav-btn" data-section="work">.work()</a></li>
+      <li><a href="#" class="nav-btn" data-section="bio">.bio()</a></li>
+      <li><a href="#" class="nav-btn" data-section="about">.about()</a></li>
+      <li><a href="#" class="nav-btn" data-section="contact">.contact()</a></li>
     </ul>
   </nav>
 
@@ -1598,8 +1598,48 @@
       return path.replace(/\/+$/, '') || '/';
     }
 
-    function sectionFromPath(pathname) {
+    function getRedirectPathFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      const route = params.get('route');
+      if (!route) return null;
+      try {
+        return decodeURIComponent(route);
+      } catch (_err) {
+        return route;
+      }
+    }
+
+    const redirectedPath = getRedirectPathFromQuery();
+    if (redirectedPath) {
+      window.history.replaceState({}, '', redirectedPath);
+    }
+
+    function computeBasePath(pathname) {
       const cleanPath = normalizePath(pathname);
+      const parts = cleanPath.split('/').filter(Boolean);
+      if (parts.length === 0) return '';
+
+      const lastPart = parts[parts.length - 1].toLowerCase();
+      if (lastPart === 'index.html' || sectionIds.includes(lastPart)) {
+        parts.pop();
+      }
+
+      return parts.length ? '/' + parts.join('/') : '';
+    }
+
+    const basePath = computeBasePath(window.location.pathname);
+
+    function stripBase(pathname) {
+      if (!basePath) return pathname;
+      if (pathname === basePath) return '/';
+      if (pathname.startsWith(basePath + '/')) {
+        return pathname.slice(basePath.length) || '/';
+      }
+      return pathname;
+    }
+
+    function sectionFromPath(pathname) {
+      const cleanPath = normalizePath(stripBase(pathname));
       if (cleanPath === '/' || cleanPath === '/index.html') return 'is';
 
       const firstSegment = cleanPath.slice(1).split('/')[0].toLowerCase();
@@ -1607,7 +1647,7 @@
     }
 
     function syncPathWithSection(id, replace) {
-      const targetPath = '/' + id;
+      const targetPath = (basePath || '') + '/' + id;
       if (normalizePath(window.location.pathname) === targetPath) return;
       const method = replace ? 'replaceState' : 'pushState';
       window.history[method]({ section: id }, '', targetPath);

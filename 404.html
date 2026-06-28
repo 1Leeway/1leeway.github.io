@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redirecting...</title>
+  <script>
+    (function () {
+      var locationObj = window.location;
+      var parts = locationObj.pathname.split('/').filter(Boolean);
+      var first = (parts[0] || '').toLowerCase();
+      var categories = { is: true, work: true, bio: true, about: true, contact: true };
+
+      var basePath = '';
+      if (first && first !== 'index.html' && !categories[first]) {
+        basePath = '/' + parts[0];
+      }
+
+      var route = locationObj.pathname + locationObj.search + locationObj.hash;
+      var target = locationObj.origin + basePath + '/?route=' + encodeURIComponent(route);
+      locationObj.replace(target);
+    })();
+  </script>
+</head>
+<body></body>
+</html>
