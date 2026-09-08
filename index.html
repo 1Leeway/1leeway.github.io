@@ -106,7 +106,12 @@
       font-size: 0.72rem;
     }
 
-    .mobile-menu-toggle svg { width: 14px; height: 14px; fill: currentColor; }
+    .mobile-menu-toggle svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+      transition: transform 0.3s ease;
+    }
 
     /* ── SECTIONS WRAPPER ── */
     .sections-wrapper {
@@ -192,12 +197,12 @@
     #section-work {
       flex-direction: column;
       padding-top: 48px;
-      padding-bottom: 48px;
       gap: 36px;
       overflow-y: auto;
       overscroll-behavior-y: contain;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: thin;
+      padding-bottom: 50vh;
     }
 
     .section-label {
@@ -213,6 +218,7 @@
       gap: 10px;
       width: 100%;
       align-content: start;
+      flex-shrink: 0;
     }
 
     .work-card {
@@ -300,11 +306,15 @@
     .work-detail {
       max-height: 0;
       overflow: hidden;
+      flex-shrink: 0;
       transition: max-height 0.52s cubic-bezier(0.16,1,0.3,1);
     }
 
     .work-detail.open {
-      max-height: 280px;
+      max-height: min(520px, calc(100vh - 160px));
+      overflow-y: auto;
+      scrollbar-width: thin;
+      overscroll-behavior: contain;
     }
 
     .work-detail-inner {
@@ -1213,7 +1223,7 @@
         top: 54px;
         right: 18px;
         z-index: 210;
-        display: none;
+        display: flex;
         width: min(220px, calc(100vw - 36px));
         padding: 8px;
         flex-direction: column;
@@ -1221,9 +1231,22 @@
         background: rgba(0,0,0,0.94);
         border: 1px solid rgba(255,255,255,0.18);
         box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(-10px) scale(0.97);
+        transform-origin: top right;
+        transition: opacity 0.22s ease, transform 0.3s ease, visibility 0.3s;
       }
 
-      nav.menu-open .nav-links { display: flex; }
+      nav.menu-open .nav-links {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0) scale(1);
+      }
+
+      nav.menu-open .mobile-menu-toggle svg { transform: rotate(90deg); }
       .mobile-menu-toggle {
         position: absolute;
         top: 12px;
@@ -1251,7 +1274,7 @@
 
       #section-work {
         padding-top: 28px;
-        padding-bottom: 28px;
+        padding-bottom: 50vh;
         gap: 20px;
         touch-action: pan-y;
         overscroll-behavior-y: contain;
@@ -1264,11 +1287,27 @@
       /* .work() */
       .work-grid { grid-template-columns: 1fr; }
       .work-card { height: 148px; }
-      .work-detail-inner { flex-direction: column; gap: 14px; }
+      .work-detail-inner {
+        position: relative;
+        flex-direction: column;
+        gap: 14px;
+      }
       .work-detail-img { flex: 0 0 138px; width: 100%; }
-      .work-detail.open { max-height: 560px; }
-      .work-detail-meta { flex-wrap: wrap; row-gap: 5px; }
-      .work-detail-close { margin-left: auto; }
+      .work-detail.open { max-height: min(560px, calc(100vh - 120px)); }
+      .work-detail-meta { flex-wrap: wrap; row-gap: 5px; padding-right: 30px; }
+      .work-detail-close {
+        position: absolute;
+        top: 18px;
+        right: 0;
+        width: 22px;
+        height: 22px;
+        margin-left: 0;
+        font-size: 0;
+      }
+      .work-detail-close::before {
+        content: '\00d7';
+        font-size: 1rem;
+      }
       .work-detail-desc { font-size: 0.75rem; }
 
       /* .bio() */
@@ -2026,6 +2065,7 @@
       var detailDesc = document.getElementById('work-detail-desc');
       var detailLink = document.getElementById('work-detail-link');
       var closeBtn   = document.getElementById('work-detail-close');
+      var workSection = document.getElementById('section-work');
 
       var projects = window.portfolioProjects;
 
@@ -2081,6 +2121,18 @@
 
       var activeIdx = -1;
 
+      function centerInWorkSection(element) {
+        var sectionRect = workSection.getBoundingClientRect();
+        var elementRect = element.getBoundingClientRect();
+        var elementTop = elementRect.top - sectionRect.top + workSection.scrollTop;
+        var targetTop = elementTop - (workSection.clientHeight - elementRect.height) / 2;
+        var maxScroll = workSection.scrollHeight - workSection.clientHeight;
+        workSection.scrollTo({
+          top: Math.min(Math.max(0, targetTop), maxScroll),
+          behavior: 'smooth'
+        });
+      }
+
       function openDetail(idx) {
         var p = projects[idx];
         var visitUrl = p.visit === '#' ? '#' : /^https:\/\//i.test(p.visit) ? p.visit : '#';
@@ -2100,15 +2152,21 @@
         });
         detail.classList.add('open');
         setTimeout(function () {
-          detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 60);
+          centerInWorkSection(detail);
+        }, 540);
       }
 
       function closeDetail() {
+        var activeCard = activeIdx >= 0 ? document.querySelectorAll('.work-card')[activeIdx] : null;
         detail.classList.remove('open');
         document.querySelectorAll('.work-card').forEach(function (c) { c.classList.remove('active'); });
         grid.classList.remove('has-active');
         activeIdx = -1;
+        if (activeCard) {
+          setTimeout(function () {
+            centerInWorkSection(activeCard);
+          }, 540);
+        }
       }
 
       document.querySelectorAll('.work-card').forEach(function (card, i) {
