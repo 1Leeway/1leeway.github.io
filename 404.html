@@ -54,6 +54,8 @@
 
     .media-controls { display: flex; align-items: center; }
 
+    .media-controls { gap: 8px; }
+
     .ctrl-btn {
       display: flex;
       align-items: center;
@@ -72,6 +74,15 @@
     .ctrl-btn:hover { opacity: 0.8; }
     .ctrl-btn.active { border-radius: 50%; opacity: 0.9; }
     .ctrl-btn svg { width: 10px; height: 10px; fill: #ffffff; }
+
+    .music-status {
+      max-width: 180px;
+      overflow: hidden;
+      color: rgba(255, 255, 255, 0.48);
+      font-size: 0.65rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
     .nav-links {
       display: flex;
@@ -217,6 +228,10 @@
       <button class="ctrl-btn active" id="btn-video" type="button" title="Background on/off" aria-label="Toggle background">
         <svg id="icon-video" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>
       </button>
+      <button class="ctrl-btn" id="btn-music" type="button" title="Play music" aria-label="Play music">
+        <svg id="icon-music" viewBox="0 0 24 24" aria-hidden="true"><polygon points="5,3 19,12 5,21"/></svg>
+      </button>
+      <span class="music-status" id="music-status" aria-live="polite">music off</span>
     </div>
     <ul class="nav-links">
       <li><a href="./">.is()</a></li>
@@ -244,13 +259,30 @@
     const video = document.getElementById('bg-video');
     const videoButton = document.getElementById('btn-video');
     const videoIcon = document.getElementById('icon-video');
+    const music = new Audio('msc/lofi.mp3');
+    const musicButton = document.getElementById('btn-music');
+    const musicIcon = document.getElementById('icon-music');
+    const musicStatus = document.getElementById('music-status');
     const errorPath = document.getElementById('error-path');
+
+    music.loop = true;
+    music.volume = 0.65;
 
     errorPath.textContent = window.location.pathname + window.location.search;
 
+    function setMusicState(playing, message) {
+      musicIcon.innerHTML = playing
+        ? '<rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/>'
+        : '<polygon points="5,3 19,12 5,21"/>';
+      musicButton.classList.toggle('active', playing);
+      musicButton.title = playing ? 'Pause music' : 'Play music';
+      musicButton.setAttribute('aria-label', musicButton.title);
+      musicStatus.textContent = message || (playing ? 'playing: lofi' : 'music off');
+    }
+
     videoButton.addEventListener('click', () => {
       if (video.paused) {
-        video.play();
+        video.play().catch(() => {});
         videoButton.classList.add('active');
         videoIcon.innerHTML = '<rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/>';
       } else {
@@ -259,6 +291,19 @@
         videoIcon.innerHTML = '<polygon points="5,3 19,12 5,21"/>';
       }
     });
+
+    musicButton.addEventListener('click', () => {
+      if (music.paused) {
+        music.play()
+          .then(() => setMusicState(true))
+          .catch(() => setMusicState(false, 'music unavailable'));
+      } else {
+        music.pause();
+        setMusicState(false);
+      }
+    });
+
+    music.addEventListener('error', () => setMusicState(false, 'music unavailable'));
   </script>
 </body>
 </html>
