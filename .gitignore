@@ -1,0 +1,38 @@
+# ── Dependencies ──
+node_modules/
+**/node_modules/
+
+# ── Environment / secrets ──
+.env
+.env.*
+!.env.example
+
+# ── Databases ──
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# ── Build outputs ──
+dist/
+build/
+.next/
+out/
+
+# ── Uploads (user files) ──
+cloud/uploads/
+cloud/apps/api/uploads/
+
+# ── Prisma generated ──
+cloud/apps/api/prisma/migrations/
+cloud/apps/api/node_modules/
+
+# ── OS / editors ──
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ── Logs ──
+*.log
+npm-debug.log*
