@@ -1265,7 +1265,7 @@
   <video id="bg-video" src="src/Background.mp4" autoplay loop muted playsinline></video>
 
   <audio id="bg-music" loop>
-    <source src="msc/music.mp3" type="audio/mpeg">
+    <source src="msc/lofi.mp3" type="audio/mpeg">
   </audio>
 
   <!-- Dynamic Notch Music Player Scrap-->
@@ -1666,17 +1666,17 @@
 
     // ── Playlist ──
     const tracks = [
-      'msc/Lofi - Lofi Girl - Lofi Chill |  Mondamusic.mp3',
-      'msc/Lofi - Lofi Girl - Lofi Music |  Mondamusic.mp3',
-      'msc/Lofi - Lofi Music - |  Mondamusic.mp3',
-      'msc/Lofi - Lofi Music - Lofi Chill |  Mondamusic.mp3',
+      { src: 'msc/lofi.mp3', name: 'Lofi session' },
+      { src: 'msc/gellegani-a-poultry-farm.mp3', name: 'A Poultry Farm' },
+      { src: 'msc/making-bad-naifs-et-risibles.mp3', name: 'Naifs et risibles' },
     ];
     let currentTrack = 0;
 
     function loadTrack(idx, autoplay) {
       currentTrack = ((idx % tracks.length) + tracks.length) % tracks.length;
-      bgMusic.src = tracks[currentTrack];
-      var name = tracks[currentTrack].split('/').pop().replace(/\.[^.]+$/, '');
+      const track = tracks[currentTrack];
+      bgMusic.src = track.src;
+      const name = track.name;
       dynTrackName.textContent = name;
       if (typeof marqueeEl !== 'undefined') {
         marqueeEl.textContent = name;
