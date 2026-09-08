@@ -646,6 +646,15 @@
       opacity: 0.6;
     }
 
+    .contact-honeypot {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
     /* ── .auteur ── */
     .auteur {
       position: fixed;
@@ -1441,6 +1450,10 @@
             <label for="c-message">Message</label>
             <textarea id="c-message" name="message" required></textarea>
           </div>
+          <div class="contact-honeypot" aria-hidden="true">
+            <label for="c-website">Website</label>
+            <input type="text" id="c-website" name="website" tabindex="-1" autocomplete="off" />
+          </div>
           <button type="submit" class="contact-submit">Click to send</button>
           <p class="contact-status" id="contact-status" aria-live="polite"></p>
         </form>
@@ -1795,9 +1808,21 @@
       const form      = e.currentTarget;
       const submitBtn = form.querySelector('.contact-submit');
       const status    = document.getElementById('contact-status');
+      const honeypot  = document.getElementById('c-website');
       const name    = document.getElementById('c-name').value.trim();
       const replyTo = document.getElementById('c-email').value.trim();
       const message = document.getElementById('c-message').value.trim();
+      const cooldownKey = 'contact-last-sent';
+      const cooldownMs = 60 * 1000;
+      const lastSent = Number(localStorage.getItem(cooldownKey) || 0);
+      const remainingMs = cooldownMs - (Date.now() - lastSent);
+
+      if (honeypot.value) return;
+
+      if (remainingMs > 0) {
+        status.textContent = 'Please wait ' + Math.ceil(remainingMs / 1000) + ' seconds before sending again.';
+        return;
+      }
 
       if (!name || !replyTo || !message) {
         status.textContent = 'Please fill in every field.';
@@ -1825,6 +1850,7 @@
         });
 
         if (!response.ok) throw new Error('Request failed');
+        localStorage.setItem(cooldownKey, Date.now().toString());
         form.reset();
         status.textContent = 'Message sent successfully.';
       } catch (error) {
@@ -1985,7 +2011,7 @@
           <div class="legal-col">
             <span class="legal-lbl">Éditeur</span>
             1Leeway &mdash; Leeway Studio<br>
-            <a href="mailto:email@email.com" style="color:inherit">email@email.com</a>
+            <a href="mailto:email@email.com" style="color:inherit">Not Define</a>
           </div>
           <div class="legal-col">
             <span class="legal-lbl">Hébergement</span>
