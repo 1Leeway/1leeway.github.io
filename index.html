@@ -1440,15 +1440,15 @@
         <form class="contact-form" id="contact-form" novalidate>
           <div class="form-field">
             <label for="c-name">Name</label>
-            <input type="text" id="c-name" name="name" autocomplete="off" required />
+            <input type="text" id="c-name" name="name" autocomplete="name" minlength="2" maxlength="80" pattern="[\p{L}][\p{L}\s.'-]{1,79}" required />
           </div>
           <div class="form-field">
             <label for="c-email">Email</label>
-            <input type="email" id="c-email" name="email" autocomplete="off" required />
+            <input type="email" id="c-email" name="email" autocomplete="email" minlength="5" maxlength="160" required />
           </div>
           <div class="form-field">
             <label for="c-message">Message</label>
-            <textarea id="c-message" name="message" required></textarea>
+            <textarea id="c-message" name="message" minlength="2" maxlength="4000" required></textarea>
           </div>
           <div class="contact-honeypot" aria-hidden="true">
             <label for="c-website">Website</label>
@@ -1812,6 +1812,9 @@
       const name    = document.getElementById('c-name').value.trim();
       const replyTo = document.getElementById('c-email').value.trim();
       const message = document.getElementById('c-message').value.trim();
+      const namePattern = /^[\p{L}][\p{L}\s.'-]{1,79}$/u;
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+      const hasControlCharacter = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/;
       const cooldownKey = 'contact-last-sent';
       const cooldownMs = 60 * 1000;
       const lastSent = Number(localStorage.getItem(cooldownKey) || 0);
@@ -1824,8 +1827,18 @@
         return;
       }
 
-      if (!name || !replyTo || !message) {
-        status.textContent = 'Please fill in every field.';
+      if (name.length < 2 || !namePattern.test(name)) {
+        status.textContent = 'Name: use at least 2 letters and valid characters.';
+        return;
+      }
+
+      if (replyTo.length < 5 || !emailPattern.test(replyTo)) {
+        status.textContent = 'Email: enter a valid address with @ and a domain.';
+        return;
+      }
+
+      if (message.length < 2 || hasControlCharacter.test(message)) {
+        status.textContent = 'Message: use at least 2 valid characters.';
         return;
       }
 
@@ -1838,7 +1851,7 @@
         message,
         _replyto: replyTo,
         _subject: 'Portfolio message from ' + name,
-        _captcha: 'false',
+        _honey: '',
         _template: 'table'
       });
 
