@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://cdn.discordapp.com data:; media-src 'self'; connect-src 'self' https://formsubmit.co https://discord.com; base-uri 'self'; form-action 'self' https://formsubmit.co;" />
   <title>Leeway - Portfolio</title>
   <link rel="icon" type="image/png" href="src/favicon.png" />
   <style>
@@ -1183,10 +1184,16 @@
       .nav-links {
         order: 2;
         width: 100%;
-        justify-content: center;
-        gap: 12px;
-        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 14px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
       }
+
+      .nav-links::-webkit-scrollbar { display: none; }
 
       .nav-links a { font-size: 0.75rem; }
 
@@ -1211,9 +1218,13 @@
 
       /* .work() */
       .work-grid { grid-template-columns: 1fr; }
-      .work-card { height: 150px; }
-      .work-detail-img { flex: 0 0 110px; }
-      .work-detail.open { max-height: 340px; }
+      .work-card { height: 148px; }
+      .work-detail-inner { flex-direction: column; gap: 14px; }
+      .work-detail-img { flex: 0 0 138px; width: 100%; }
+      .work-detail.open { max-height: 560px; }
+      .work-detail-meta { flex-wrap: wrap; row-gap: 5px; }
+      .work-detail-close { margin-left: auto; }
+      .work-detail-desc { font-size: 0.75rem; }
 
       /* .bio() */
       .bio-title { font-size: 2rem; }
@@ -1229,6 +1240,8 @@
       /* .contact() */
       .contact-heading { font-size: 2rem; }
       .contact-content { max-width: 100%; }
+      .contact-heading { line-height: 1.15; }
+      .contact-submit { width: 100%; }
 
       /* Auteur */
       .auteur {
@@ -1591,7 +1604,19 @@
     });
 
     const initialSection = sectionFromHash(window.location.hash) || 'is';
-    goToSection(initialSection, { replacePath: !window.location.hash, force: true });
+    const redirectedRoute = new URLSearchParams(window.location.search).get('route');
+    let redirectedPath = '';
+    try {
+      redirectedPath = redirectedRoute ? decodeURIComponent(redirectedRoute) : '';
+    } catch (error) {
+      redirectedPath = '';
+    }
+    const redirectedSection = redirectedPath.match(/^\/(is|work|bio|about|contact)(?:\/|$)/i);
+    const routeSection = redirectedSection ? redirectedSection[1].toLowerCase() : null;
+    if (routeSection && !window.location.hash) {
+      window.history.replaceState({}, '', '#' + routeSection);
+    }
+    goToSection(routeSection || initialSection, { replacePath: !window.location.hash, force: true });
 
     // ── Scroll to change section ──
     let scrollLocked = false;
@@ -1936,10 +1961,18 @@
 
           var header = document.createElement('div');
           header.className = 'work-card-header';
-          header.innerHTML = '<span class="work-card-num"></span><span class="work-card-title"></span><span class="work-card-year"></span>';
-          header.querySelector('.work-card-num').textContent = project.position;
-          header.querySelector('.work-card-title').textContent = project.name;
-          header.querySelector('.work-card-year').textContent = project.year;
+          var number = document.createElement('span');
+          number.className = 'work-card-num';
+          number.textContent = project.position;
+          var title = document.createElement('span');
+          title.className = 'work-card-title';
+          title.textContent = project.name;
+          var year = document.createElement('span');
+          year.className = 'work-card-year';
+          year.textContent = project.year;
+          header.appendChild(number);
+          header.appendChild(title);
+          header.appendChild(year);
 
           var tags = document.createElement('div');
           tags.className = 'work-card-tags';
@@ -1965,16 +1998,21 @@
 
       function openDetail(idx) {
         var p = projects[idx];
+        var visitUrl = p.visit === '#' ? '#' : /^https:\/\//i.test(p.visit) ? p.visit : '#';
         // Populate content before opening so height is correct
         detailImg.style.backgroundImage  = 'url("' + p.image + '")';
         detailNum.textContent   = p.position;
         detailTitle.textContent = p.name;
         detailYear.textContent  = p.year;
         detailDesc.textContent  = p.description;
-        detailLink.href         = p.visit;
-        detailTags.innerHTML    = p.tags.map(function (t) {
-          return '<span class="tag">' + t + '</span>';
-        }).join('');
+        detailLink.href         = visitUrl;
+        detailTags.replaceChildren();
+        p.tags.forEach(function (tagName) {
+          var tag = document.createElement('span');
+          tag.className = 'tag';
+          tag.textContent = tagName;
+          detailTags.appendChild(tag);
+        });
         detail.classList.add('open');
         setTimeout(function () {
           detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
