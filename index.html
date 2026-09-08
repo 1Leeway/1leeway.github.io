@@ -1268,7 +1268,7 @@
     <source src="msc/music.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Dynamic Notch Music Player -->
+  <!-- Dynamic Notch Music Player Scrap -->
   <div class="dyn-notch" id="dyn-notch">
     <div class="dyn-notch-idle">
       <svg class="dyn-idle-icon" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
@@ -1311,11 +1311,11 @@
       </button>
     </div>
     <ul class="nav-links">
-      <li><a href="#" class="nav-btn active" data-section="is">.is()</a></li>
-      <li><a href="#" class="nav-btn" data-section="work">.work()</a></li>
-      <li><a href="#" class="nav-btn" data-section="bio">.bio()</a></li>
-      <li><a href="#" class="nav-btn" data-section="about">.about()</a></li>
-      <li><a href="#" class="nav-btn" data-section="contact">.contact()</a></li>
+      <li><a href="#is" class="nav-btn active" data-section="is">.is()</a></li>
+      <li><a href="#work" class="nav-btn" data-section="work">.work()</a></li>
+      <li><a href="#bio" class="nav-btn" data-section="bio">.bio()</a></li>
+      <li><a href="#about" class="nav-btn" data-section="about">.about()</a></li>
+      <li><a href="#contact" class="nav-btn" data-section="contact">.contact()</a></li>
     </ul>
   </nav>
 
@@ -1585,63 +1585,15 @@
     const sections = document.querySelectorAll('.page-section');
     const sectionIds = Array.from(navBtns).map(b => b.dataset.section);
 
-    function normalizePath(path) {
-      return path.replace(/\/+$/, '') || '/';
+    function sectionFromHash(hash) {
+      const sectionId = hash.replace(/^#/, '').toLowerCase();
+      return sectionIds.includes(sectionId) ? sectionId : null;
     }
 
-    function getRedirectPathFromQuery() {
-      const params = new URLSearchParams(window.location.search);
-      const route = params.get('route');
-      if (!route) return null;
-      try {
-        return decodeURIComponent(route);
-      } catch (_err) {
-        return route;
-      }
-    }
-
-    const redirectedPath = getRedirectPathFromQuery();
-    if (redirectedPath) {
-      window.history.replaceState({}, '', redirectedPath);
-    }
-
-    function computeBasePath(pathname) {
-      const cleanPath = normalizePath(pathname);
-      const parts = cleanPath.split('/').filter(Boolean);
-      if (parts.length === 0) return '';
-
-      const lastPart = parts[parts.length - 1].toLowerCase();
-      if (lastPart === 'index.html' || sectionIds.includes(lastPart)) {
-        parts.pop();
-      }
-
-      return parts.length ? '/' + parts.join('/') : '';
-    }
-
-    const basePath = computeBasePath(window.location.pathname);
-
-    function stripBase(pathname) {
-      if (!basePath) return pathname;
-      if (pathname === basePath) return '/';
-      if (pathname.startsWith(basePath + '/')) {
-        return pathname.slice(basePath.length) || '/';
-      }
-      return pathname;
-    }
-
-    function sectionFromPath(pathname) {
-      const cleanPath = normalizePath(stripBase(pathname));
-      if (cleanPath === '/' || cleanPath === '/index.html') return 'is';
-
-      const firstSegment = cleanPath.slice(1).split('/')[0].toLowerCase();
-      return sectionIds.includes(firstSegment) ? firstSegment : null;
-    }
-
-    function syncPathWithSection(id, replace) {
-      const targetPath = (basePath || '') + '/' + id;
-      if (normalizePath(window.location.pathname) === targetPath) return;
+    function syncHashWithSection(id, replace) {
+      if (window.location.hash === '#' + id) return;
       const method = replace ? 'replaceState' : 'pushState';
-      window.history[method]({ section: id }, '', targetPath);
+      window.history[method]({ section: id }, '', '#' + id);
     }
 
     function goToSection(id, options) {
@@ -1661,7 +1613,7 @@
       }
 
       if (opts.updatePath) {
-        syncPathWithSection(id, opts.replacePath);
+        syncHashWithSection(id, opts.replacePath);
       }
     }
 
@@ -1672,13 +1624,13 @@
       });
     });
 
-    window.addEventListener('popstate', () => {
-      const sectionId = sectionFromPath(window.location.pathname) || 'is';
+    window.addEventListener('hashchange', () => {
+      const sectionId = sectionFromHash(window.location.hash) || 'is';
       goToSection(sectionId, { updatePath: false, force: true });
     });
 
-    const initialSection = sectionFromPath(window.location.pathname) || 'is';
-    goToSection(initialSection, { replacePath: true, force: true });
+    const initialSection = sectionFromHash(window.location.hash) || 'is';
+    goToSection(initialSection, { replacePath: !window.location.hash, force: true });
 
     // ── Scroll to change section ──
     let scrollLocked = false;
