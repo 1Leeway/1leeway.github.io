@@ -6,6 +6,13 @@
   <meta name="theme-color" content="#000000" />
   <link rel="icon" type="image/png" href="src/favicon.png" />
   <title>404 - 1Leeway</title>
+  <script>
+    const knownRoutes = /^(?:\/(?:is|work|bio|about|contact))\/?$/i;
+    if (knownRoutes.test(window.location.pathname)) {
+      const route = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+      window.location.replace('/?route=' + route);
+    }
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
 
