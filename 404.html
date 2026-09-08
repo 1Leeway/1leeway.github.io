@@ -57,6 +57,7 @@
       justify-content: space-between;
       gap: 24px;
       padding: 20px 32px;
+      animation: navReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
     .media-controls { display: flex; align-items: center; }
@@ -123,6 +124,8 @@
       left: 80px;
       width: 3px;
       background: #ffffff;
+      transform-origin: top;
+      animation: lineReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
     }
 
     .site-line::before {
@@ -142,7 +145,35 @@
       flex-direction: column;
       gap: 14px;
       max-width: 560px;
-      animation: reveal 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation: reveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+
+    .error-content > * {
+      animation: itemReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .error-content > :nth-child(1) { animation-delay: 0.34s; }
+    .error-content > :nth-child(2) { animation-delay: 0.42s; }
+    .error-content > :nth-child(3) { animation-delay: 0.5s; }
+    .error-content > :nth-child(4) { animation-delay: 0.58s; }
+    .error-content > :nth-child(5) { animation-delay: 0.66s; }
+
+    body.is-leaving .error-content {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    body.is-leaving .site-line {
+      transform: scaleY(0);
+      transition: transform 0.45s cubic-bezier(0.76, 0, 0.24, 1);
+      transform-origin: bottom;
+    }
+
+    body.is-leaving nav,
+    body.is-leaving .auteur {
+      opacity: 0;
+      transition: opacity 0.25s ease;
     }
 
     .error-code {
@@ -211,6 +242,21 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    @keyframes itemReveal {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes navReveal {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes lineReveal {
+      from { transform: scaleY(0); }
+      to { transform: scaleY(1); }
+    }
+
     @media (max-width: 640px) {
       nav { align-items: flex-start; padding: 18px 20px; }
       .nav-links { gap: 11px; flex-wrap: wrap; justify-content: flex-end; }
@@ -222,7 +268,9 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .error-content { animation: none; }
+      nav, .site-line, .error-content, .error-content > * { animation: none; }
+      .error-content { transition: none; }
+      body.is-leaving .error-content { opacity: 0; transform: none; }
       #bg-video { display: none; }
     }
   </style>
@@ -311,6 +359,16 @@
     });
 
     music.addEventListener('error', () => setMusicState(false, 'music unavailable'));
+
+    document.querySelectorAll('a[href^="./#"]').forEach(link => {
+      link.addEventListener('click', event => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        event.preventDefault();
+        document.body.classList.add('is-leaving');
+        setTimeout(() => { window.location.href = link.href; }, 380);
+      });
+    });
   </script>
 </body>
 </html>
