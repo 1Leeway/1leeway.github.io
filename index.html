@@ -93,6 +93,21 @@
       pointer-events: none;
     }
 
+    .mobile-menu-toggle {
+      display: none;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.35);
+      color: #fff;
+      width: 34px;
+      height: 30px;
+      padding: 0;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.72rem;
+    }
+
+    .mobile-menu-toggle svg { width: 14px; height: 14px; fill: currentColor; }
+
     /* ── SECTIONS WRAPPER ── */
     .sections-wrapper {
       flex: 1;
@@ -180,6 +195,9 @@
       padding-bottom: 48px;
       gap: 36px;
       overflow-y: auto;
+      overscroll-behavior-y: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
     }
 
     .section-label {
@@ -808,6 +826,12 @@
       pointer-events: auto;
     }
 
+    .dyn-notch.mobile-expanded .dyn-notch-idle { opacity: 0; }
+    .dyn-notch.mobile-expanded .dyn-notch-player {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     /* Big eq bars (in expanded player) */
     .dyn-eq {
       display: flex;
@@ -1168,7 +1192,7 @@
        MOBILE — orientation portrait
        (height > width)
     ═══════════════════════════════ */
-    @media (orientation: portrait) {
+    @media (max-width: 640px) {
 
       nav {
         padding: 12px 18px;
@@ -1182,18 +1206,25 @@
       }
 
       .nav-links {
-        order: 2;
-        width: 100%;
-        justify-content: flex-start;
-        gap: 14px;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-bottom: 4px;
-        scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
+        position: absolute;
+        top: 54px;
+        right: 18px;
+        z-index: 210;
+        display: none;
+        width: min(220px, calc(100vw - 36px));
+        padding: 8px;
+        flex-direction: column;
+        gap: 2px;
+        background: rgba(0,0,0,0.94);
+        border: 1px solid rgba(255,255,255,0.18);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.35);
       }
 
-      .nav-links::-webkit-scrollbar { display: none; }
+      nav.menu-open .nav-links { display: flex; }
+      .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; margin-left: auto; }
+      .nav-links li { width: 100%; }
+      .nav-links a { display: block; padding: 10px 12px; font-size: 0.78rem; }
+      .nav-links a.active { opacity: 0.45; }
 
       .nav-links a { font-size: 0.75rem; }
 
@@ -1210,6 +1241,8 @@
         padding-top: 28px;
         padding-bottom: 28px;
         gap: 20px;
+        touch-action: pan-y;
+        overscroll-behavior-y: contain;
       }
 
       /* .is() */
@@ -1269,11 +1302,16 @@
         height: 66px;
         border-radius: 0 0 30px 30px;
       }
-      .dyn-notch.mobile-expanded .dyn-notch-idle { opacity: 0; }
-      .dyn-notch.mobile-expanded .dyn-notch-player {
-        opacity: 1;
-        pointer-events: auto;
-      }
+      .dyn-notch { width: 124px; height: 30px; }
+      .dyn-notch-player { padding: 0 12px; gap: 7px; }
+      .dyn-track-name { font-size: 0.62rem; }
+    }
+
+    @media (max-width: 640px) and (orientation: landscape) {
+      nav { padding: 8px 14px; }
+      .nav-links { top: 44px; right: 14px; }
+      .page-section { padding-left: 48px; padding-right: 18px; }
+      .work-card { height: 128px; }
     }
   </style>
 </head>
@@ -1343,6 +1381,9 @@
         <svg id="icon-video" viewBox="0 0 24 24"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>
       </button>
     </div>
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+    </button>
     <ul class="nav-links">
       <li><a href="#is" class="nav-btn active" data-section="is">.is()</a></li>
       <li><a href="#work" class="nav-btn" data-section="work">.work()</a></li>
@@ -1558,6 +1599,25 @@
     const navBtns  = document.querySelectorAll('.nav-btn');
     const sections = document.querySelectorAll('.page-section');
     const sectionIds = Array.from(navBtns).map(b => b.dataset.section);
+    const mainNav = document.querySelector('nav');
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+
+    function closeMobileMenu() {
+      mainNav.classList.remove('menu-open');
+      mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      mobileMenuToggle.setAttribute('aria-label', 'Open navigation');
+    }
+
+    mobileMenuToggle.addEventListener('click', e => {
+      e.stopPropagation();
+      const isOpen = mainNav.classList.toggle('menu-open');
+      mobileMenuToggle.setAttribute('aria-expanded', String(isOpen));
+      mobileMenuToggle.setAttribute('aria-label', isOpen ? 'Close navigation' : 'Open navigation');
+    });
+
+    document.addEventListener('click', e => {
+      if (!mainNav.contains(e.target)) closeMobileMenu();
+    });
 
     function sectionFromHash(hash) {
       const sectionId = hash.replace(/^#/, '').toLowerCase();
@@ -1595,6 +1655,7 @@
       btn.addEventListener('click', e => {
         e.preventDefault();
         goToSection(btn.dataset.section);
+        closeMobileMenu();
       });
     });
 
@@ -1742,11 +1803,13 @@
     setTimeout(typeNextChar, 350);
 
     function dismissSplash() {
-      bgMusic.play().then(() => setPlaying(true)).catch(() => {});
+      bgMusic.play()
+        .then(() => setPlaying(true))
+        .catch(() => setPlaying(false));
       splashEl.classList.add('exit');
       setTimeout(() => { splashEl.style.display = 'none'; }, 700);
     }
-    splashEl.addEventListener('click', (e) => {
+    splashEl.addEventListener('pointerup', (e) => {
       if (e.button === 0) dismissSplash();
     }, { once: true });
     bgMusic.addEventListener('ended', () => loadTrack(currentTrack + 1, true));
@@ -1901,15 +1964,25 @@
     // ── Touch swipe: navigate between sections ──
     (function () {
       var startY = 0;
+      var startScrollTop = 0;
+      var touchSection = null;
       document.addEventListener('touchstart', function (e) {
         startY = e.touches[0].clientY;
+        touchSection = document.querySelector('.page-section.active');
+        startScrollTop = touchSection && touchSection.id === 'section-work' ? touchSection.scrollTop : 0;
       }, { passive: true });
 
       document.addEventListener('touchend', function (e) {
         var dy = startY - e.changedTouches[0].clientY;
         if (Math.abs(dy) < 50) return; // ignore tiny swipes
-        var activeSection = document.querySelector('.page-section.active');
-        if (!workReachedScrollBoundary(activeSection, dy)) return;
+        var activeSection = touchSection || document.querySelector('.page-section.active');
+        if (activeSection.id === 'section-work' && activeSection.scrollHeight > activeSection.clientHeight) {
+          var maxScroll = activeSection.scrollHeight - activeSection.clientHeight;
+          var startedAtTop = startScrollTop <= 1;
+          var startedAtBottom = startScrollTop >= maxScroll - 1;
+          if (dy > 0 && !startedAtBottom) return;
+          if (dy < 0 && !startedAtTop) return;
+        }
         if (scrollLocked) return;
         var current = sectionIds.indexOf(document.querySelector('.nav-btn.active').dataset.section);
         var next = dy > 0 ? current + 1 : current - 1;
